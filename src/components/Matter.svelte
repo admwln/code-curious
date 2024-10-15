@@ -1,0 +1,23 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { initMatterJS } from '$lib/matter';
+
+	// Define a reference to the container with the correct type
+	let matterContainer: HTMLElement;
+
+	//Initialize Matter.js after the component is mounted
+	onMount(() => {
+		if (matterContainer) {
+			initMatterJS(matterContainer);
+		}
+	});
+</script>
+
+<section class="matter-container" bind:this={matterContainer}></section>
+
+<style>
+	.matter-container {
+		width: 450px;
+		height: 800px;
+	}
+</style>
