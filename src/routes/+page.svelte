@@ -40,4 +40,8 @@
 			</li>
 		{/each}
 	</ol>
+
+	<div class="space-y-5">
+		<a href="/about" class="btn btn-primary">About</a>
+	</div>
 </div>
