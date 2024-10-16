@@ -5,7 +5,7 @@
 
 <div class="flex flex-col min-h-screen">
 	<!-- Header (shared across all pages) -->
-	<header class="bg-blue-600 text-white p-4">
+	<header class="bg-secondary-800 text-white p-4">
 		<div class="container mx-auto flex justify-between items-center">
 			<h1>Funnel Logic</h1>
 			<nav class="flex space-x-4">
@@ -17,25 +17,60 @@
 	</header>
 
 	<!-- Main Layout (shared) -->
-	<main class="flex-1 flex flex-col md:flex-row">
+	<main class="flex-1 flex flex-col md:flex-row h-full">
 		<!-- This is where the content of each page will be injected -->
 		<slot></slot>
 	</main>
 
 	<!-- Mobile Buttons for Panel Toggle (shared) -->
-	<div class="fixed bottom-0 inset-x-0 flex justify-evenly bg-blue-600 text-white md:hidden">
-		<!-- The $ prefix is shorthand for subscribing to a store in Svelte. -->
-		<button on:click={() => ($currentPanel = 1)}>Panel 1</button>
-		<button on:click={() => ($currentPanel = 2)}>Panel 2</button>
-		<button on:click={() => ($currentPanel = 3)}>Panel 3</button>
-	</div>
+	<div class="bg-tertiary-800 fixed flex justify-center bottom-0 inset-x-0 md:hidden">
+		<class class="flex gap-4 justify-center m-2">
+			<!-- The $ prefix is shorthand for subscribing to a store in Svelte. -->
+			<button
+				type="button"
+				on:click={() => ($currentPanel = 1)}
+				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 1
+					? 'variant-filled-surface focus:variant-filled-surface'
+					: ''}">Tutorial</button
+			>
 
+			<button
+				type="button"
+				on:click={() => ($currentPanel = 2)}
+				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 2
+					? 'variant-filled-surface focus:variant-filled-surface'
+					: ''}">Editor</button
+			>
+			<button
+				type="button"
+				on:click={() => ($currentPanel = 3)}
+				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 3
+					? 'variant-filled-surface focus:variant-filled-surface'
+					: ''}">Client</button
+			>
+		</class>
+	</div>
 	<!-- Tablet (md) Toggle Buttons (for Panel 1 and Panel 2) -->
 	<div
-		class="hidden md:flex lg:hidden fixed bottom-0 left-0 w-1/2 justify-evenly bg-blue-600 text-white"
+		class="bg-tertiary-800 hidden md:w-1/2 md:flex md:justify-center lg:hidden fixed bottom-0 left-0"
 	>
-		<!-- Toggle buttons for Panel 1 and Panel 2 only -->
-		<button on:click={() => ($currentPanel = 1)} class="w-1/2 text-center p-2">Panel 1</button>
-		<button on:click={() => ($currentPanel = 2)} class="w-1/2 text-center p-2">Panel 2</button>
+		<div class="flex gap-4 justify-center m-2">
+			<!-- Toggle buttons for Panel 1 and Panel 2 only -->
+			<button
+				type="button"
+				on:click={() => ($currentPanel = 1)}
+				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 1
+					? 'variant-filled-surface focus:variant-filled-surface'
+					: ''}">Tutorial</button
+			>
+
+			<button
+				type="button"
+				on:click={() => ($currentPanel = 2)}
+				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 2
+					? 'variant-filled-surface focus:variant-filled-surface'
+					: ''}">Editor</button
+			>
+		</div>
 	</div>
 </div>

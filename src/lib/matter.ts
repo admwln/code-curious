@@ -17,19 +17,40 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 		options: {
 			width: options.width || container.clientWidth,
 			height: options.height || container.clientHeight,
-			wireframes: false
-		}
+			wireframes: false,
+			background: 'rgb(23 23 23)',
+		},
 	});
 
 	// Create a circle body
-	const circle = Bodies.circle(100, 100, 50, {
+	const circle = Bodies.circle(100, 100, 25, {
 		isStatic: false, // Static bodies are not affected by gravity
-		restitution: 0.9, // Bounce effect
-		render: { fillStyle: 'blue' } // Circle color
+		restitution: 1, // Bounce effect
+		render: { fillStyle: 'rgb(99 102 241)' }, // Circle color
 	});
-
 	// Add the circle to the world
 	World.add(engine.world, [circle]);
+
+	// Create static walls
+	World.add(engine.world, [
+		Bodies.rectangle(225, 0, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(225, 700, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(450, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(0, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+	]);
+
+	// Add a mouse constraint
+	const mouse = Matter.Mouse.create(render.canvas);
+	const mouseConstraint = Matter.MouseConstraint.create(engine, {
+		mouse: mouse,
+		constraint: {
+			stiffness: 0.2,
+			render: {
+				visible: false,
+			},
+		},
+	});
+	World.add(engine.world, mouseConstraint);
 
 	// Create a runner
 	const runner = Runner.create();

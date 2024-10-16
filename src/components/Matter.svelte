@@ -13,11 +13,13 @@
 	});
 </script>
 
-<section class="matter-container" bind:this={matterContainer}></section>
+<section class="w-full flex justify-center">
+	<div bind:this={matterContainer}></div>
+</section>
 
 <style>
-	.matter-container {
+	div {
 		width: 450px;
-		height: 800px;
+		height: 700px;
 	}
 </style>
