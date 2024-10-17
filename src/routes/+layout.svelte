@@ -7,11 +7,11 @@
 	<!-- Header (shared across all pages) -->
 	<header class="bg-secondary-800 text-white p-4">
 		<div class="container mx-auto flex justify-between items-center">
-			<h1>Funnel Logic</h1>
+			<a href="/" class="hover:text-gray-200"><h1>Funnel Logic</h1></a>
 			<nav class="flex space-x-4">
 				<a href="/" class="hover:text-gray-200">Home</a>
 				<a href="/about" class="hover:text-gray-200">About</a>
-				<a href="/contact" class="hover:text-gray-200">Contact</a>
+				<a href="/login" class="hover:text-gray-200">Log in</a>
 			</nav>
 		</div>
 	</header>
@@ -46,7 +46,7 @@
 				on:click={() => ($currentPanel = 3)}
 				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 3
 					? 'variant-filled-surface focus:variant-filled-surface'
-					: ''}">Client</button
+					: ''}">Funnel</button
 			>
 		</class>
 	</div>

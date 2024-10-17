@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/store'; // Import the store
-	import { faChalkboardUser, faDesktop } from '@fortawesome/free-solid-svg-icons';
+	import { faChalkboardUser, faDesktop, faFilter } from '@fortawesome/free-solid-svg-icons';
 	import { faFileCode } from '@fortawesome/free-regular-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import Matter from '../components/Matter.svelte';
@@ -57,6 +57,6 @@
 		? 'hidden md:block lg:block'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="p-4 bg-neutral-800"><FontAwesomeIcon icon={faDesktop} /> Client</h2>
+	<h2 class="p-4 bg-neutral-800"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
 	<Matter />
 </div>
