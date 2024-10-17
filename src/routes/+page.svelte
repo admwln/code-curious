@@ -1,9 +1,23 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/store'; // Import the store
-	import { faChalkboardUser, faDesktop, faFilter } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faChalkboardUser,
+		faCode,
+		faDesktop,
+		faFilter,
+		faMinus,
+		faPlay,
+		faPlus,
+	} from '@fortawesome/free-solid-svg-icons';
 	import { faFileCode } from '@fortawesome/free-regular-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import Matter from '../components/Matter.svelte';
+
+	// Accordion imports
+	// import { Accordion } from '@skeletonlabs/skeleton';
+	// Modified AccordionItem component
+	import Accordion from '../components/Accordion.svelte';
+	import AccordionItem from '../components/AccordionItem.svelte';
 </script>
 
 <!-- Panel 1 -->
@@ -12,8 +26,10 @@
 		? 'hidden'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="p-4 bg-neutral-600"><FontAwesomeIcon icon={faChalkboardUser} /> Tutorial</h2>
-	<p class="p-4">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-2 px-4 bg-[#ec489a2A]">
+		<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+	</h2>
+	<h3 class="p-4">The Basics</h3>
 	<ul class="p-4 list">
 		<li>Data types</li>
 		<li>Variables</li>
@@ -21,23 +37,11 @@
 		<li>Functions</li>
 		<li>Loops</li>
 	</ul>
+	<p class="p-4">An array is a special variable, which can hold more than one value:</p>
+	<code class="p-4 block">["apple", "banana", "orange"]</code>
 	<p class="p-4">
-		Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nam totam nobis nisi ducimus dolor
-		aperiam. Quia ea deserunt incidunt cumque quis! Nisi sint, repellat vitae veritatis saepe
-		perferendis inventore, quia neque necessitatibus alias enim omnis commodi expedita veniam
-		obcaecati provident incidunt deserunt amet dolores maiores quasi natus eaque? Voluptate sit in
-		eaque natus laudantium ad sint! Totam veritatis temporibus placeat ipsum, necessitatibus
-		similique nihil rem tenetur expedita illum! Obcaecati iusto rerum consectetur quas libero soluta
-		ut!
-	</p>
-	<p class="p-4">
-		Exercitationem ipsam, amet quasi ad dignissimos tenetur esse eligendi unde delectus, expedita
-		laborum nulla vel deleniti alias sapiente eius iste? Animi saepe laboriosam minus dolores illo,
-		labore hic repellendus consequatur nihil. Sed repellat ab placeat tempore perspiciatis
-		asperiores. Facilis, repellendus. Possimus aliquam cupiditate illo illum dolore magni aliquid
-		molestias cumque! Eveniet, facilis. Illum error odio ipsam consequuntur eveniet eos repellat,
-		architecto est aut animi, dolore fuga quaerat magnam quia laudantium fugiat ipsa quam, rerum
-		aspernatur perspiciatis tempora?
+		You access an array element by referring to the index number. This statement accesses the value
+		of the first element in fruits.
 	</p>
 </div>
 
@@ -47,8 +51,30 @@
 		? 'hidden'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="p-4 bg-neutral-700"><FontAwesomeIcon icon={faFileCode} /> Editor</h2>
-	<p class="p-4">Here you will find all the code blocks!</p>
+	<Accordion>
+		<AccordionItem open>
+			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faMinus} /></svelte:fragment>
+			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faPlus} /></svelte:fragment>
+			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faCode} /></svelte:fragment>
+			<svelte:fragment slot="summary">
+				<div class="flex justify-between">
+					<h2>Editor</h2>
+				</div>
+			</svelte:fragment>
+			<svelte:fragment slot="content">Here you will find all the code blocks!</svelte:fragment>
+		</AccordionItem>
+		<AccordionItem open>
+			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faMinus} /></svelte:fragment>
+			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faPlus} /></svelte:fragment>
+			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
+			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
+			<svelte:fragment slot="content">
+				<div class="rounded-md bg-slate-900 p-4">
+					<code class="block">Hello World!</code>
+				</div>
+			</svelte:fragment>
+		</AccordionItem>
+	</Accordion>
 </div>
 
 <!-- Panel 3 (always visible on tablet and desktop) -->
@@ -57,6 +83,8 @@
 		? 'hidden md:block lg:block'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="p-4 bg-neutral-800"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
+	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-2 px-4 bg-[#ec489a2a]">
+		<FontAwesomeIcon icon={faFilter} /> Funnel
+	</h2>
 	<Matter />
 </div>

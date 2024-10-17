@@ -18,7 +18,8 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 			width: options.width || container.clientWidth,
 			height: options.height || container.clientHeight,
 			wireframes: false,
-			background: 'rgb(23 23 23)',
+			// background: 'rgb(23 23 23)',
+			background: 'rgb(30 30 30)',
 		},
 	});
 
@@ -28,8 +29,18 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 		restitution: 1, // Bounce effect
 		render: { fillStyle: 'rgb(99 102 241)' }, // Circle color
 	});
+	const circle2 = Bodies.circle(100, 100, 25, {
+		isStatic: false, // Static bodies are not affected by gravity
+		restitution: 1, // Bounce effect
+		render: { fillStyle: 'rgb(99 102 241)' }, // Circle color
+	});
+	const circle3 = Bodies.circle(100, 100, 25, {
+		isStatic: false, // Static bodies are not affected by gravity
+		restitution: 1, // Bounce effect
+		render: { fillStyle: 'rgb(99 102 241)' }, // Circle color
+	});
 	// Add the circle to the world
-	World.add(engine.world, [circle]);
+	World.add(engine.world, [circle, circle2, circle3]);
 
 	// Create static walls
 	World.add(engine.world, [
@@ -39,18 +50,18 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 		Bodies.rectangle(0, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
 	]);
 
-	// Add a mouse constraint
-	const mouse = Matter.Mouse.create(render.canvas);
-	const mouseConstraint = Matter.MouseConstraint.create(engine, {
-		mouse: mouse,
-		constraint: {
-			stiffness: 0.2,
-			render: {
-				visible: false,
-			},
-		},
-	});
-	World.add(engine.world, mouseConstraint);
+	// // Add a mouse constraint
+	// const mouse = Matter.Mouse.create(render.canvas);
+	// const mouseConstraint = Matter.MouseConstraint.create(engine, {
+	// 	mouse: mouse,
+	// 	constraint: {
+	// 		stiffness: 0.2,
+	// 		render: {
+	// 			visible: false,
+	// 		},
+	// 	},
+	// });
+	// World.add(engine.world, mouseConstraint);
 
 	// Create a runner
 	const runner = Runner.create();

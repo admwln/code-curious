@@ -39,7 +39,7 @@
 				on:click={() => ($currentPanel = 2)}
 				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 2
 					? 'variant-filled-surface focus:variant-filled-surface'
-					: ''}">Editor</button
+					: ''}">Editor & Console</button
 			>
 			<button
 				type="button"
@@ -69,7 +69,7 @@
 				on:click={() => ($currentPanel = 2)}
 				class="px-4 py-2 rounded-full shadow-sm {$currentPanel === 2
 					? 'variant-filled-surface focus:variant-filled-surface'
-					: ''}">Editor</button
+					: ''}">Editor & Console</button
 			>
 		</div>
 	</div>
