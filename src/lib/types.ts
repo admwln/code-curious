@@ -1,11 +1,18 @@
-/**
- * This type alias is to identify CSS classes within component props,
- * which enables Tailwind IntelliSense
- */
-export type CssClasses = string;
-
-export type SvelteEvent<E extends Event = Event, T extends EventTarget = Element> = E & {
-	currentTarget: EventTarget & T;
-};
-
-export type { Transition, TransitionParams } from './internal/transitions.js';
+export interface LessonData {
+	tutorial: {
+		title: string;
+		description: string;
+		topics: { name: string }[];
+		exampleCode: string;
+		nextLesson: string;
+	};
+	editor: {
+		defaultCode: string;
+	};
+	console: {
+		defaultCode: string;
+	};
+	funnel: {
+		color: string;
+	};
+}

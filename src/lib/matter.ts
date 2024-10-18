@@ -27,24 +27,14 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 	});
 
 	// Create a few circle bodies
-	const circle1 = Bodies.circle(100, 100, 25, {
-		isStatic: false,
-		restitution: 1,
-		render: { fillStyle: 'rgb(99 102 241)' },
-	});
-	const circle2 = Bodies.circle(100, 150, 25, {
-		isStatic: false,
-		restitution: 1,
-		render: { fillStyle: 'rgb(99 102 241)' },
-	});
-	const circle3 = Bodies.circle(100, 200, 25, {
+	const circle1 = Bodies.circle(55, 55, 25, {
 		isStatic: false,
 		restitution: 1,
 		render: { fillStyle: 'rgb(99 102 241)' },
 	});
 
 	// Add the bodies to the world
-	World.add(engine.world, [circle1, circle2, circle3]);
+	World.add(engine.world, [circle1]);
 
 	// Create static walls
 	World.add(engine.world, [
@@ -52,6 +42,22 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 		Bodies.rectangle(225, 700, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
 		Bodies.rectangle(450, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
 		Bodies.rectangle(0, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+	]);
+
+	// Create four static narrow rectangles positioned in a funnel shape
+	World.add(engine.world, [
+		Bodies.rectangle(30, 120, 450, 10, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(23 23 23)' },
+			angle: Math.PI * 0.25,
+		}),
+		Bodies.rectangle(420, 120, 450, 10, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(23 23 23)' },
+			angle: Math.PI * -0.25,
+		}),
+		Bodies.rectangle(190, 400, 10, 250, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(260, 400, 10, 250, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
 	]);
 
 	// Create a runner

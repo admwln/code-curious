@@ -1,6 +1,10 @@
 <script lang="ts" context="module">
 	import { slide } from 'svelte/transition';
-	import { type Transition, type TransitionParams, type CssClasses } from '../lib/types';
+	import {
+		type Transition,
+		type TransitionParams,
+		type CssClasses,
+	} from '../../lib/skeleton/types';
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	type SlideTransition = typeof slide;
