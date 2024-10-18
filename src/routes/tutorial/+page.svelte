@@ -11,8 +11,8 @@
 			<h3 class="h3" data-toc-ignore>Looks like you're lost!</h3>
 			<article>
 				<p>
-					The tutorial starts over at the <a class="anchor" href="/tutorial/lesson-1"
-						>Welcome to Funnel</a
+					The tutorial starts over at the <a class="anchor" href="/tutorial/welcome-to-funnel"
+						>Tutorial</a
 					> page.
 				</p>
 			</article>

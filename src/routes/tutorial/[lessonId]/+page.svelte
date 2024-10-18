@@ -22,17 +22,15 @@
 	// Import the `load` function result from page.server.ts
 	export let data;
 
-	// This will give us access to the lessonData returned by +page.server.ts
 	let lessonData = data.lessonData;
-	let lessonId = data.lessonData.id;
+	let lessonId = data.lessonId; // Use the lessonId passed from the load function
 
-	// Reactive declaration: when `$page.params.lessonId` changes, fetch the corresponding lesson data
+	// Reactive declaration to update when the route changes
 	$: if ($page.params.lessonId !== lessonId) {
 		lessonId = $page.params.lessonId;
-		lessonData = data.lessonData; // Reassign the new lessonData from the route
+		lessonData = data.lessonData; // Reassign the new lessonData when the route changes
 	}
 
-	// Keep track of if the simulation is running
 	function toggleRun() {
 		$isRunning = !$isRunning;
 	}
@@ -66,7 +64,6 @@
 			<p>Loading...</p>
 		{/if}
 	</div>
-	<!-- Dynamic content end -->
 </section>
 
 <!-- Panel 2: Editor & Console -->

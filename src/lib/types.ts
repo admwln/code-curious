@@ -1,5 +1,4 @@
 export interface LessonData {
-	id: string;
 	tutorial: {
 		title: string;
 		description: string;

@@ -1,6 +1,5 @@
 {
 	"welcome-to-funnel": {
-		"id": "welcome-to-funnel",
 		"tutorial": {
 			"title": "Welcome to Funnel Logic!",
 			"description": "Funnel Logic is a fun and interactive way to learn the fundamentals of programming.",
@@ -19,7 +18,6 @@
 		}
 	},
 	"lesson-1": {
-		"id": "lesson-1",
 		"tutorial": {
 			"title": "Lesson 1: Introduction to Variables",
 			"description": "In this lesson, we will cover basic variable declarations.",
@@ -42,7 +40,6 @@
 		}
 	},
 	"lesson-2": {
-		"id": "lesson-2",
 		"tutorial": {
 			"title": "Lesson 2: Introduction to Functions",
 			"description": "In this lesson, we will cover basic function declarations.",
