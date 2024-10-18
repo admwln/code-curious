@@ -22,8 +22,8 @@
 	// Accordion imports
 	// import { Accordion } from '@skeletonlabs/skeleton';
 	// Modified AccordionItem component
-	import Accordion from '../components/Accordion.svelte';
-	import AccordionItem from '../components/AccordionItem.svelte';
+	import Accordion from '../components/skeleton/Accordion.svelte';
+	import AccordionItem from '../components/skeleton/AccordionItem.svelte';
 </script>
 
 <!-- Panel 1 -->

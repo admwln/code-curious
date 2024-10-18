@@ -9,7 +9,6 @@
 		<div class="container mx-auto flex justify-between items-center">
 			<a href="/" class="hover:text-gray-200"><h1>Funnel Logic</h1></a>
 			<nav class="flex space-x-4">
-				<a href="/" class="hover:text-gray-200">Home</a>
 				<a href="/about" class="hover:text-gray-200">About</a>
 				<a href="/login" class="hover:text-gray-200">Log in</a>
 			</nav>

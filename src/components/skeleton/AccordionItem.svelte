@@ -13,9 +13,9 @@
 
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import { dynamicTransition } from '../lib/internal/transitions';
-	import type { Transition, TransitionParams } from '../lib/internal/transitions';
-	import type { CssClasses, SvelteEvent } from '../lib/types.ts';
+	import { dynamicTransition } from '../../lib/skeleton/transitions';
+	import type { Transition, TransitionParams } from '../../lib/skeleton/transitions';
+	import type { CssClasses, SvelteEvent } from '../../lib/skeleton/types';
 
 	// Types
 	type TransitionIn = $$Generic<Transition>;
