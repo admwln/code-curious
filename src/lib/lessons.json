@@ -1,0 +1,23 @@
+{
+	"lesson-1": {
+		"tutorial": {
+			"title": "Lesson 1: Introduction to Variables",
+			"description": "In this lesson, we will cover basic variable declarations.",
+			"topics": [
+				{ "name": "What is a variable?" },
+				{ "name": "Variable types" },
+				{ "name": "Declaring variables" }
+			],
+			"exampleCode": "let x = 5;\nlet y = 10;\nconsole.log(x + y);"
+		},
+		"editor": {
+			"defaultCode": "console.log('Hello, World!');"
+		},
+		"matterInstructions": {
+			"setup": {
+				"gravity": 0,
+				"shapes": [{ "type": "circle", "radius": 25, "position": { "x": 100, "y": 100 } }]
+			}
+		}
+	}
+}
