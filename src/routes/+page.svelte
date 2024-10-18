@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Matter from '../components/Matter.svelte';
-
 	import { faFilter } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { supabase } from '$lib/supabaseClient';
@@ -24,14 +22,7 @@
 	fetchCountries();
 </script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-5">
-		<h1 class="h1">
-			<FontAwesomeIcon icon={faFilter} /> Funnel
-		</h1>
-		<Matter />
-	</div>
-
+<div class="container h-full my-4 mx-auto flex justify-center items-center">
 	<ol class="list">
 		{#each countries as country}
 			<li>
@@ -40,8 +31,4 @@
 			</li>
 		{/each}
 	</ol>
-
-	<div class="space-y-5">
-		<a href="/about" class="btn btn-primary">About</a>
-	</div>
 </div>

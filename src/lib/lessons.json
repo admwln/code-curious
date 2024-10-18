@@ -1,0 +1,64 @@
+{
+	"welcome-to-funnel": {
+		"tutorial": {
+			"title": "Welcome to Funnel Logic!",
+			"description": "Funnel Logic is a fun and interactive way to learn the fundamentals of programming.",
+			"topics": [{ "name": "Introduction" }, { "name": "Getting started" }],
+			"exampleCode": "console.log(\"Hello, World!\");",
+			"nextLesson": "lesson-1"
+		},
+		"editor": {
+			"defaultCode": "Here you will find all the code blocks!"
+		},
+		"console": {
+			"defaultCode": "console.log('Hello, World!');"
+		},
+		"funnel": {
+			"color": "hotpink"
+		}
+	},
+	"lesson-1": {
+		"tutorial": {
+			"title": "Lesson 1: Introduction to Variables",
+			"description": "In this lesson, we will cover basic variable declarations.",
+			"topics": [
+				{ "name": "What is a variable?" },
+				{ "name": "Variable types" },
+				{ "name": "Declaring variables" }
+			],
+			"exampleCode": "let x = 5;\nlet y = 10;\nconsole.log(x + y);",
+			"nextLesson": "lesson-2"
+		},
+		"editor": {
+			"defaultCode": "Here you will find all the code blocks!"
+		},
+		"console": {
+			"defaultCode": "console.log('Goodbye, World!');"
+		},
+		"funnel": {
+			"color": "seagreen"
+		}
+	},
+	"lesson-2": {
+		"tutorial": {
+			"title": "Lesson 2: Introduction to Functions",
+			"description": "In this lesson, we will cover basic function declarations.",
+			"topics": [
+				{ "name": "What is a function?" },
+				{ "name": "Function syntax" },
+				{ "name": "Calling functions" }
+			],
+			"exampleCode": "function add(x, y) {\n\treturn x + y;\n}\nconsole.log(add(5, 10));",
+			"nextLesson": "lesson-3"
+		},
+		"editor": {
+			"defaultCode": "Here you will find all the code blocks!"
+		},
+		"console": {
+			"defaultCode": "console.log('Aloha, World!');"
+		},
+		"funnel": {
+			"color": "gold"
+		}
+	}
+}
