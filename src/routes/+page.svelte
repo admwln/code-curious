@@ -6,12 +6,18 @@
 		faDesktop,
 		faFilter,
 		faMinus,
+		faPause,
 		faPlay,
 		faPlus,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { faFileCode } from '@fortawesome/free-regular-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import Matter from '../components/Matter.svelte';
+	import { isPlaying } from '$lib/store';
+
+	function togglePlay() {
+		$isPlaying = !$isPlaying;
+	}
 
 	// Accordion imports
 	// import { Accordion } from '@skeletonlabs/skeleton';
@@ -26,7 +32,7 @@
 		? 'hidden'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-2 px-4 bg-[#ec489a2A]">
+	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-3 px-4 bg-[#ec489a2A]">
 		<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
 	</h2>
 	<h3 class="p-4">The Basics</h3>
@@ -77,14 +83,24 @@
 	</Accordion>
 </div>
 
-<!-- Panel 3 (always visible on tablet and desktop) -->
+<!-- Panel 3 (Matter.js Panel) -->
 <div
 	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:w-1/3 lg:block {$currentPanel !== 3
 		? 'hidden md:block lg:block'
 		: ''} overflow-y-scroll"
 >
-	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-2 px-4 bg-[#ec489a2a]">
-		<FontAwesomeIcon icon={faFilter} /> Funnel
-	</h2>
+	<div
+		class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#ec489a2a]"
+	>
+		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
+		<button type="button" on:click={togglePlay} class="btn btn-sm bg-primary-900 flex gap-2">
+			{#if $isPlaying}
+				<FontAwesomeIcon icon={faPause} /> Running
+			{/if}
+			{#if !$isPlaying}
+				<FontAwesomeIcon icon={faPlay} /> Run
+			{/if}
+		</button>
+	</div>
 	<Matter />
 </div>

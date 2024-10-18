@@ -34,7 +34,7 @@
 	/** Set the accordion disabled state for all items. */
 	export let disabled = false;
 	/** Provide classes to set the accordion item padding styles. */
-	export let padding: CssClasses = 'py-2 px-4';
+	export let padding: CssClasses = 'py-3 px-4';
 	/** Provide classes to set the accordion item hover styles. */
 	export let hover: CssClasses = 'hover:bg-primary-hover-token';
 	/** Provide classes to set the accordion item rounded styles. */
