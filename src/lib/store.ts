@@ -4,4 +4,4 @@ import { writable } from 'svelte/store';
 export const currentPanel = writable(1);
 
 // Store to track if the Matter.js simulation is playing
-export const isPlaying = writable(false);
+export const isRunning = writable(false);

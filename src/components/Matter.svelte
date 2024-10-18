@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { currentPanel, isPlaying } from '$lib/store';
+	import { currentPanel, isRunning } from '$lib/store';
 	import { initMatterJS, startMatter, stopMatter } from '$lib/matter';
 	import type { MatterInstance } from '$lib/matter'; // Import the type
 	import Matter from 'matter-js';
@@ -10,8 +10,8 @@
 	// This will hold the instance returned by initMatterJS (contains engine, runner, etc.)
 	let matterInstance: MatterInstance | null = null; // Initialize as null
 
-	// Track the playing state reactively
-	$: playing = $isPlaying;
+	// Track the running state reactively
+	$: running = $isRunning;
 
 	onMount(() => {
 		if (matterContainer) {
@@ -22,7 +22,7 @@
 	});
 
 	// Reactively control Matter.js based on the play state
-	$: if (playing && matterInstance) {
+	$: if (running && matterInstance) {
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {
 		stopMatter(matterInstance.runner);
