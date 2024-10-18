@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/store';
 	import { isRunning } from '$lib/store';
-	import { page } from '$app/stores'; // For dynamic routing
-	import { onDestroy } from 'svelte';
+	import { page } from '$app/stores'; // Store for dynamic routing
 
 	import {
 		faChalkboardUser,
@@ -16,112 +15,27 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
-	// Import components
 	import Matter from '../../../components/Matter.svelte';
-
-	// Modified skeleton components
 	import Accordion from '../../../components/skeleton/Accordion.svelte';
 	import AccordionItem from '../../../components/skeleton/AccordionItem.svelte';
+
+	// Import the `load` function result from page.server.ts
+	export let data;
+
+	// This will give us access to the lessonData returned by +page.server.ts
+	let lessonData = data.lessonData;
+	let lessonId = data.lessonData.id;
+
+	// Reactive declaration: when `$page.params.lessonId` changes, fetch the corresponding lesson data
+	$: if ($page.params.lessonId !== lessonId) {
+		lessonId = $page.params.lessonId;
+		lessonData = data.lessonData; // Reassign the new lessonData from the route
+	}
 
 	// Keep track of if the simulation is running
 	function toggleRun() {
 		$isRunning = !$isRunning;
 	}
-
-	interface LessonData {
-		tutorial: {
-			title: string;
-			description: string;
-			topics: { name: string }[];
-			exampleCode: string;
-		};
-		editor: {
-			defaultCode: string;
-		};
-		console: {
-			defaultCode: string;
-		};
-		funnel: {
-			color: string;
-		};
-	}
-
-	let lessonData: LessonData | null = null;
-	let lessonId = '';
-
-	// Example of locally stored lessons data
-	const lessons: { [key: string]: LessonData } = {
-		'welcome-to-funnel': {
-			tutorial: {
-				title: 'Welcome to Funnel Logic!',
-				description: 'This is the starting point of the tutorial.',
-				topics: [{ name: 'Introduction' }, { name: 'Getting started' }],
-				exampleCode: 'console.log("Hello, World!");',
-			},
-			editor: {
-				defaultCode: 'Here you will find all the code blocks!',
-			},
-			console: {
-				defaultCode: "console.log('Hello, World!');",
-			},
-			funnel: {
-				color: 'hotpink',
-			},
-		},
-		'lesson-1': {
-			tutorial: {
-				title: 'Lesson 1: Introduction to Variables',
-				description: 'In this lesson, we will cover basic variable declarations.',
-				topics: [
-					{ name: 'What is a variable?' },
-					{ name: 'Variable types' },
-					{ name: 'Declaring variables' },
-				],
-				exampleCode: 'let x = 5;\nlet y = 10;\nconsole.log(x + y);',
-			},
-			editor: {
-				defaultCode: 'Here you will find all the code blocks!',
-			},
-			console: {
-				defaultCode: "console.log('Hello, World!');",
-			},
-			funnel: {
-				color: 'seagreen',
-			},
-		},
-		'lesson-2': {
-			tutorial: {
-				title: 'Lesson 2: Introduction to Functions',
-				description: 'In this lesson, we will cover basic function declarations.',
-				topics: [
-					{ name: 'What is a function?' },
-					{ name: 'Function syntax' },
-					{ name: 'Calling functions' },
-				],
-				exampleCode: 'function add(x, y) {\n\treturn x + y;\n}\nconsole.log(add(5, 10));',
-			},
-			editor: {
-				defaultCode: 'Here you will find all the code blocks!',
-			},
-			console: {
-				defaultCode: "console.log('Hello, World!');",
-			},
-			funnel: {
-				color: 'gold',
-			},
-		},
-	};
-
-	// Subscribe to the `page` store to get the current route parameters
-	const unsubscribe = page.subscribe(({ params }) => {
-		lessonId = params.lessonId; // `lessonId` is a dynamic route param
-		lessonData = lessons[lessonId] || null; // Fetch the lesson data or set to null if not found
-	});
-
-	// Unsubscribe when the component is destroyed to avoid memory leaks
-	onDestroy(() => {
-		unsubscribe();
-	});
 </script>
 
 <!-- Panel 1: Tutorial -->
@@ -145,6 +59,9 @@
 				{/each}
 			</ul>
 			<code>{lessonData.tutorial.exampleCode}</code>
+			<p>
+				<a class="anchor" href={`/tutorial/${lessonData.tutorial.nextLesson}`}>Next lesson</a>
+			</p>
 		{:else}
 			<p>Loading...</p>
 		{/if}
