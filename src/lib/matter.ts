@@ -3,40 +3,71 @@ import Matter from 'matter-js';
 // Create aliases to avoid "Matter." prefixes
 const { Engine, Render, World, Bodies, Runner } = Matter;
 
+export interface MatterInstance {
+	engine: Matter.Engine;
+	runner: Matter.Runner;
+}
+
 interface MatterOptions {
 	width?: number;
 	height?: number;
 }
 
-export function initMatterJS(container: HTMLElement, options: MatterOptions = {}): void {
+export function initMatterJS(container: HTMLElement, options: MatterOptions = {}) {
 	const engine = Engine.create();
-
 	const render = Render.create({
 		element: container,
 		engine: engine,
 		options: {
 			width: options.width || container.clientWidth,
 			height: options.height || container.clientHeight,
-			wireframes: false
-		}
+			wireframes: false,
+			background: 'rgb(30 30 30)', // Adjust background color
+		},
 	});
 
-	// Create a circle body
-	const circle = Bodies.circle(100, 100, 50, {
-		isStatic: false, // Static bodies are not affected by gravity
-		restitution: 0.9, // Bounce effect
-		render: { fillStyle: 'blue' } // Circle color
+	// Create a few circle bodies
+	const circle1 = Bodies.circle(100, 100, 25, {
+		isStatic: false,
+		restitution: 1,
+		render: { fillStyle: 'rgb(99 102 241)' },
+	});
+	const circle2 = Bodies.circle(100, 150, 25, {
+		isStatic: false,
+		restitution: 1,
+		render: { fillStyle: 'rgb(99 102 241)' },
+	});
+	const circle3 = Bodies.circle(100, 200, 25, {
+		isStatic: false,
+		restitution: 1,
+		render: { fillStyle: 'rgb(99 102 241)' },
 	});
 
-	// Add the circle to the world
-	World.add(engine.world, [circle]);
+	// Add the bodies to the world
+	World.add(engine.world, [circle1, circle2, circle3]);
+
+	// Create static walls
+	World.add(engine.world, [
+		Bodies.rectangle(225, 0, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(225, 700, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(450, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(0, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+	]);
 
 	// Create a runner
 	const runner = Runner.create();
 
-	// Run the engine using the runner
-	Runner.run(runner, engine);
-
 	// Run the renderer
 	Render.run(render);
+
+	// Return the engine and runner so we can control them externally
+	return { engine, runner };
+}
+
+export function startMatter(runner: Matter.Runner, engine: Matter.Engine) {
+	Runner.run(runner, engine);
+}
+
+export function stopMatter(runner: Matter.Runner) {
+	Runner.stop(runner);
 }
