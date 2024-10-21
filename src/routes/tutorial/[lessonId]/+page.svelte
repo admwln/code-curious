@@ -6,6 +6,10 @@
 	import { marked } from 'marked';
 
 	import {
+		faAngleDown,
+		faAngleLeft,
+		faAngleRight,
+		faAngleUp,
 		faChalkboardUser,
 		faCode,
 		faDesktop,
@@ -36,20 +40,48 @@
 	function toggleRun() {
 		$isRunning = !$isRunning;
 	}
+
+	// Panel width logic
+	let panel1Width = 'lg:w-1/3'; // Initially 1/3 of the screen width
+	let panel2Width = 'lg:w-1/3'; // Initially 1/3 of the screen width
+	const panel3Width = 'lg:min-w-[450px] lg:w-1/3'; // Fixed width for the third panel
+
+	let isPanel1Collapsed = false;
+
+	// Function to toggle the width of the first panel
+	function togglePanel1Width() {
+		isPanel1Collapsed = !isPanel1Collapsed;
+		panel1Width = isPanel1Collapsed ? 'lg:w-1/6' : 'lg:w-1/3'; // Change to 1/6 when collapsed
+		panel2Width = isPanel1Collapsed ? 'lg:w-1/2' : 'lg:w-1/3'; // Expand panel 2 accordingly
+	}
 </script>
 
 <!-- Panel 1: Tutorial -->
 <section
-	class="bg-neutral-900 md:mr-0.5 lg:mx-0 w-full h-screen md:w-1/2 lg:w-1/3 lg:block {$currentPanel !==
+	class="bg-neutral-900 md:mr-0.5 lg:mx-0 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
 	1
 		? 'hidden'
-		: ''} overflow-y-scroll"
+		: ''} {panel1Width} lg:block"
 >
-	<h2 class="text-start w-full flex items-center gap-4 space-x-4 py-3 px-4 bg-[#ec489a2A]">
-		<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
-	</h2>
+	<div class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#ec489a2A]">
+		<h2 class="flex items-center py-0 gap-4">
+			<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+		</h2>
+		<!-- Toggle Panel 1 width -->
+		<button
+			type="button"
+			class="btn btn-sm py-0 hidden lg:inline-block"
+			on:click={togglePanel1Width}
+		>
+			{#if isPanel1Collapsed}
+				<span><FontAwesomeIcon icon={faAngleRight} /></span>
+			{:else}
+				<span><FontAwesomeIcon icon={faAngleLeft} /></span>
+			{/if}
+		</button>
+	</div>
 	<!-- Dynamic content start -->
-	<div class="p-4">
+	<div class="p-4 md:overflow-x-scroll">
 		{#if lessonData}
 			<div class="markdown">
 				<h2>{lessonData.tutorial.title}</h2>
@@ -67,15 +99,15 @@
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="bg-neutral-900 md:mr-0.5 lg:mx-0.5 w-full h-screen md:w-1/2 lg:w-1/3 lg:block {$currentPanel !==
+	class="bg-neutral-900 md:mr-0.5 lg:mx-0.5 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
-		: ''} overflow-y-scroll"
+		: ''} {panel2Width} lg:block"
 >
 	<Accordion>
 		<AccordionItem open>
-			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faMinus} /></svelte:fragment>
-			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faPlus} /></svelte:fragment>
+			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faAngleUp} /></svelte:fragment>
+			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faAngleDown} /></svelte:fragment>
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faCode} /></svelte:fragment>
 			<svelte:fragment slot="summary">
 				<div class="flex justify-between">
@@ -85,16 +117,23 @@
 			<svelte:fragment slot="content">
 				<!-- Dynamic content start -->
 				<div class="flex flex-col min-h-[320px] justify-start">
-					{#if lessonData}
+					<div class="dummy-btns">
+						<button class="btn bg-secondary-900">Var</button>
+						<button class="btn bg-secondary-900">Object</button>
+						<button class="btn bg-secondary-900">Array</button>
+						<button class="btn bg-secondary-900">If</button>
+						<button class="btn bg-secondary-900">Loop</button>
+					</div>
+					<!-- {#if lessonData}
 						<code>{lessonData.editor.defaultCode}</code>
-					{/if}
+					{/if} -->
 				</div>
 				<!-- Dynamic content end -->
 			</svelte:fragment>
 		</AccordionItem>
-		<AccordionItem>
-			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faMinus} /></svelte:fragment>
-			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faPlus} /></svelte:fragment>
+		<AccordionItem open>
+			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faAngleUp} /></svelte:fragment>
+			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faAngleDown} /></svelte:fragment>
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
 			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
 			<svelte:fragment slot="content">
@@ -116,9 +155,10 @@
 
 <!-- Panel 3: Funnel (matter.js) -->
 <section
-	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:w-1/3 lg:block {$currentPanel !== 3
+	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:block transition-all duration-250 ease-in-out {$currentPanel !==
+	3
 		? 'hidden md:block lg:block'
-		: ''} overflow-y-scroll"
+		: ''} {panel3Width} overflow-y-scroll"
 >
 	<div
 		class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#ec489a2a]"
