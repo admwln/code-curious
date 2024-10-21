@@ -3,6 +3,8 @@
 	import { isRunning } from '$lib/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
 
+	import { marked } from 'marked';
+
 	import {
 		faChalkboardUser,
 		faCode,
@@ -49,17 +51,14 @@
 	<!-- Dynamic content start -->
 	<div class="p-4">
 		{#if lessonData}
-			<h1>{lessonData.tutorial.title}</h1>
-			<p>{lessonData.tutorial.description}</p>
-			<ul>
-				{#each lessonData.tutorial.topics as topic}
-					<li>{topic.name}</li>
-				{/each}
-			</ul>
-			<code>{lessonData.tutorial.exampleCode}</code>
-			<p>
-				<a class="anchor" href={`/tutorial/${lessonData.tutorial.nextLesson}`}>Next lesson</a>
-			</p>
+			<div class="markdown">
+				<h2>{lessonData.tutorial.title}</h2>
+				<!-- Render parsed markdown content -->
+				{@html marked(lessonData.tutorial.content)}
+				<p>
+					<a class="anchor" href={`/tutorial/${lessonData.tutorial.nextLesson}`}>Next lesson</a>
+				</p>
+			</div>
 		{:else}
 			<p>Loading...</p>
 		{/if}
@@ -85,13 +84,15 @@
 			</svelte:fragment>
 			<svelte:fragment slot="content">
 				<!-- Dynamic content start -->
-				{#if lessonData}
-					<code>{lessonData.editor.defaultCode}</code>
-				{/if}
+				<div class="flex flex-col min-h-[320px] justify-start">
+					{#if lessonData}
+						<code>{lessonData.editor.defaultCode}</code>
+					{/if}
+				</div>
 				<!-- Dynamic content end -->
 			</svelte:fragment>
 		</AccordionItem>
-		<AccordionItem open>
+		<AccordionItem>
 			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faMinus} /></svelte:fragment>
 			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faPlus} /></svelte:fragment>
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
@@ -100,7 +101,11 @@
 				<!-- Dynamic content start -->
 				<div class="rounded-md bg-slate-800 p-4">
 					{#if lessonData}
-						<code>{lessonData.console.defaultCode}</code>
+						{#each lessonData.console.defaultCode as code}
+							<p>
+								<code>{code}</code>
+							</p>
+						{/each}
 					{/if}
 				</div>
 				<!-- Dynamic content end -->
