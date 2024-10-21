@@ -37,5 +37,27 @@
 		"funnel": {
 			"color": "hotpink"
 		}
+	},
+	"lesson-2": {
+		"tutorial": {
+			"title": "Lesson 2: Introduction to Functions",
+			"description": "---",
+			"content": "### Functions in JavaScript\n\nFunctions are blocks of code that can be reused. Here is how you can declare a function:\n\n```javascript\nfunction sayHello() {\n  console.log('Hello, World!');\n}\n```\n\nYou can then call this function in your code.",
+			"nextLesson": "lesson-3"
+		},
+		"editor": {
+			"defaultCode": "function sayHello() {\n  console.log('Hello, World!');\n}"
+		},
+		"console": {
+			"defaultCode": [
+				"Hello, World!",
+				"Error: Function 'sayHello' is not defined.",
+				"Welcome to Funnel!",
+				"Aloha, World!"
+			]
+		},
+		"funnel": {
+			"color": "dodgerblue"
+		}
 	}
 }
