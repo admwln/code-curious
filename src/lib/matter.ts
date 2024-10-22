@@ -13,8 +13,21 @@ interface MatterOptions {
 	height?: number;
 }
 
-export function initMatterJS(container: HTMLElement, options: MatterOptions = {}) {
-	const engine = Engine.create();
+let engine: Matter.Engine | null = null;
+
+export function initMatterJS(
+	container: HTMLElement,
+	options: MatterOptions = {},
+	circleColor: string,
+) {
+	// First, check if there is any existing eninge
+	if (engine) {
+		Matter.World.clear(engine.world, false); // Clear existing bodies, 'false' removes static bodies as well as dynamic
+		Matter.Engine.clear(engine); // Clear the engine itself
+		// Get rid of any previously created canvas elements
+	}
+
+	engine = Engine.create();
 	const render = Render.create({
 		element: container,
 		engine: engine,
@@ -26,11 +39,11 @@ export function initMatterJS(container: HTMLElement, options: MatterOptions = {}
 		},
 	});
 
-	// Create a few circle bodies
-	const circle1 = Bodies.circle(55, 55, 25, {
+	// Create a circle body
+	const circle1 = Bodies.circle(55, 55, 20, {
 		isStatic: false,
 		restitution: 1,
-		render: { fillStyle: 'rgb(99 102 241)' },
+		render: { fillStyle: circleColor },
 	});
 
 	// Add the bodies to the world

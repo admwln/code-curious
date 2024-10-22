@@ -1,44 +1,59 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { currentPanel, isRunning } from '$lib/store';
-	import { initMatterJS, startMatter, stopMatter } from '$lib/matter';
-	import type { MatterInstance } from '$lib/matter'; // Import the type
+	import { initMatterJS, startMatter, stopMatter, type MatterInstance } from '$lib/matter';
 	import Matter from 'matter-js';
 
-	let matterContainer: HTMLElement;
+	// Expose the data prop to receive the data from the parent +page.svelte
+	export let data;
+	let matterInstance: MatterInstance | null = null;
+	let matterContainer: HTMLElement | null = null;
 
-	// This will hold the instance returned by initMatterJS (contains engine, runner, etc.)
-	let matterInstance: MatterInstance | null = null; // Initialize as null
+	// Helper to clean up the current Matter.js instance
+	function cleanupMatterInstance() {
+		if (matterInstance) {
+			stopMatter(matterInstance.runner);
+			Matter.Engine.clear(matterInstance.engine);
+			Matter.World.clear(matterInstance.engine.world, false); // Clear all bodies including static ones
+			const container = document.querySelector('#matterContainer');
+			const canvas = container?.querySelector('canvas');
+			if (canvas) {
+				canvas.remove(); // Ensure canvas is removed
+			}
+		}
+	}
 
 	// Track the running state reactively
 	$: running = $isRunning;
 
+	// Initialize Matter.js when the component mounts
 	onMount(() => {
 		if (matterContainer) {
-			// Initialize Matter.js and store the instance, needs container dimensions to work
-			// TODO pass these as props from the parent component
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 });
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color);
 		}
 	});
 
-	// Reactively control Matter.js based on the play state
+	// Clean up Matter.js when the component is destroyed
+	onDestroy(() => {
+		cleanupMatterInstance();
+	});
+
+	// Reinitialize Matter.js whenever the lesson `data` changes
+	$: if (data && matterContainer) {
+		cleanupMatterInstance(); // First, clean up the old instance
+		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color); // Reinitialize with new data
+	}
+
+	// Reactively control Matter.js based on the running state
 	$: if (running && matterInstance) {
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {
 		stopMatter(matterInstance.runner);
 	}
-
-	onDestroy(() => {
-		// Clean up Matter.js on component destroy
-		if (matterInstance) {
-			Matter.Engine.clear(matterInstance.engine);
-			stopMatter(matterInstance.runner);
-		}
-	});
 </script>
 
 <section class="w-full flex justify-center">
-	<div bind:this={matterContainer}></div>
+	<div id="matterContainer" bind:this={matterContainer}></div>
 </section>
 
 <style>

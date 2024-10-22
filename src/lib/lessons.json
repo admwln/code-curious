@@ -59,5 +59,22 @@
 		"funnel": {
 			"color": "dodgerblue"
 		}
+	},
+	"lesson-3": {
+		"tutorial": {
+			"title": "Lesson 3: Introduction to Loops",
+			"description": "---",
+			"content": "### Loops in JavaScript\n\nLoops are used to repeat a block of code. Here is how you can declare a loop:\n\n```javascript\nfor (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n```\n\nYou can then use this loop in your code.",
+			"nextLesson": "lesson-4"
+		},
+		"editor": {
+			"defaultCode": "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}"
+		},
+		"console": {
+			"defaultCode": ["0", "1", "2", "3", "4"]
+		},
+		"funnel": {
+			"color": "darkorange"
+		}
 	}
 }
