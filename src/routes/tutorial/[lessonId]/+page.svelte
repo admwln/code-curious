@@ -14,11 +14,8 @@
 		faCode,
 		faDesktop,
 		faFilter,
-		faMinus,
-		faPause,
-		faPlay,
-		faPlus,
 		faRotateRight,
+		faStop,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -167,7 +164,7 @@
 		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
 		<button type="button" on:click={toggleRun} class="btn btn-sm bg-primary-900 flex gap-2">
 			{#if $isRunning}
-				<FontAwesomeIcon icon={faPause} /> Running
+				<FontAwesomeIcon icon={faStop} /> Running
 			{/if}
 			{#if !$isRunning}
 				<FontAwesomeIcon icon={faRotateRight} /> Run
