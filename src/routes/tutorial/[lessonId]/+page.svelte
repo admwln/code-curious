@@ -18,6 +18,7 @@
 		faPause,
 		faPlay,
 		faPlus,
+		faRotateRight,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -58,7 +59,7 @@
 
 <!-- Panel 1: Tutorial -->
 <section
-	class="bg-neutral-900 md:mr-0.5 lg:mx-0 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-neutral-900 h-screen md:border-r border-zinc-700 lg:border-0 md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
 	1
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
@@ -99,7 +100,7 @@
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="bg-neutral-900 md:mr-0.5 lg:mx-0.5 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-neutral-900 md:border-r lg:border-x border-zinc-700 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
@@ -169,11 +170,11 @@
 				<FontAwesomeIcon icon={faPause} /> Running
 			{/if}
 			{#if !$isRunning}
-				<FontAwesomeIcon icon={faPlay} /> Run
+				<FontAwesomeIcon icon={faRotateRight} /> Run
 			{/if}
 		</button>
 	</div>
 	<!-- Dynamic content start -->
-	<Matter />
+	<Matter data={lessonData.funnel} />
 	<!-- Dynamic content end -->
 </section>
