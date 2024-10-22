@@ -9,12 +9,16 @@
 	let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
+	// Track the running state reactively
+	$: running = $isRunning;
+
 	// Helper to clean up the current Matter.js instance
 	function cleanupMatterInstance() {
 		if (matterInstance) {
 			stopMatter(matterInstance.runner);
 			Matter.Engine.clear(matterInstance.engine);
 			Matter.World.clear(matterInstance.engine.world, false); // Clear all bodies including static ones
+			// Remove the canvas element
 			const container = document.querySelector('#matterContainer');
 			const canvas = container?.querySelector('canvas');
 			if (canvas) {
@@ -22,9 +26,6 @@
 			}
 		}
 	}
-
-	// Track the running state reactively
-	$: running = $isRunning;
 
 	// Initialize Matter.js when the component mounts
 	onMount(() => {
@@ -41,6 +42,8 @@
 	// Reinitialize Matter.js whenever the lesson `data` changes
 	$: if (data && matterContainer) {
 		cleanupMatterInstance(); // First, clean up the old instance
+		// Toggle running state to false, NB must be run after cleanup
+		$isRunning = false;
 		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color); // Reinitialize with new data
 	}
 

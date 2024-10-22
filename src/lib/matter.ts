@@ -24,7 +24,6 @@ export function initMatterJS(
 	if (engine) {
 		Matter.World.clear(engine.world, false); // Clear existing bodies, 'false' removes static bodies as well as dynamic
 		Matter.Engine.clear(engine); // Clear the engine itself
-		// Get rid of any previously created canvas elements
 	}
 
 	engine = Engine.create();
