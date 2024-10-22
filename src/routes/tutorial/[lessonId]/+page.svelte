@@ -18,6 +18,7 @@
 		faPause,
 		faPlay,
 		faPlus,
+		faRotateRight,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -169,7 +170,7 @@
 				<FontAwesomeIcon icon={faPause} /> Running
 			{/if}
 			{#if !$isRunning}
-				<FontAwesomeIcon icon={faPlay} /> Run
+				<FontAwesomeIcon icon={faRotateRight} /> Run
 			{/if}
 		</button>
 	</div>

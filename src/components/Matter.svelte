@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { currentPanel, isRunning } from '$lib/store';
-	import { initMatterJS, startMatter, stopMatter, type MatterInstance } from '$lib/matter';
+	import { isRunning } from '$lib/store';
+	import {
+		initMatterJS,
+		startMatter,
+		stopMatter,
+		resetBodies,
+		type MatterInstance,
+	} from '$lib/matter';
 	import Matter from 'matter-js';
 
 	// Expose the data prop to receive the data from the parent +page.svelte
@@ -49,6 +55,7 @@
 
 	// Reactively control Matter.js based on the running state
 	$: if (running && matterInstance) {
+		resetBodies(matterInstance.engine);
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {
 		stopMatter(matterInstance.runner);
