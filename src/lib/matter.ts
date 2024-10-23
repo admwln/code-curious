@@ -9,8 +9,8 @@ export interface MatterInstance {
 }
 
 interface MatterOptions {
-	width?: number;
-	height?: number;
+	width: number;
+	height: number;
 }
 
 interface InitialBody {
@@ -24,8 +24,9 @@ let initialBodies: InitialBody[] = [];
 
 export function initMatterJS(
 	container: HTMLElement,
-	options: MatterOptions = {},
+	options: MatterOptions,
 	circleColor: string,
+	scale: number,
 ) {
 	// First, check if there is any existing eninge
 	if (engine) {
@@ -38,15 +39,15 @@ export function initMatterJS(
 		element: container,
 		engine: engine,
 		options: {
-			width: options.width || container.clientWidth,
-			height: options.height || container.clientHeight,
+			width: options.width * scale,
+			height: options.height * scale,
 			wireframes: false,
 			background: 'rgb(30 30 30)', // Adjust background color
 		},
 	});
 
 	// Create a circle body
-	const circle = Bodies.circle(55, 55, 20, {
+	const circle = Bodies.circle(55 * scale, 55 * scale, 20 * scale, {
 		isStatic: false,
 		restitution: 1,
 		render: { fillStyle: circleColor },
@@ -65,26 +66,44 @@ export function initMatterJS(
 
 	// Create static walls
 	World.add(engine.world, [
-		Bodies.rectangle(225, 0, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
-		Bodies.rectangle(225, 700, 450, 50, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
-		Bodies.rectangle(450, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
-		Bodies.rectangle(0, 350, 50, 700, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(225 * scale, 0, 450 * scale, 50 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(30, 30, 30' },
+		}),
+		Bodies.rectangle(225 * scale, 700 * scale, 450 * scale, 50 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(30, 30, 30' },
+		}),
+		Bodies.rectangle(450 * scale, 350 * scale, 50 * scale, 700 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(30, 30, 30' },
+		}),
+		Bodies.rectangle(0, 350 * scale, 50 * scale, 700 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(30, 30, 30' },
+		}),
 	]);
 
 	// Create four static narrow rectangles positioned in a funnel shape
 	World.add(engine.world, [
-		Bodies.rectangle(30, 120, 450, 10, {
+		Bodies.rectangle(30 * scale, 120 * scale, 450 * scale, 10 * scale, {
 			isStatic: true,
 			render: { fillStyle: 'rgb(23 23 23)' },
 			angle: Math.PI * 0.25,
 		}),
-		Bodies.rectangle(420, 120, 450, 10, {
+		Bodies.rectangle(420 * scale, 120 * scale, 450 * scale, 10 * scale, {
 			isStatic: true,
 			render: { fillStyle: 'rgb(23 23 23)' },
 			angle: Math.PI * -0.25,
 		}),
-		Bodies.rectangle(190, 400, 10, 250, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
-		Bodies.rectangle(260, 400, 10, 250, { isStatic: true, render: { fillStyle: 'rgb(23 23 23)' } }),
+		Bodies.rectangle(190 * scale, 400 * scale, 10 * scale, 250 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(23 23 23)' },
+		}),
+		Bodies.rectangle(260 * scale, 400 * scale, 10 * scale, 250 * scale, {
+			isStatic: true,
+			render: { fillStyle: 'rgb(23 23 23)' },
+		}),
 	]);
 
 	// Create a runner
