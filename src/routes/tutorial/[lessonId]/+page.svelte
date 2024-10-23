@@ -3,8 +3,6 @@
 	import { isRunning } from '$lib/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
 
-	import { marked } from 'marked';
-
 	import {
 		faAngleDown,
 		faAngleLeft,
@@ -19,6 +17,9 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
+	import Tutorial from '../../../components/Tutorial.svelte';
+	import Editor from '../../../components/Editor.svelte';
+	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
 	import Accordion from '../../../components/skeleton/Accordion.svelte';
 	import AccordionItem from '../../../components/skeleton/AccordionItem.svelte';
@@ -78,21 +79,11 @@
 			{/if}
 		</button>
 	</div>
-	<!-- Dynamic content start -->
-	<div class="p-4 md:overflow-x-scroll">
-		{#if lessonData}
-			<div class="markdown">
-				<h2>{lessonData.tutorial.title}</h2>
-				<!-- Render parsed markdown content -->
-				{@html marked(lessonData.tutorial.content)}
-				<p>
-					<a class="anchor" href={`/tutorial/${lessonData.tutorial.nextLesson}`}>Next lesson</a>
-				</p>
-			</div>
-		{:else}
-			<p>Loading...</p>
-		{/if}
-	</div>
+	{#if lessonData}
+		<Tutorial data={lessonData.tutorial} />
+	{:else}
+		<p>Loading...</p>
+	{/if}
 </section>
 
 <!-- Panel 2: Editor & Console -->
@@ -113,20 +104,11 @@
 				</div>
 			</svelte:fragment>
 			<svelte:fragment slot="content">
-				<!-- Dynamic content start -->
-				<div class="flex flex-col min-h-[320px] justify-start">
-					<div class="dummy-btns">
-						<button class="btn bg-secondary-900">Var</button>
-						<button class="btn bg-secondary-900">Object</button>
-						<button class="btn bg-secondary-900">Array</button>
-						<button class="btn bg-secondary-900">If</button>
-						<button class="btn bg-secondary-900">Loop</button>
-					</div>
-					<!-- {#if lessonData}
-						<code>{lessonData.editor.defaultCode}</code>
-					{/if} -->
-				</div>
-				<!-- Dynamic content end -->
+				{#if lessonData}
+					<Editor data={lessonData.editor} />
+				{:else}
+					<p>Loading...</p>
+				{/if}
 			</svelte:fragment>
 		</AccordionItem>
 		<AccordionItem open>
@@ -135,17 +117,13 @@
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
 			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
 			<svelte:fragment slot="content">
-				<!-- Dynamic content start -->
 				<div class="rounded-md bg-slate-800 p-4">
 					{#if lessonData}
-						{#each lessonData.console.defaultCode as code}
-							<p>
-								<code>{code}</code>
-							</p>
-						{/each}
+						<Console data={lessonData.console} />
+					{:else}
+						<p>Loading...</p>
 					{/if}
 				</div>
-				<!-- Dynamic content end -->
 			</svelte:fragment>
 		</AccordionItem>
 	</Accordion>
@@ -172,6 +150,10 @@
 		</button>
 	</div>
 	<!-- Dynamic content start -->
-	<Matter data={lessonData.funnel} />
+	{#if lessonData}
+		<Matter data={lessonData.funnel} />
+	{:else}
+		<p>Loading...</p>
+	{/if}
 	<!-- Dynamic content end -->
 </section>
