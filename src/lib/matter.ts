@@ -15,7 +15,8 @@ export function initMatterJS(
 	scale: number,
 ) {
 	// Helper function to apply scale to a pixel value
-	const s = (value: number) => value * scale;
+	// Remove unnecessary decimal points by rounding
+	const s = (value: number) => Math.round(value * scale);
 
 	// First, check if there is any existing eninge
 	if (engine) {
