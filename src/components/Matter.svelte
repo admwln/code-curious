@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { isRunning } from '$lib/store';
-	import {
-		initMatterJS,
-		startMatter,
-		stopMatter,
-		resetBodies,
-		type MatterInstance,
-	} from '$lib/matter';
+	import { initMatterJS, startMatter, stopMatter, resetBodies } from '$lib/matter';
 	import Matter from 'matter-js';
+	import type { MatterInstance } from '../lib/types';
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;

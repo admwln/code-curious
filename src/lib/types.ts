@@ -15,3 +15,18 @@ export interface LessonData {
 		color: string;
 	};
 }
+
+export interface MatterInstance {
+	engine: Matter.Engine;
+	runner: Matter.Runner;
+}
+
+export interface MatterOptions {
+	width: number;
+	height: number;
+}
+
+export interface InitialBody {
+	body: Matter.Body;
+	initialPosition: { x: number; y: number };
+}
