@@ -7,6 +7,7 @@
 	// Props
 	export let header: string;
 	export let isOpen: boolean = false; // Modal visibility control
+	export let onSave: () => void;
 
 	const dispatch = createEventDispatcher();
 
@@ -35,7 +36,7 @@
 {#if isOpen}
 	<!-- Background overlay -->
 	<div
-		class="fixed inset-0 bg-neutral-900 bg-opacity-75 z-50 flex items-start justify-center pt-0 md:pt-20"
+		class="fixed inset-0 bg-neutral-900 bg-opacity-75 z-50 flex items-start justify-center pt-0 md:pt-8"
 	>
 		<!-- Modal container -->
 		<div
@@ -48,7 +49,15 @@
 			<section class="px-4 flex flex-col gap-4"><slot></slot></section>
 			<footer class="card-footer flex justify-end">
 				<button on:click={closeModal} class="btn"> Cancel </button>
-				<button on:click={closeModal} class="btn btn-sm bg-primary-900"> Ok </button>
+				<button
+					on:click={() => {
+						onSave(); // Call the save function
+						closeModal(); // Close the modal afterward
+					}}
+					class="btn btn-sm bg-primary-900"
+				>
+					OK
+				</button>
 			</footer>
 		</div>
 	</div>
