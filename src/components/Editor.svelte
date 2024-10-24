@@ -1,15 +1,22 @@
 <script lang="ts">
-	// Expose the data prop to receive the data from the parent +page.svelte
-	export let data;
+	import { snapshot } from '$lib/store'; // User code
+	import Variable from './Variable.svelte';
+	import NewVariable from './NewVariable.svelte';
+
+	export let data; // Data passed from the parent component
 	console.log('Editor data', data);
 </script>
 
-<div class="flex flex-col min-h-[320px] justify-start">
-	<div class="dummy-btns">
-		<button class="btn btn-sm bg-secondary-900">Var</button>
-		<button class="btn btn-sm bg-secondary-900">Object</button>
-		<button class="btn btn-sm bg-secondary-900">Array</button>
-		<button class="btn btn-sm bg-secondary-900">If</button>
-		<button class="btn btn-sm bg-secondary-900">Loop</button>
+<div class="min-h-[320px] flex flex-col justify-start gap-2">
+	<div class="flex flex-col items-start gap-2">
+		<!-- loop through each object in shapshot, if any -->
+		{#if $snapshot.length > 0}
+			{#each $snapshot as variable (variable.id)}
+				<Variable data={variable} />
+			{/each}
+		{/if}
+	</div>
+	<div>
+		<NewVariable />
 	</div>
 </div>
