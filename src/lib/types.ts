@@ -35,5 +35,5 @@ export interface VariableType {
 	id: number;
 	name: string;
 	type: string;
-	value: string | number | boolean;
+	value: string | number | boolean | any[] | object;
 }
