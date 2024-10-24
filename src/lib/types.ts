@@ -30,3 +30,10 @@ export interface InitialBody {
 	body: Matter.Body;
 	initialPosition: { x: number; y: number };
 }
+
+export interface VariableType {
+	id: string;
+	name: string;
+	type: string;
+	value: string | number | boolean;
+}

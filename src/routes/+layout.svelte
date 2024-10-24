@@ -6,7 +6,7 @@
 	<!-- Header (shared across all pages) -->
 	<header class="bg-secondary-800 text-white p-4">
 		<div class="container mx-auto flex justify-between items-center">
-			<a href="/" class="hover:text-gray-200"><h1>Funnel Logic</h1></a>
+			<a href="/" class="hover:text-gray-200"><h1>Funnel</h1></a>
 			<nav class="flex space-x-4">
 				<a href="/tutorial/welcome-to-funnel" class="hover:text-gray-200">Tutorial</a>
 				<a href="/about" class="hover:text-gray-200">About</a>

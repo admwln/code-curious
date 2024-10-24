@@ -7,7 +7,7 @@
 	// Props
 	export let header: string;
 	export let isOpen: boolean = false; // Modal visibility control
-	export let onSave: () => void;
+	// export let onSave: () => void;
 
 	const dispatch = createEventDispatcher();
 
@@ -51,8 +51,9 @@
 				<button on:click={closeModal} class="btn"> Cancel </button>
 				<button
 					on:click={() => {
-						onSave(); // Call the save function
-						closeModal(); // Close the modal afterward
+						// Trigger the form submit by dispatching an event
+						const form = document.querySelector('form');
+						if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
 					}}
 					class="btn btn-sm bg-primary-900"
 				>
