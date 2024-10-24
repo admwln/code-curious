@@ -32,7 +32,7 @@ export interface InitialBody {
 }
 
 export interface VariableType {
-	id: string;
+	id: number;
 	name: string;
 	type: string;
 	value: string | number | boolean;

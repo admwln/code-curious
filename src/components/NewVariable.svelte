@@ -21,6 +21,7 @@
 	let dataType: string = 'text'; // Default data type is 'Text' (1)
 	let value: string | number | boolean = ''; // Holds the value input
 
+	// Each time the 'New Variable' modal is opened, reset the variable
 	const resetVariable = () => {
 		variableName = '';
 		dataType = 'text';
@@ -42,21 +43,17 @@
 		}
 	}
 
-	let counter: number = 0;
-
 	// Function to handle form submission
 	function createVariable() {
 		const variable = {
-			id: `${Date.now()}-${counter}`,
+			id: Date.now(),
 			name: variableName,
 			type: dataType,
 			value: value,
 		};
-		// Do something with the variable (e.g., send to a server, store in state)
 		// Add variable to snapshot store
 		$snapshot = [...$snapshot, variable];
-		console.log('Variable created:', variable);
-		counter++;
+		//console.log('Variable created:', variable);
 		closeModal();
 	}
 </script>
@@ -66,8 +63,18 @@
 	><FontAwesomeIcon icon={faPlus} /> Variable</button
 >
 <!-- Modal Component -->
-<Modal header="New Variable" isOpen={showModal} on:close={closeModal}>
-	<form on:submit|preventDefault={createVariable}>
+<Modal
+	header="New Variable"
+	isOpen={showModal}
+	on:close={closeModal}
+	formId="newVariable"
+	deleteFunction={undefined}
+>
+	<form
+		id="newVariable"
+		on:submit|preventDefault={createVariable}
+		class="px-4 flex flex-col gap-4 items-start"
+	>
 		<!-- Add form element here -->
 		<!-- Variable Name Input -->
 		<label class="label">
@@ -102,9 +109,9 @@
 			</label>
 		{:else if dataType === 'number'}
 			<!-- Number input for 'Number' type -->
-			<label class="label">
-				<span>Value: {value}</span>
-				<input type="range" max="10" bind:value name="number" />
+			<label class="label flex flex-col">
+				<span>Value</span>
+				<input class="input w-24" type="number" min="0" max="9999" bind:value name="number" />
 			</label>
 		{:else if dataType === 'bool'}
 			<!-- Radio buttons for 'Boolean' type -->
@@ -122,6 +129,7 @@
 							name="booleanValue"
 							value={false}
 							bind:group={value}
+							autocomplete="off"
 						/>
 						False
 					</label>

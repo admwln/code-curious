@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { createEventDispatcher, onMount } from 'svelte';
 
-	import { faXmark } from '@fortawesome/free-solid-svg-icons';
+	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	// Props
 	export let header: string;
 	export let isOpen: boolean = false; // Modal visibility control
+	export let formId: string; // Form ID to trigger submit event
+	export let deleteFunction: (() => void) | undefined; // Delete function
 	// export let onSave: () => void;
 
 	const dispatch = createEventDispatcher();
@@ -46,19 +48,34 @@
 				<h3 class="text-lg font-semibold">{header}</h3>
 				<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
 			</header>
-			<section class="px-4 flex flex-col gap-4"><slot></slot></section>
-			<footer class="card-footer flex justify-end">
-				<button on:click={closeModal} class="btn"> Cancel </button>
-				<button
-					on:click={() => {
-						// Trigger the form submit by dispatching an event
-						const form = document.querySelector('form');
-						if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
-					}}
-					class="btn btn-sm bg-primary-900"
-				>
-					OK
-				</button>
+			<hr class="opacity-50" />
+			<section><slot></slot></section>
+			<hr class="opacity-50" />
+			<footer class="card-footer flex justify-between">
+				{#if deleteFunction}
+					<button
+						type="button"
+						on:click={deleteFunction}
+						class="btn btn-sm bg-primary-700 flex gap-2"
+					>
+						<FontAwesomeIcon icon={faTrash} /> Delete
+					</button>
+				{:else}
+					<div></div>
+				{/if}
+				<div class="flex">
+					<button on:click={closeModal} class="btn"> Cancel </button>
+					<button
+						on:click={() => {
+							// Trigger the form submit by dispatching an event
+							const form = document.getElementById(formId);
+							if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
+						}}
+						class="btn btn-sm bg-secondary-700 flex gap-2"
+					>
+						<FontAwesomeIcon icon={faFloppyDisk} /> Save
+					</button>
+				</div>
 			</footer>
 		</div>
 	</div>
