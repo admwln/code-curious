@@ -1,10 +1,9 @@
 <script lang="ts">
+	import VariableForm from './VariableForm.svelte';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
-	// Import the snapshot store
-	import { snapshot } from '$lib/store';
-	import type { VariableType } from '$lib/types';
+	import { snapshot } from '$lib/store'; // Snapshot store
 
 	import Modal from './Modal.svelte';
 
@@ -19,7 +18,20 @@
 
 	let variableName: string = ''; // Holds the variable's name
 	let dataType: string = 'text'; // Default data type is 'Text' (1)
-	let value: string | number | boolean = ''; // Holds the value input
+	let value: string | number | boolean | any[] | object = ''; // Holds the value input
+
+	// Update handlers for changes coming from the child component
+	function updateVariableName(event: CustomEvent<string>) {
+		variableName = event.detail;
+	}
+
+	function updateDataType(event: CustomEvent<string>) {
+		dataType = event.detail;
+	}
+
+	function updateValue(event: CustomEvent<string | number | boolean | any[] | object>) {
+		value = event.detail;
+	}
 
 	// Each time the 'New Variable' modal is opened, reset the variable
 	const resetVariable = () => {
@@ -27,21 +39,6 @@
 		dataType = 'text';
 		value = '';
 	};
-
-	// Handle change in the data type
-	function handleDataTypeChange(event: Event) {
-		const target = event.target as HTMLSelectElement;
-		dataType = target.value;
-
-		// Reset value when changing data type
-		if (dataType === 'text') {
-			value = ''; // For text
-		} else if (dataType === 'number') {
-			value = 0; // For number
-		} else if (dataType === 'bool') {
-			value = false; // For boolean
-		}
-	}
 
 	// Function to handle form submission
 	function createVariable() {
@@ -53,7 +50,6 @@
 		};
 		// Add variable to snapshot store
 		$snapshot = [...$snapshot, variable];
-		//console.log('Variable created:', variable);
 		closeModal();
 	}
 </script>
@@ -70,75 +66,15 @@
 	formId="newVariable"
 	deleteFunction={undefined}
 >
-	<form
-		id="newVariable"
-		on:submit|preventDefault={createVariable}
-		class="px-4 flex flex-col gap-4 items-start"
-	>
-		<!-- Add form element here -->
-		<!-- Variable Name Input -->
-		<label class="label">
-			<span>Name</span>
-			<input
-				class="input"
-				type="text"
-				placeholder="Name"
-				bind:value={variableName}
-				name="name"
-				autocomplete="off"
-				required
-			/>
-		</label>
-
-		<!-- Data Type Selector -->
-		<label class="label">
-			<span>Data type</span>
-			<select class="select" bind:value={dataType} on:change={handleDataTypeChange} name="dataType">
-				<option value="text">Text</option>
-				<option value="number">Number</option>
-				<option value="bool">Boolean</option>
-			</select>
-		</label>
-
-		<!-- Conditional Value Input -->
-		{#if dataType === 'text'}
-			<label class="label">
-				<!-- Text input for 'Text' type -->
-				<span>Value</span>
-				<input class="input" type="text" placeholder="Value" bind:value name="text" required />
-			</label>
-		{:else if dataType === 'number'}
-			<!-- Number input for 'Number' type -->
-			<label class="label flex flex-col">
-				<span>Value</span>
-				<input class="input w-24" type="number" min="0" max="9999" bind:value name="number" />
-			</label>
-		{:else if dataType === 'bool'}
-			<!-- Radio buttons for 'Boolean' type -->
-			<label class="label">
-				<span>Value</span>
-				<div class="flex gap-4">
-					<label class="label">
-						<input class="radio" type="radio" name="booleanValue" value={true} bind:group={value} />
-						True
-					</label>
-					<label class="label">
-						<input
-							class="radio"
-							type="radio"
-							name="booleanValue"
-							value={false}
-							bind:group={value}
-							autocomplete="off"
-						/>
-						False
-					</label>
-				</div>
-			</label>
-		{/if}
-
-		<!-- Submit button -->
-		<button type="submit" class="sr-only">Submit</button>
-		<!-- Hidden button for form submission -->
-	</form>
+	<!-- Listen to custom events from VariableForm -->
+	<VariableForm
+		{variableName}
+		{dataType}
+		{value}
+		on:updateVariableName={updateVariableName}
+		on:updateDataType={updateDataType}
+		on:updateValue={updateValue}
+		onSave={createVariable}
+		formId="newVariable"
+	/>
 </Modal>
