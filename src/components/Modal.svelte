@@ -7,9 +7,7 @@
 	// Props
 	export let header: string;
 	export let isOpen: boolean = false; // Modal visibility control
-	export let formId: string; // Form ID to trigger submit event
 	export let deleteFunction: (() => void) | undefined; // Delete function
-	// export let onSave: () => void;
 
 	const dispatch = createEventDispatcher();
 
@@ -68,7 +66,7 @@
 					<button
 						on:click={() => {
 							// Trigger the form submit by dispatching an event
-							const form = document.getElementById(formId);
+							const form = document.querySelector('form');
 							if (form) form.dispatchEvent(new Event('submit', { bubbles: true }));
 						}}
 						class="btn btn-sm bg-secondary-700 flex gap-2"

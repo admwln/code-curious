@@ -53,7 +53,6 @@
 		if (innerWidth <= 400) {
 			scale = 0.8;
 		}
-		console.log('Scale updated', scale);
 	}
 
 	// Initialize Matter.js when the component mounts

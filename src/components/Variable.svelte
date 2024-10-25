@@ -19,8 +19,8 @@
 
 	let variableId: number = data.id; // Holds the variable's ID
 	let variableName: string = data.name; // Holds the variable's name
-	let dataType: string = data.type; // Default data type is 'Text' (1)
-	let value: string | number | boolean | any[] | object = data.value; // Holds the value input
+	let dataType: string = data.type; // Default data type is 'Text'
+	let value: string | number | any[] | object = data.value; // Holds the value input
 
 	// Function to handle form submission
 	function updateVariable() {
@@ -40,25 +40,22 @@
 	function deleteVariable() {
 		// Filter out the variable with the current ID
 		$snapshot = $snapshot.filter((v) => v.id !== variableId);
-		//console.log('Variable deleted:', $snapshot);
 		closeModal();
 	}
 </script>
 
 <div class="flex rounded-full border border-secondary-900 text-sm">
 	<div class="bg-secondary-900 rounded-l-full px-2 py-1">{data.name}</div>
-	<button on:click={openModal} type="button" class="btn btn-sm">{data.value}</button>
+	<button on:click={openModal} type="button" class="btn btn-sm">{data.value} </button>
 </div>
 
 <Modal
 	bind:header={variableName}
 	isOpen={showModal}
 	on:close={closeModal}
-	formId="editVariable"
 	deleteFunction={deleteVariable}
 >
 	<VariableForm
-		formId="editVariable"
 		{value}
 		onSave={updateVariable}
 		bind:dataType

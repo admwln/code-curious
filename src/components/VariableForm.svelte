@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let variableName: string;
 	export let dataType: string;
-	export let value: string | number | boolean | any[] | object;
-	export let formId: string; // Form ID to trigger submit event
+	export let value: string | number | any[] | object;
 	export let onSave: () => void;
-
 	const dispatch = createEventDispatcher();
 
 	// Handle changes in the input fields and dispatch events to parent
@@ -33,7 +32,7 @@
 		} else if (dataType === 'number') {
 			value = 0;
 		} else if (dataType === 'bool') {
-			value = false;
+			value = 'false';
 		} else if (dataType === 'array') {
 			value = [];
 		} else if (dataType === 'object') {
@@ -43,7 +42,7 @@
 </script>
 
 <!-- Form Layout -->
-<form id={formId} on:submit|preventDefault={onSave} class="px-4 flex flex-col gap-4 items-start">
+<form on:submit|preventDefault={onSave} class="px-4 flex flex-col gap-4 items-start">
 	<!-- Variable Name Input -->
 	<label class="label">
 		<span>Name</span>
@@ -96,17 +95,17 @@
 			/>
 		</label>
 	{:else if dataType === 'bool'}
-		<label class="label">
+		<div class="flex flex-col gap-1">
 			<span>Value</span>
-			<div class="flex gap-4">
-				<label class="label">
-					<input class="radio" type="radio" name="booleanValue" value={true} bind:group={value} /> True
-				</label>
-				<label class="label">
-					<input class="radio" type="radio" name="booleanValue" value={false} bind:group={value} /> False
-				</label>
-			</div>
-		</label>
+			<RadioGroup>
+				<RadioItem bind:group={value} name="justify" value={'true'} on:change={handleValueChange}
+					>True</RadioItem
+				>
+				<RadioItem bind:group={value} name="justify" value={'false'} on:change={handleValueChange}
+					>False</RadioItem
+				>
+			</RadioGroup>
+		</div>
 	{:else if dataType === 'array'}
 		<!-- Array Input -->
 		<label class="label">

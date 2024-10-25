@@ -18,7 +18,7 @@
 
 	let variableName: string = ''; // Holds the variable's name
 	let dataType: string = 'text'; // Default data type is 'Text' (1)
-	let value: string | number | boolean | any[] | object = ''; // Holds the value input
+	let value: string | number | any[] | object = ''; // Holds the value input
 
 	// Update handlers for changes coming from the child component
 	function updateVariableName(event: CustomEvent<string>) {
@@ -29,7 +29,7 @@
 		dataType = event.detail;
 	}
 
-	function updateValue(event: CustomEvent<string | number | boolean | any[] | object>) {
+	function updateValue(event: CustomEvent<string | number | any[] | object>) {
 		value = event.detail;
 	}
 
@@ -59,13 +59,7 @@
 	><FontAwesomeIcon icon={faPlus} /> Variable</button
 >
 <!-- Modal Component -->
-<Modal
-	header="New Variable"
-	isOpen={showModal}
-	on:close={closeModal}
-	formId="newVariable"
-	deleteFunction={undefined}
->
+<Modal header="New Variable" isOpen={showModal} on:close={closeModal} deleteFunction={undefined}>
 	<!-- Listen to custom events from VariableForm -->
 	<VariableForm
 		{variableName}
@@ -75,6 +69,5 @@
 		on:updateDataType={updateDataType}
 		on:updateValue={updateValue}
 		onSave={createVariable}
-		formId="newVariable"
 	/>
 </Modal>
