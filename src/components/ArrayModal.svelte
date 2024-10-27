@@ -1,0 +1,196 @@
+<script lang="ts">
+	import { createEventDispatcher } from 'svelte';
+	import Modal from './Modal.svelte';
+	import {
+		faFloppyDisk,
+		faMinus,
+		faPlus,
+		faTrash,
+		faXmark,
+	} from '@fortawesome/free-solid-svg-icons';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import type { ArrayVariable } from '$lib/types';
+	import { snapshot } from '$lib/store'; // Snapshot store
+
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+
+	export let editMode: boolean;
+	export let isOpen: boolean;
+	export let variableId;
+	let variable: ArrayVariable;
+	let itemCount = 1;
+	let strings: string[] = [];
+
+	if (variableId !== undefined) {
+		variable = $snapshot.find((v) => v.id === variableId) as ArrayVariable;
+		strings = variable.value;
+		itemCount = strings.length;
+	} else {
+		variable = {
+			id: Date.now(),
+			name: '',
+			type: 'array',
+			itemType: 'string',
+			value: [],
+		};
+	}
+
+	const dispatch = createEventDispatcher();
+
+	const closeModal = () => {
+		dispatch('close');
+	};
+
+	const deleteVariable = () => {
+		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
+		console.log('Variable deleted', $snapshot);
+		dispatch('close');
+	};
+
+	const onSave = () => {
+		if (editMode) {
+			variable.value = strings;
+			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
+			console.log('Variable updated', $snapshot);
+			dispatch('close');
+			return;
+		} else {
+			variable.value = strings;
+			// Add variable to snapshot store
+			$snapshot = [...$snapshot, variable];
+			console.log('New variable added', $snapshot);
+		}
+		dispatch('close');
+	};
+
+	const handleNameChange = (event: Event) => {
+		variable.name = (event.target as HTMLInputElement).value;
+	};
+
+	const handleItemDataTypeChange = (event: Event) => {
+		variable.itemType = (event.target as HTMLInputElement).value;
+	};
+
+	const handleRemoveItem = () => {
+		itemCount -= 1;
+		strings.pop();
+	};
+</script>
+
+<Modal {isOpen}>
+	<div slot="header" class="card-header flex justify-between items-start">
+		<div class="flex flex-col">
+			<!-- Display item type if in edit mode -->
+			{#if editMode}
+				<h3 class="text-sm text-secondary-500">Array of {variable.itemType}s</h3>
+			{/if}
+			<h4 class="text-lg font-semibold">
+				{editMode ? variable.name : 'New Array'}
+			</h4>
+		</div>
+		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
+	</div>
+	<form
+		slot="content"
+		on:submit|preventDefault={onSave}
+		class="px-4 flex flex-col gap-4 items-start"
+	>
+		<!-- Variable Name Input -->
+		<label class="label">
+			<span>Name</span>
+			<input
+				class="input"
+				type="text"
+				bind:value={variable.name}
+				on:input={handleNameChange}
+				name="name"
+				autocomplete="off"
+				required
+			/>
+		</label>
+
+		<!-- Item Data Type -->
+		{#if !editMode}
+			<div class="flex flex-col gap-1">
+				<span>Item Data Type</span>
+				<RadioGroup>
+					<RadioItem
+						bind:group={variable.itemType}
+						name="justify"
+						value={'string'}
+						on:change={handleItemDataTypeChange}>String</RadioItem
+					>
+					<RadioItem
+						bind:group={variable.itemType}
+						name="justify"
+						value={'number'}
+						on:change={handleItemDataTypeChange}>Number</RadioItem
+					>
+					<RadioItem
+						bind:group={variable.itemType}
+						name="justify"
+						value={'boolean'}
+						on:change={handleItemDataTypeChange}>Boolean</RadioItem
+					>
+					<RadioItem
+						bind:group={variable.itemType}
+						name="justify"
+						value={'object'}
+						on:change={handleItemDataTypeChange}>Object</RadioItem
+					>
+				</RadioGroup>
+			</div>
+		{/if}
+		<div class="flex gap-2">
+			<button
+				type="button"
+				on:click={() => {
+					itemCount += 1;
+				}}
+				class="btn btn-sm bg-secondary-700 flex gap-2"
+				><FontAwesomeIcon icon={faPlus} /> Add item</button
+			>
+			<button type="button" on:click={handleRemoveItem} class="btn btn-sm bg-primary-700 flex gap-2"
+				><FontAwesomeIcon icon={faMinus} /> Remove item</button
+			>
+		</div>
+		{#if variable.itemType === 'string'}
+			{#each { length: itemCount } as _, i}
+				<label class="label flex flex-row items-center gap-2">
+					<span>{i}</span>
+					<input
+						bind:value={strings[i]}
+						class="input"
+						type="text"
+						name="name"
+						autocomplete="off"
+						required
+					/>
+				</label>
+			{/each}
+		{/if}
+		<!-- Hidden Submit Button -->
+		<button type="submit" class="sr-only">Submit</button>
+	</form>
+	<div slot="footer">
+		<div class="card-footer flex justify-between">
+			{#if editMode}
+				<button
+					type="button"
+					on:click={deleteVariable}
+					class="btn btn-sm bg-primary-700 flex gap-2"
+				>
+					<FontAwesomeIcon icon={faTrash} /> Delete
+				</button>
+			{:else}
+				<div></div>
+			{/if}
+			<div class="flex">
+				<button on:click={closeModal} class="btn"> Cancel </button>
+				<button on:click={onSave} class="btn btn-sm bg-secondary-700 flex gap-2">
+					<FontAwesomeIcon icon={faFloppyDisk} /> Save
+				</button>
+			</div>
+		</div>
+	</div>
+</Modal>

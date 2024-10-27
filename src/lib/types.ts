@@ -37,3 +37,32 @@ export interface VariableType {
 	type: string;
 	value: string | number | any[] | object;
 }
+
+export interface StringVariable {
+	id: number;
+	name: string;
+	type: 'string';
+	value: string;
+}
+
+export interface NumberVariable {
+	id: number;
+	name: string;
+	type: 'number';
+	value: number;
+}
+
+export interface BooleanVariable {
+	id: number;
+	name: string;
+	type: 'boolean';
+	value: string;
+}
+
+export interface ArrayVariable {
+	id: number;
+	name: string;
+	type: 'array';
+	itemType: string;
+	value: any[];
+}

@@ -7,7 +7,7 @@
 	import Modal from './Modal.svelte';
 
 	// Props, data holds the variable object
-	export let data: VariableType;
+	export let variable: VariableType;
 
 	let showModal = false;
 	function openModal() {
@@ -17,10 +17,10 @@
 		showModal = false;
 	}
 
-	let variableId: number = data.id; // Holds the variable's ID
-	let variableName: string = data.name; // Holds the variable's name
-	let dataType: string = data.type; // Default data type is 'Text'
-	let value: string | number | any[] | object = data.value; // Holds the value input
+	let variableId: number = variable.id; // Holds the variable's ID
+	let variableName: string = variable.name; // Holds the variable's name
+	let dataType: string = variable.type; // Default data type is 'Text'
+	let value: string | number | any[] | object = variable.value; // Holds the value input
 
 	// Function to handle form submission
 	function updateVariable() {
@@ -48,7 +48,7 @@
 	<div class="bg-secondary-900 rounded-l-full px-2 py-1">{data.name}</div>
 	<button on:click={openModal} type="button" class="btn btn-sm">{data.value} </button>
 </div>
-
+<!-- 
 <Modal
 	bind:header={variableName}
 	isOpen={showModal}
@@ -64,4 +64,4 @@
 		on:updateDataType={(e) => (dataType = e.detail)}
 		on:updateVariableName={(e) => (variableName = e.detail)}
 	/>
-</Modal>
+</Modal> -->
