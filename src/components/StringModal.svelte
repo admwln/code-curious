@@ -9,11 +9,15 @@
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId;
+	console.log('StringModal', variableId);
+
 	let variable: StringVariable;
 
-	if (variableId !== undefined) {
-		variable = $snapshot.find((v) => v.id === variableId) as StringVariable;
+	if (editMode && variableId !== undefined) {
+		// Clone the variable to avoid directly modifying the store object
+		variable = { ...$snapshot.find((v) => v.id === variableId) } as StringVariable;
 	} else {
+		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
 			name: '',
