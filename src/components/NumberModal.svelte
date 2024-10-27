@@ -100,7 +100,7 @@
 				max="9999"
 				bind:value={variable.value}
 				on:input={handleValueChange}
-				name="text"
+				name="number"
 				required
 			/>
 		</label>

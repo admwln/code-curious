@@ -19,12 +19,13 @@
 	export let variableId;
 	let variable: ArrayVariable;
 	let itemCount = 1;
-	let strings: string[] = [];
+	let keyCount = 1;
+	let array: any[] = [];
 
 	if (variableId !== undefined) {
 		variable = $snapshot.find((v) => v.id === variableId) as ArrayVariable;
-		strings = variable.value;
-		itemCount = strings.length;
+		itemCount = variable.value.length;
+		array = variable.value;
 	} else {
 		variable = {
 			id: Date.now(),
@@ -48,17 +49,17 @@
 	};
 
 	const onSave = () => {
-		if (editMode) {
-			variable.value = strings;
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
-			dispatch('close');
-			return;
-		} else {
-			variable.value = strings;
-			// Add variable to snapshot store
+		// Update variable value
+		variable.value = array;
+		// Update snapshot store
+		if (!editMode) {
+			// Add new variable to snapshot store, if not in edit mode
 			$snapshot = [...$snapshot, variable];
 			console.log('New variable added', $snapshot);
+		} else {
+			// Update existing variable in snapshot store
+			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
+			console.log('Variable updated', $snapshot);
 		}
 		dispatch('close');
 	};
@@ -73,7 +74,11 @@
 
 	const handleRemoveItem = () => {
 		itemCount -= 1;
-		strings.pop();
+		array.pop();
+	};
+
+	const handleRemoveKey = () => {
+		keyCount -= 1;
 	};
 </script>
 
@@ -141,25 +146,30 @@
 				</RadioGroup>
 			</div>
 		{/if}
-		<div class="flex gap-2">
-			<button
-				type="button"
-				on:click={() => {
-					itemCount += 1;
-				}}
-				class="btn btn-sm bg-secondary-700 flex gap-2"
-				><FontAwesomeIcon icon={faPlus} /> Add item</button
-			>
-			<button type="button" on:click={handleRemoveItem} class="btn btn-sm bg-primary-700 flex gap-2"
-				><FontAwesomeIcon icon={faMinus} /> Remove item</button
-			>
-		</div>
+		{#if true}
+			<div class="flex gap-2">
+				<button
+					type="button"
+					on:click={() => {
+						itemCount += 1;
+					}}
+					class="btn btn-sm bg-secondary-700 flex gap-2"
+					><FontAwesomeIcon icon={faPlus} /> Add item</button
+				>
+				<button
+					type="button"
+					on:click={handleRemoveItem}
+					class="btn btn-sm bg-primary-700 flex gap-2"
+					><FontAwesomeIcon icon={faMinus} /> Remove item</button
+				>
+			</div>
+		{/if}
 		{#if variable.itemType === 'string'}
 			{#each { length: itemCount } as _, i}
 				<label class="label flex flex-row items-center gap-2">
 					<span>{i}</span>
 					<input
-						bind:value={strings[i]}
+						bind:value={array[i]}
 						class="input"
 						type="text"
 						name="name"
@@ -167,6 +177,32 @@
 						required
 					/>
 				</label>
+			{/each}
+		{/if}
+		{#if variable.itemType === 'number'}
+			{#each { length: itemCount } as _, i}
+				<label class="label flex flex-row items-center gap-2">
+					<span>{i}</span>
+					<input
+						bind:value={array[i]}
+						class="input"
+						type="number"
+						name="number"
+						autocomplete="off"
+						required
+					/>
+				</label>
+			{/each}
+		{/if}
+		{#if variable.itemType === 'boolean'}
+			{#each { length: itemCount } as _, i}
+				<div class="label flex flex-row items-center gap-2">
+					<span>{i}</span>
+					<RadioGroup>
+						<RadioItem bind:group={array[i]} name="justify" value="true">True</RadioItem>
+						<RadioItem bind:group={array[i]} name="justify" value="false">False</RadioItem>
+					</RadioGroup>
+				</div>
 			{/each}
 		{/if}
 		<!-- Hidden Submit Button -->

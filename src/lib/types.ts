@@ -66,3 +66,11 @@ export interface ArrayVariable {
 	itemType: string;
 	value: any[];
 }
+
+export interface ObjectVariable {
+	id: number;
+	keys: string[];
+	name: string;
+	type: 'object';
+	value: object;
+}
