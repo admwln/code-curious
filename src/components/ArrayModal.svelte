@@ -227,10 +227,25 @@
 							>
 						</div>
 						<div>
-							<ObjectEdit
-								objectVariable={null}
-								on:update={(e) => handleObjectUpdate(i, e.detail)}
-							/>
+							{#if !editMode}
+								<ObjectEdit
+									objectVariable={null}
+									on:update={(e) => handleObjectUpdate(i, e.detail)}
+								/>
+							{/if}
+							{#if editMode}
+								<ObjectEdit
+									objectVariable={array[i]
+										? {
+												id: Date.now(),
+												name: '',
+												type: 'object',
+												value: { ...array[i] },
+											}
+										: null}
+									on:update={(e) => handleObjectUpdate(i, e.detail)}
+								/>
+							{/if}
 						</div>
 						<div class="rounded-b-xl p-2 bg-surface-200-700-token mt-3"></div>
 					</div>

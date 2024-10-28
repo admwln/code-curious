@@ -7,8 +7,22 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let objectVariable: ObjectVariable | null;
+	//export let editMode: boolean;
+	//console.log('editMode from ObjectEdit component', editMode);
 	const dispatch = createEventDispatcher();
 	let _object: Record<string, any> = {}; // Intermediate object to store key-value pairs
+
+	let objectTypes: string[] = [];
+	// Helper to determine the type of each value
+	const getType = (value: any): string => {
+		const type = typeof value;
+		return type === 'string' || type === 'number' || type === 'boolean' ? type : 'string';
+	};
+	const getObjectTypes = () => {
+		//Loop through _object and get the type of each value using getType helper
+		const types = Object.values(_object).map((value) => getType(value));
+		return types;
+	};
 
 	if (!objectVariable) {
 		objectVariable = {
@@ -17,21 +31,18 @@
 			type: 'object',
 			value: { key1: '' },
 		};
+		objectTypes = ['string'];
+		//console.log('Object types', objectTypes);
 		_object = { ...objectVariable.value };
 	} else {
 		_object = { ...objectVariable.value };
+		objectTypes = getObjectTypes();
+		//console.log('Object types', objectTypes);
 	}
 
 	let objectKeys: string[] = Object.keys(_object);
-	let objectTypes: string[] = ['string'];
 	let objectValues: any[] = Object.values(_object);
-	console.log(objectKeys, objectTypes, objectValues);
-
-	// Helper to determine the type of each value
-	const getType = (value: any): string => {
-		const type = typeof value;
-		return type === 'string' || type === 'number' || type === 'boolean' ? type : 'string';
-	};
+	//console.log(objectKeys, objectTypes, objectValues);
 
 	// Function to add an empty key-value pair
 	const addKeyValuePair = () => {
@@ -41,8 +52,9 @@
 		objectKeys.push(newKeyName);
 		objectTypes.push('string');
 		objectValues.push('');
+		respawnObject();
 		_object = { ..._object }; // Trigger reactivity
-		console.log('Added key-value pair', _object);
+		//console.log('Added key-value pair', _object);
 	};
 
 	// Function to remove a key-value pair
@@ -55,8 +67,8 @@
 			objectKeys.pop();
 			objectTypes.pop();
 			objectValues.pop();
+			respawnObject();
 			_object = { ..._object }; // Trigger reactivity
-			console.log('Removed key-value pair', _object);
 		}
 	};
 
@@ -83,7 +95,7 @@
 
 		_object = { ..._object }; // Trigger reactivity
 
-		console.log('Updated key', _object);
+		//console.log('Updated key', _object);
 	};
 
 	// Function to handle type changes
@@ -91,7 +103,7 @@
 		const target = e.target as HTMLSelectElement;
 		const newType = target.value;
 		objectTypes[index] = newType;
-		console.log('Updated value type', objectTypes);
+		//console.log('Updated value type', objectTypes);
 
 		//Change initial value of corresponding value
 		if (newType === 'number') objectValues[index] = 0;
@@ -113,7 +125,7 @@
 
 		_object = respawnObject();
 		_object = { ..._object }; // Trigger reactivity
-		console.log('Updated value', _object);
+		//console.log('Updated value', _object);
 		return newValue;
 	};
 </script>
