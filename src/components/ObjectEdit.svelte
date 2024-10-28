@@ -163,6 +163,7 @@
 					<!-- Type Selector -->
 					<td class="p-0.5">
 						<select
+							name="type"
 							class="select px-2 py-0 mt-1 text-sm"
 							value={objectTypes[i]}
 							on:change={(e) => {
@@ -185,6 +186,7 @@
 							<label class="label">
 								<span class="sr-only">Value</span>
 								<input
+									name="value"
 									class="input px-2 py-0 text-sm"
 									type="text"
 									bind:value={objectValues[i]}
@@ -200,6 +202,7 @@
 							<label class="label">
 								<span class="sr-only">Value</span>
 								<input
+									name="value"
 									class="input px-2 py-0 text-sm"
 									type="number"
 									bind:value={objectValues[i]}
