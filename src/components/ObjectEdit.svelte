@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { snapshot } from '$lib/store';
+	import { createEventDispatcher } from 'svelte';
 	import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { ObjectVariable } from '$lib/types';
@@ -7,6 +7,7 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let objectVariable: ObjectVariable | null;
+	const dispatch = createEventDispatcher();
 	let _object: Record<string, any> = {}; // Intermediate object to store key-value pairs
 
 	if (!objectVariable) {
@@ -67,6 +68,7 @@
 		});
 		//Update objectVariable.value
 		objectVariable.value = newObject;
+		dispatch('update', objectVariable);
 		return newObject;
 	};
 

@@ -84,6 +84,11 @@
 		itemCount -= 1;
 		array.pop();
 	};
+
+	// Listen for object updates from ObjectEdit component
+	const handleObjectUpdate = (index: number, updatedObject: any) => {
+		array[index] = updatedObject.value;
+	};
 </script>
 
 <Modal {isOpen}>
@@ -216,13 +221,17 @@
 					<!-- Accordion -->
 					<div class="w-full">
 						<div class="rounded-t-xl flex justify-between p-2 bg-surface-200-700-token mb-2">
-							<!-- : &lcub;firstname: Adam...&rcub; -->
 							<h4>Object {i}</h4>
 							<button type="button" class="btn btn-sm"
 								><FontAwesomeIcon icon={faAngleDown} /></button
 							>
 						</div>
-						<div><ObjectEdit objectVariable={null} /></div>
+						<div>
+							<ObjectEdit
+								objectVariable={null}
+								on:update={(e) => handleObjectUpdate(i, e.detail)}
+							/>
+						</div>
 						<div class="rounded-b-xl p-2 bg-surface-200-700-token mt-3"></div>
 					</div>
 				{/each}
