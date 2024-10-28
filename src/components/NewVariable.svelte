@@ -83,12 +83,7 @@
 	<NumberModal editMode={false} isOpen={newNumber} variableId={undefined} on:close={handleClose} />
 {/if}
 {#if newBoolean}
-	<BooleanModal
-		editMode={false}
-		isOpen={newBoolean}
-		variableId={undefined}
-		on:close={handleClose}
-	/>
+	<BooleanModal editMode={false} isOpen={newBoolean} variableId={null} on:close={handleClose} />
 {/if}
 {#if newObject}
 	<ObjectModal editMode={false} isOpen={newObject} variableId={null} on:close={handleClose} />

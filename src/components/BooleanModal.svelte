@@ -12,16 +12,20 @@
 	export let isOpen: boolean;
 	export let variableId;
 	let variable: BooleanVariable;
+	// The value of the radio button must be a string. Is converted to boolean when saving.
+	let _boolString: string;
 
-	if (variableId !== undefined) {
+	if (variableId) {
 		variable = $snapshot.find((v) => v.id === variableId) as BooleanVariable;
+		_boolString = variable.value ? 'true' : 'false';
 	} else {
 		variable = {
 			id: Date.now(),
 			name: '',
 			type: 'boolean',
-			value: 'false',
+			value: false,
 		};
+		_boolString = 'false';
 	}
 
 	const dispatch = createEventDispatcher();
@@ -38,11 +42,15 @@
 
 	const onSave = () => {
 		if (editMode) {
+			// Convert string to boolean and update variable value
+			variable.value = _boolString === 'true';
 			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
 			console.log('Variable updated', $snapshot);
 			dispatch('close');
 			return;
 		} else {
+			// Convert string to boolean and update variable value
+			variable.value = _boolString === 'true';
 			// Add variable to snapshot store
 			$snapshot = [...$snapshot, variable];
 			console.log('New variable added', $snapshot);
@@ -55,7 +63,7 @@
 	};
 
 	const handleValueChange = (event: Event) => {
-		variable.value = (event.target as HTMLInputElement).value;
+		_boolString = (event.target as HTMLInputElement).value;
 	};
 </script>
 
@@ -93,13 +101,13 @@
 			<span>Value</span>
 			<RadioGroup>
 				<RadioItem
-					bind:group={variable.value}
+					bind:group={_boolString}
 					name="justify"
 					value={'true'}
 					on:change={handleValueChange}>True</RadioItem
 				>
 				<RadioItem
-					bind:group={variable.value}
+					bind:group={_boolString}
 					name="justify"
 					value={'false'}
 					on:change={handleValueChange}>False</RadioItem
