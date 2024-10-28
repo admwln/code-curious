@@ -5,6 +5,7 @@
 	import BooleanModal from './BooleanModal.svelte';
 	import ArrayModal from './ArrayModal.svelte';
 	import NewVariable from './NewVariable.svelte';
+	import Accordion from './skeleton/Accordion.svelte';
 
 	export let data;
 
@@ -82,10 +83,14 @@
 						>
 							{#if Array.isArray(variable.value)}
 								{#each variable.value as item, i}
-									{#if i < variable.value.length - 1}
-										{item},{' '}
-									{:else}
-										{item}
+									{#if typeof item === 'object' && i === 0}
+										{JSON.stringify(item).substring(0, 30)} ...
+									{:else if typeof item !== 'object'}
+										{#if i < variable.value.length - 1}
+											{item},{' '}
+										{:else}
+											{item}
+										{/if}
 									{/if}
 								{/each}
 							{/if}
