@@ -266,7 +266,7 @@
 								/>
 							{/if}
 						</div>
-						<div class="rounded-b-xl p-2 bg-surface-200-700-token mt-3"></div>
+						<div class="p-0.5 bg-surface-200-700-token mt-3"></div>
 					</div>
 				{/each}
 			</div>

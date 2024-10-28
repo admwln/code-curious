@@ -7,12 +7,12 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let objectVariable: ObjectVariable | null;
-	//export let editMode: boolean;
 	//console.log('editMode from ObjectEdit component', editMode);
 	const dispatch = createEventDispatcher();
-	let _object: Record<string, any> = {}; // Intermediate object to store key-value pairs
+	let _object: Record<string, any> = {}; // Temporary object to store key-value pairs
 
 	let objectTypes: string[] = [];
+	let objectValues: any[] = [];
 	// Helper to determine the type of each value
 	const getType = (value: any): string => {
 		const type = typeof value;
@@ -37,11 +37,18 @@
 	} else {
 		_object = { ...objectVariable.value };
 		objectTypes = getObjectTypes();
-		//console.log('Object types', objectTypes);
+		objectValues = Object.values(_object);
+		// For each item in objectTypes, check if it's a boolean and convert the corresponding value to
+		// a string, to accomodate the RadioGroup component
+		objectTypes.forEach((type, index) => {
+			if (type === 'boolean') {
+				objectValues[index] = String(objectValues[index]);
+			}
+		});
+		console.log('Object types', objectTypes);
 	}
 
 	let objectKeys: string[] = Object.keys(_object);
-	let objectValues: any[] = Object.values(_object);
 	//console.log(objectKeys, objectTypes, objectValues);
 
 	// Function to add an empty key-value pair
@@ -75,12 +82,22 @@
 	// Function to respawn object from scratch, using the arrays
 	const respawnObject = () => {
 		const newObject: Record<string, any> = {};
+
+		// Loop through objectTypes; if type is 'boolean', convert values to true boolean
 		objectKeys.forEach((key, index) => {
-			newObject[key] = objectValues[index];
+			if (objectTypes[index] === 'boolean') {
+				newObject[key] = objectValues[index] === 'true'; // Convert string 'true'/'false' to boolean
+			} else {
+				newObject[key] = objectValues[index];
+			}
 		});
-		//Update objectVariable.value
+
+		// Update objectVariable.value with the new object structure
 		objectVariable.value = newObject;
+
+		// Dispatch the updated objectVariable to parent
 		dispatch('update', objectVariable);
+
 		return newObject;
 	};
 
@@ -170,7 +187,7 @@
 								const newType = handleTypeChange(e, i);
 								if (newType === 'string') _object[key] = String(value);
 								if (newType === 'number') _object[key] = Number(value);
-								if (newType === 'boolean') _object[key] = Boolean(value);
+								if (newType === 'boolean') _object[key] = String(value);
 							}}
 						>
 							<option value="string">String</option>
