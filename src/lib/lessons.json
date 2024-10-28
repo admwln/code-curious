@@ -1,64 +1,80 @@
 {
 	"welcome-to-funnel": {
 		"tutorial": {
-			"title": "Welcome to Funnel Logic!",
-			"description": "Funnel Logic is a fun and interactive way to learn the fundamentals of programming.",
-			"topics": [{ "name": "Introduction" }, { "name": "Getting started" }],
-			"exampleCode": "console.log(\"Hello, World!\");",
+			"title": "Welcome to Funnel!",
+			"description": "---",
+			"content": "### A fun and interactive way to learn the basics of programming\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nYou can then use this variable in your code.",
 			"nextLesson": "lesson-1"
 		},
 		"editor": {
-			"defaultCode": "Here you will find all the code blocks!"
+			"defaultCode": "let x = 5;"
 		},
 		"console": {
-			"defaultCode": "console.log('Hello, World!');"
-		},
-		"funnel": {
-			"color": "hotpink"
-		}
-	},
-	"lesson-1": {
-		"tutorial": {
-			"title": "Lesson 1: Introduction to Variables",
-			"description": "In this lesson, we will cover basic variable declarations.",
-			"topics": [
-				{ "name": "What is a variable?" },
-				{ "name": "Variable types" },
-				{ "name": "Declaring variables" }
-			],
-			"exampleCode": "let x = 5;\nlet y = 10;\nconsole.log(x + y);",
-			"nextLesson": "lesson-2"
-		},
-		"editor": {
-			"defaultCode": "Here you will find all the code blocks!"
-		},
-		"console": {
-			"defaultCode": "console.log('Goodbye, World!');"
+			"defaultCode": ["Hello, World!", "Welcome to Funnel!", "Let's get started!", "Aloha, World!"]
 		},
 		"funnel": {
 			"color": "seagreen"
 		}
 	},
+	"lesson-1": {
+		"tutorial": {
+			"title": "Lesson 1: Introduction to Variables",
+			"description": "---",
+			"content": "### Variables in JavaScript\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nYou can then use this variable in your code. [Variable Declaration](https://example.com/variable-example.png \"Variable Example\")",
+			"nextLesson": "lesson-2"
+		},
+		"editor": {
+			"defaultCode": "let y = 5;"
+		},
+		"console": {
+			"defaultCode": [
+				"Aloha, World!",
+				"Error: Variable 'y' is not defined.",
+				"Hello, World!",
+				"Welcome to Funnel!"
+			]
+		},
+		"funnel": {
+			"color": "hotpink"
+		}
+	},
 	"lesson-2": {
 		"tutorial": {
 			"title": "Lesson 2: Introduction to Functions",
-			"description": "In this lesson, we will cover basic function declarations.",
-			"topics": [
-				{ "name": "What is a function?" },
-				{ "name": "Function syntax" },
-				{ "name": "Calling functions" }
-			],
-			"exampleCode": "function add(x, y) {\n\treturn x + y;\n}\nconsole.log(add(5, 10));",
+			"description": "---",
+			"content": "### Functions in JavaScript\n\nFunctions are blocks of code that can be reused. Here is how you can declare a function:\n\n```javascript\nfunction sayHello() {\n  console.log('Hello, World!');\n}\n```\n\nYou can then call this function in your code.",
 			"nextLesson": "lesson-3"
 		},
 		"editor": {
-			"defaultCode": "Here you will find all the code blocks!"
+			"defaultCode": "function sayHello() {\n  console.log('Hello, World!');\n}"
 		},
 		"console": {
-			"defaultCode": "console.log('Aloha, World!');"
+			"defaultCode": [
+				"Hello, World!",
+				"Error: Function 'sayHello' is not defined.",
+				"Welcome to Funnel!",
+				"Aloha, World!"
+			]
 		},
 		"funnel": {
-			"color": "gold"
+			"color": "dodgerblue"
+		}
+	},
+	"lesson-3": {
+		"tutorial": {
+			"title": "Lesson 3: Introduction to Loops",
+			"description": "---",
+			"content": "### Loops in JavaScript\n\nLoops are used to repeat a block of code. Here is how you can declare a loop:\n\n```javascript\nfor (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n```\n\nYou can then use this loop in your code.",
+			"nextLesson": "lesson-4"
+		},
+		"editor": {
+			"defaultCode": "for (let i = 0; i < 5; i++) {\n  console.log(i);\n}"
+		},
+		"console": {
+			"defaultCode": ["0", "1", "2", "3", "4"]
+		},
+		"funnel": {
+			"color": "darkorange"
 		}
 	}
 }

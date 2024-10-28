@@ -1,49 +1,99 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { currentPanel, isRunning } from '$lib/store';
-	import { initMatterJS, startMatter, stopMatter } from '$lib/matter';
-	import type { MatterInstance } from '$lib/matter'; // Import the type
+	import { isRunning } from '$lib/store';
+	import { initMatterJS, startMatter, stopMatter, resetBodies } from '$lib/matter';
 	import Matter from 'matter-js';
+	import type { MatterInstance } from '../lib/types';
 
-	let matterContainer: HTMLElement;
+	// Expose the data prop to receive the data from the parent +page.svelte
+	export let data;
+	let matterInstance: MatterInstance | null = null;
+	let matterContainer: HTMLElement | null = null;
 
-	// This will hold the instance returned by initMatterJS (contains engine, runner, etc.)
-	let matterInstance: MatterInstance | null = null; // Initialize as null
+	// Scale factor
+	let scale: number = 0.8;
+	let innerWidth: number;
 
 	// Track the running state reactively
 	$: running = $isRunning;
 
+	// Helper to clean up the current Matter.js instance
+	function cleanupMatterInstance() {
+		if (matterInstance) {
+			stopMatter(matterInstance.runner);
+			Matter.Engine.clear(matterInstance.engine);
+			Matter.World.clear(matterInstance.engine.world, false); // Clear all bodies including static ones
+			// Remove the canvas element
+			const container = document.querySelector('#matterContainer');
+			const canvas = container?.querySelector('canvas');
+			if (canvas) {
+				canvas.remove(); // Ensure canvas is removed
+			}
+		}
+	}
+
+	// Reinitialize Matter.js whenever the lesson `data` changes
+	$: if (data && matterContainer) {
+		cleanupMatterInstance(); // First, clean up the old instance
+		// Toggle running state to false, NB must be run after cleanup
+		$isRunning = false;
+		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color, scale); // Reinitialize with new data
+	}
+
+	function updateScale(innerWidth: number) {
+		if (innerWidth > 1440) {
+			scale = 1.2;
+		}
+		if (innerWidth >= 1024) {
+			scale = 1;
+		}
+		if (innerWidth <= 640) {
+			scale = 0.9;
+		}
+		if (innerWidth <= 400) {
+			scale = 0.8;
+		}
+	}
+
+	// Initialize Matter.js when the component mounts
 	onMount(() => {
+		// Get window dimensions
+		innerWidth = window.innerWidth;
+		updateScale(innerWidth);
+
+		// Update scale on resize
+		window.addEventListener('resize', () => {
+			innerWidth = window.innerWidth;
+			updateScale(innerWidth);
+		});
+
 		if (matterContainer) {
-			// Initialize Matter.js and store the instance, needs container dimensions to work
-			// TODO pass these as props from the parent component
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 });
+			matterInstance = initMatterJS(
+				matterContainer,
+				{ width: 450, height: 700 },
+				data.color,
+				scale,
+			);
 		}
 	});
 
-	// Reactively control Matter.js based on the play state
+	// Clean up Matter.js when the component is destroyed
+	onDestroy(() => {
+		cleanupMatterInstance();
+	});
+
+	// Reactively control Matter.js based on the running state
 	$: if (running && matterInstance) {
+		resetBodies(matterInstance.engine);
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {
 		stopMatter(matterInstance.runner);
 	}
-
-	onDestroy(() => {
-		// Clean up Matter.js on component destroy
-		if (matterInstance) {
-			Matter.Engine.clear(matterInstance.engine);
-			stopMatter(matterInstance.runner);
-		}
-	});
 </script>
 
 <section class="w-full flex justify-center">
-	<div bind:this={matterContainer}></div>
+	<div id="matterContainer" bind:this={matterContainer}></div>
 </section>
 
 <style>
-	div {
-		width: 450px;
-		height: 700px;
-	}
 </style>
