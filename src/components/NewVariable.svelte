@@ -1,7 +1,9 @@
+<!-- NewVariable is the 'New Variable' button in the Editor. When a type is cklicked, the corresponding modal object is opened -->
 <script lang="ts">
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';
+	import ObjectModal from './ObjectModal.svelte';
 	import ArrayModal from './ArrayModal.svelte';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
@@ -14,17 +16,18 @@
 	let newString = false;
 	let newNumber = false;
 	let newBoolean = false;
+	let newObject = false;
 	let newArray = false;
 
 	const handleClose = () => {
 		newString = false;
 		newNumber = false;
 		newBoolean = false;
+		newObject = false;
 		newArray = false;
 	};
 </script>
 
-<!-- Existing Variables -->
 <div class="flex flex-col gap-2">
 	<div class="flex">
 		<div>
@@ -59,6 +62,13 @@
 					class="btn btn-sm"
 					on:click={() => {
 						toggleMenu();
+						newObject = true;
+					}}>Object</button
+				>
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
 						newArray = true;
 					}}>Array</button
 				>
@@ -79,6 +89,9 @@
 		variableId={undefined}
 		on:close={handleClose}
 	/>
+{/if}
+{#if newObject}
+	<ObjectModal editMode={false} isOpen={newObject} variableId={null} on:close={handleClose} />
 {/if}
 {#if newArray}
 	<ArrayModal editMode={false} isOpen={newArray} variableId={undefined} on:close={handleClose} />

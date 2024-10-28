@@ -3,9 +3,9 @@
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';
+	import ObjectModal from './ObjectModal.svelte';
 	import ArrayModal from './ArrayModal.svelte';
 	import NewVariable from './NewVariable.svelte';
-	import Accordion from './skeleton/Accordion.svelte';
 
 	export let data;
 
@@ -13,12 +13,14 @@
 	let activeStringId: number | null = null;
 	let activeNumberId: number | null = null;
 	let activeBooleanId: number | null = null;
+	let activeObjectId: number | null = null;
 	let activeArrayId: number | null = null;
 
 	const handleClose = () => {
 		activeStringId = null;
 		activeNumberId = null;
 		activeBooleanId = null;
+		activeObjectId = null;
 		activeArrayId = null;
 	};
 
@@ -69,6 +71,18 @@
 							class="btn btn-sm"
 						>
 							{variable.value}
+						</button>
+					{/if}
+					<!-- Object Variable -->
+					{#if variable.type === 'object'}
+						<button
+							on:click={() => {
+								activeObjectId = variable.id;
+							}}
+							type="button"
+							class="btn btn-sm"
+						>
+							{JSON.stringify(variable.value).substring(0, 30)} ...
 						</button>
 					{/if}
 
@@ -125,6 +139,15 @@
 			editMode={true}
 			isOpen={activeBooleanId !== null}
 			variableId={activeBooleanId}
+			on:close={handleClose}
+		/>
+	{/if}
+
+	{#if activeObjectId !== null}
+		<ObjectModal
+			editMode={true}
+			isOpen={activeObjectId !== null}
+			variableId={activeObjectId}
 			on:close={handleClose}
 		/>
 	{/if}
