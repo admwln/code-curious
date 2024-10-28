@@ -60,7 +60,7 @@
 	// Function to remove a key-value pair
 	const removeKeyValuePair = () => {
 		const keys = Object.keys(_object);
-		if (keys.length > 0) {
+		if (keys.length > 1) {
 			const lastKey = keys[keys.length - 1];
 			delete _object[lastKey];
 			// Remove the last key from the arrays

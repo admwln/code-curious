@@ -68,10 +68,10 @@
 		<div class="flex flex-col">
 			<!-- Display item type if in edit mode -->
 			{#if editMode}
-				<h4 class="text-sm text-secondary-500">String</h4>
+				<h4 class="text-sm text-secondary-500">Object</h4>
 			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? variable.name : 'New String'}
+				{editMode ? variable.name : 'New Object'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
