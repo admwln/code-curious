@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
+	import ObjectEdit from './ObjectEdit.svelte';
 	import {
+		faAngleDown,
+		faAngleUp,
 		faFloppyDisk,
 		faMinus,
 		faPlus,
@@ -19,8 +22,13 @@
 	export let variableId;
 	let variable: ArrayVariable;
 	let itemCount = 1;
-	let keyCount = 1;
 	let array: any[] = [];
+	const sampleObject = {
+		id: Date.now(),
+		name: 'sample',
+		type: 'object',
+		value: { name: 'John Doe', age: 30 },
+	};
 
 	if (variableId !== undefined) {
 		variable = $snapshot.find((v) => v.id === variableId) as ArrayVariable;
@@ -76,10 +84,6 @@
 		itemCount -= 1;
 		array.pop();
 	};
-
-	const handleRemoveKey = () => {
-		keyCount -= 1;
-	};
 </script>
 
 <Modal {isOpen}>
@@ -120,24 +124,28 @@
 				<span>Item Data Type</span>
 				<RadioGroup>
 					<RadioItem
+						class="text-sm px-1.5"
 						bind:group={variable.itemType}
 						name="justify"
 						value={'string'}
 						on:change={handleItemDataTypeChange}>String</RadioItem
 					>
 					<RadioItem
+						class="text-sm  px-1.5"
 						bind:group={variable.itemType}
 						name="justify"
 						value={'number'}
 						on:change={handleItemDataTypeChange}>Number</RadioItem
 					>
 					<RadioItem
+						class="text-sm  px-1.5"
 						bind:group={variable.itemType}
 						name="justify"
 						value={'boolean'}
 						on:change={handleItemDataTypeChange}>Boolean</RadioItem
 					>
 					<RadioItem
+						class="text-sm px-1.5"
 						bind:group={variable.itemType}
 						name="justify"
 						value={'object'}
@@ -146,24 +154,21 @@
 				</RadioGroup>
 			</div>
 		{/if}
-		{#if true}
-			<div class="flex gap-2">
-				<button
-					type="button"
-					on:click={() => {
-						itemCount += 1;
-					}}
-					class="btn btn-sm bg-secondary-700 flex gap-2"
-					><FontAwesomeIcon icon={faPlus} /> Add item</button
-				>
-				<button
-					type="button"
-					on:click={handleRemoveItem}
-					class="btn btn-sm bg-primary-700 flex gap-2"
-					><FontAwesomeIcon icon={faMinus} /> Remove item</button
-				>
-			</div>
-		{/if}
+		<!-- Add/Remove items -->
+		<div class="flex gap-2">
+			<button
+				type="button"
+				on:click={() => {
+					itemCount += 1;
+				}}
+				class="btn btn-sm bg-secondary-700 flex gap-2"
+				><FontAwesomeIcon icon={faPlus} /> Add item</button
+			>
+			<button type="button" on:click={handleRemoveItem} class="btn btn-sm bg-primary-700 flex gap-2"
+				><FontAwesomeIcon icon={faMinus} /> Remove item</button
+			>
+		</div>
+
 		{#if variable.itemType === 'string'}
 			{#each { length: itemCount } as _, i}
 				<label class="label flex flex-row items-center gap-2">
@@ -204,6 +209,24 @@
 					</RadioGroup>
 				</div>
 			{/each}
+		{/if}
+		{#if variable.itemType === 'object'}
+			<div class="w-full flex flex-col gap-4">
+				{#each { length: itemCount } as _, i}
+					<!-- Accordion -->
+					<div class="w-full">
+						<div class="rounded-t-xl flex justify-between p-2 bg-surface-200-700-token mb-2">
+							<!-- : &lcub;firstname: Adam...&rcub; -->
+							<h4>Object {i}</h4>
+							<button type="button" class="btn btn-sm"
+								><FontAwesomeIcon icon={faAngleDown} /></button
+							>
+						</div>
+						<div><ObjectEdit objectVariable={null} /></div>
+						<div class="rounded-b-xl p-2 bg-surface-200-700-token mt-3"></div>
+					</div>
+				{/each}
+			</div>
 		{/if}
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>

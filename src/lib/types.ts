@@ -48,29 +48,28 @@ export interface StringVariable {
 export interface NumberVariable {
 	id: number;
 	name: string;
-	type: 'number';
+	type: string;
 	value: number;
 }
 
 export interface BooleanVariable {
 	id: number;
 	name: string;
-	type: 'boolean';
+	type: string;
 	value: string;
 }
 
 export interface ArrayVariable {
 	id: number;
 	name: string;
-	type: 'array';
+	type: string;
 	itemType: string;
 	value: any[];
 }
 
 export interface ObjectVariable {
 	id: number;
-	keys: string[];
 	name: string;
-	type: 'object';
+	type: string;
 	value: object;
 }
