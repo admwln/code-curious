@@ -89,5 +89,5 @@
 	<ObjectModal editMode={false} isOpen={newObject} variableId={null} on:close={handleClose} />
 {/if}
 {#if newArray}
-	<ArrayModal editMode={false} isOpen={newArray} variableId={undefined} on:close={handleClose} />
+	<ArrayModal editMode={false} isOpen={newArray} variableId={null} on:close={handleClose} />
 {/if}
