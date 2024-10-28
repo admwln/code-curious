@@ -1,73 +1,98 @@
+<!-- NewVariable is the 'New Variable' button in the Editor. When a type is cklicked, the corresponding modal object is opened -->
 <script lang="ts">
-	import VariableForm from './VariableForm.svelte';
+	import StringModal from './StringModal.svelte';
+	import NumberModal from './NumberModal.svelte';
+	import BooleanModal from './BooleanModal.svelte';
+	import ObjectModal from './ObjectModal.svelte';
+	import ArrayModal from './ArrayModal.svelte';
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
-	import { snapshot } from '$lib/store'; // Snapshot store
-
-	import Modal from './Modal.svelte';
-
-	let showModal = false;
-	function openModal() {
-		resetVariable();
-		showModal = true;
-	}
-	function closeModal() {
-		showModal = false;
-	}
-
-	let variableName: string = ''; // Holds the variable's name
-	let dataType: string = 'text'; // Default data type is 'Text' (1)
-	let value: string | number | any[] | object = ''; // Holds the value input
-
-	// Update handlers for changes coming from the child component
-	function updateVariableName(event: CustomEvent<string>) {
-		variableName = event.detail;
-	}
-
-	function updateDataType(event: CustomEvent<string>) {
-		dataType = event.detail;
-	}
-
-	function updateValue(event: CustomEvent<string | number | any[] | object>) {
-		value = event.detail;
-	}
-
-	// Each time the 'New Variable' modal is opened, reset the variable
-	const resetVariable = () => {
-		variableName = '';
-		dataType = 'text';
-		value = '';
+	let showMenu = false;
+	const toggleMenu = () => {
+		showMenu = !showMenu;
 	};
 
-	// Function to handle form submission
-	function createVariable() {
-		const variable = {
-			id: Date.now(),
-			name: variableName,
-			type: dataType,
-			value: value,
-		};
-		// Add variable to snapshot store
-		$snapshot = [...$snapshot, variable];
-		closeModal();
-	}
+	let newString = false;
+	let newNumber = false;
+	let newBoolean = false;
+	let newObject = false;
+	let newArray = false;
+
+	const handleClose = () => {
+		newString = false;
+		newNumber = false;
+		newBoolean = false;
+		newObject = false;
+		newArray = false;
+	};
 </script>
 
-<!-- Button to open the modal -->
-<button on:click={openModal} class="btn btn-sm bg-primary-900 flex gap-2"
-	><FontAwesomeIcon icon={faPlus} /> Variable</button
->
-<!-- Modal Component -->
-<Modal header="New Variable" isOpen={showModal} on:close={closeModal} deleteFunction={undefined}>
-	<!-- Listen to custom events from VariableForm -->
-	<VariableForm
-		{variableName}
-		{dataType}
-		{value}
-		on:updateVariableName={updateVariableName}
-		on:updateDataType={updateDataType}
-		on:updateValue={updateValue}
-		onSave={createVariable}
+<div class="flex flex-col gap-2">
+	<div class="flex">
+		<div>
+			<button on:click={toggleMenu} class="btn btn-sm bg-primary-900 flex gap-2">
+				<FontAwesomeIcon icon={faPlus} /> Variable
+			</button>
+		</div>
+		{#if showMenu}
+			<div class="flex flex-wrap">
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
+						newString = true;
+					}}>String</button
+				>
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
+						newNumber = true;
+					}}>Number</button
+				>
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
+						newBoolean = true;
+					}}>Boolean</button
+				>
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
+						newObject = true;
+					}}>Object</button
+				>
+				<button
+					class="btn btn-sm"
+					on:click={() => {
+						toggleMenu();
+						newArray = true;
+					}}>Array</button
+				>
+			</div>
+		{/if}
+	</div>
+</div>
+{#if newString}
+	<StringModal editMode={false} isOpen={newString} variableId={undefined} on:close={handleClose} />
+{/if}
+{#if newNumber}
+	<NumberModal editMode={false} isOpen={newNumber} variableId={undefined} on:close={handleClose} />
+{/if}
+{#if newBoolean}
+	<BooleanModal
+		editMode={false}
+		isOpen={newBoolean}
+		variableId={undefined}
+		on:close={handleClose}
 	/>
-</Modal>
+{/if}
+{#if newObject}
+	<ObjectModal editMode={false} isOpen={newObject} variableId={null} on:close={handleClose} />
+{/if}
+{#if newArray}
+	<ArrayModal editMode={false} isOpen={newArray} variableId={undefined} on:close={handleClose} />
+{/if}
