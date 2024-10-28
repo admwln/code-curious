@@ -7,7 +7,6 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let objectVariable: ObjectVariable | null;
-	let keyValueCount = 1;
 	let _object: Record<string, any> = {}; // Intermediate object to store key-value pairs
 
 	if (!objectVariable) {
@@ -20,8 +19,6 @@
 		_object = { ...objectVariable.value };
 	} else {
 		_object = { ...objectVariable.value };
-		//Count the number of key-value pairs
-		keyValueCount = Object.keys(_object).length;
 	}
 
 	let objectKeys: string[] = Object.keys(_object);
@@ -39,7 +36,6 @@
 	const addKeyValuePair = () => {
 		const newKeyName = `key${Object.keys(_object).length + 1}`;
 		_object[newKeyName] = '';
-		keyValueCount++;
 		// Push the new key to the arrays
 		objectKeys.push(newKeyName);
 		objectTypes.push('string');
@@ -54,7 +50,6 @@
 		if (keys.length > 0) {
 			const lastKey = keys[keys.length - 1];
 			delete _object[lastKey];
-			keyValueCount--;
 			// Remove the last key from the arrays
 			objectKeys.pop();
 			objectTypes.pop();
@@ -70,6 +65,8 @@
 		objectKeys.forEach((key, index) => {
 			newObject[key] = objectValues[index];
 		});
+		//Update objectVariable.value
+		objectVariable.value = newObject;
 		return newObject;
 	};
 
