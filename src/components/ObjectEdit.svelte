@@ -4,6 +4,8 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { ObjectVariable } from '$lib/types';
 
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+
 	export let objectVariable: ObjectVariable | null;
 	let keyValueCount = 1;
 	let _object: Record<string, any> = {}; // Intermediate object to store key-value pairs
@@ -62,16 +64,27 @@
 		}
 	};
 
+	// Function to respawn object from scratch, using the arrays
+	const respawnObject = () => {
+		const newObject: Record<string, any> = {};
+		objectKeys.forEach((key, index) => {
+			newObject[key] = objectValues[index];
+		});
+		return newObject;
+	};
+
 	// Function to update key
-	const updateKey = (e: Event, oldKey: string) => {
+	const updateKey = (e: Event, oldKey: string, index: number) => {
 		const target = e.target as HTMLInputElement;
 		const newKey = target.value;
 		if (newKey !== oldKey) {
-			_object[newKey] = _object[oldKey];
-			delete _object[oldKey];
-			_object = { ..._object }; // Trigger reactivity
+			objectKeys[index] = newKey;
+			_object = respawnObject();
 		}
-		console.log('Updated object value', _object);
+
+		_object = { ..._object }; // Trigger reactivity
+
+		console.log('Updated key', _object);
 	};
 
 	// Function to handle type changes
@@ -79,17 +92,29 @@
 		const target = e.target as HTMLSelectElement;
 		const newType = target.value;
 		objectTypes[index] = newType;
+		console.log('Updated value type', objectTypes);
+
+		//Change initial value of corresponding value
+		if (newType === 'number') objectValues[index] = 0;
+		if (newType === 'boolean') objectValues[index] = 'false';
+		if (newType === 'string') objectValues[index] = '';
+		_object = respawnObject();
+		_object = { ..._object }; // Trigger reactivity
 		return newType;
 	};
 
 	// Function to handle value changes
 	const updateValue = (e: Event, index: number, key: string) => {
 		const target = e.target as HTMLInputElement;
-		const newValue = target.value;
+		let newValue: string | number | boolean = target.value;
+		if (objectTypes[index] === 'number') {
+			newValue = Number(newValue);
+		} //otherwise, it's a string
 		objectValues[index] = newValue;
-		_object[key] = newValue;
+
+		_object = respawnObject();
 		_object = { ..._object }; // Trigger reactivity
-		console.log('Updated object value', _object);
+		console.log('Updated value', _object);
 		return newValue;
 	};
 </script>
@@ -116,7 +141,7 @@
 								name="key"
 								bind:value={objectKeys[i]}
 								on:blur={(e) => {
-									updateKey(e, key);
+									updateKey(e, key, i);
 								}}
 								autocomplete="off"
 								required
@@ -128,7 +153,7 @@
 					<td class="p-0.5">
 						<select
 							class="select px-2 py-0 mt-1 text-sm"
-							value={getType(value)}
+							value={objectTypes[i]}
 							on:change={(e) => {
 								const newType = handleTypeChange(e, i);
 								if (newType === 'string') _object[key] = String(value);
@@ -161,10 +186,41 @@
 							</label>
 						{/if}
 						{#if objectTypes[i] === 'number'}
-							<span>Number!</span>
+							<label class="label">
+								<span class="sr-only">Value</span>
+								<input
+									class="input px-2 py-0 text-sm"
+									type="number"
+									bind:value={objectValues[i]}
+									on:blur={(e) => {
+										updateValue(e, i, key);
+									}}
+									autocomplete="off"
+									required
+								/>
+							</label>
 						{/if}
 						{#if objectTypes[i] === 'boolean'}
-							<span>Boolean!</span>
+							<RadioGroup padding="px-1 py-0">
+								<RadioItem
+									bind:group={objectValues[i]}
+									on:change={(e) => {
+										updateValue(e, i, key);
+									}}
+									name="justify"
+									value="true"
+									class="text-sm">True</RadioItem
+								>
+								<RadioItem
+									bind:group={objectValues[i]}
+									on:change={(e) => {
+										updateValue(e, i, key);
+									}}
+									name="justify"
+									value="false"
+									class="text-sm">False</RadioItem
+								>
+							</RadioGroup>
 						{/if}
 					</td>
 				</tr>
