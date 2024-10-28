@@ -13,7 +13,7 @@
 			id: Date.now(),
 			name: '',
 			type: 'object',
-			value: { sampleKey: 'sample value' },
+			value: { key1: '' },
 		};
 		_object = { ...objectVariable.value };
 	} else {
@@ -35,9 +35,15 @@
 
 	// Function to add an empty key-value pair
 	const addKeyValuePair = () => {
-		_object[`key${Object.keys(_object).length + 1}`] = '';
+		const newKeyName = `key${Object.keys(_object).length + 1}`;
+		_object[newKeyName] = '';
 		keyValueCount++;
+		// Push the new key to the arrays
+		objectKeys.push(newKeyName);
+		objectTypes.push('string');
+		objectValues.push('');
 		_object = { ..._object }; // Trigger reactivity
+		console.log('Added key-value pair', _object);
 	};
 
 	// Function to remove a key-value pair
@@ -47,7 +53,12 @@
 			const lastKey = keys[keys.length - 1];
 			delete _object[lastKey];
 			keyValueCount--;
+			// Remove the last key from the arrays
+			objectKeys.pop();
+			objectTypes.pop();
+			objectValues.pop();
 			_object = { ..._object }; // Trigger reactivity
+			console.log('Removed key-value pair', _object);
 		}
 	};
 
