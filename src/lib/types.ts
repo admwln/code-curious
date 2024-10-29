@@ -35,13 +35,13 @@ export interface VariableType {
 	id: number;
 	name: string;
 	type: string;
-	value: string | number | any[] | object;
+	value: string | boolean | number | any[] | object;
 }
 
 export interface StringVariable {
 	id: number;
 	name: string;
-	type: 'string';
+	type: string;
 	value: string;
 }
 
@@ -56,7 +56,7 @@ export interface BooleanVariable {
 	id: number;
 	name: string;
 	type: string;
-	value: string;
+	value: boolean;
 }
 
 export interface ArrayVariable {
