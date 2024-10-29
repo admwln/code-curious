@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { currentPanel } from '$lib/store';
-	import { isRunning } from '$lib/store';
+	import { currentPanel } from '$lib/stores/store';
+	import { isRunning } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
 
 	import {

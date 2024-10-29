@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentPanel } from '$lib/store'; // Import the store
+	import { currentPanel } from '$lib/stores/store'; // Import the store
 </script>
 
 <slot></slot>
