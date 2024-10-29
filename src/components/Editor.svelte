@@ -1,13 +1,41 @@
 <script lang="ts">
-	import { snapshot } from '$lib/stores/snapshots';
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';
 	import ObjectModal from './ObjectModal.svelte';
 	import ArrayModal from './ArrayModal.svelte';
 	import NewVariable from './NewVariable.svelte';
+	// START: New logic for loading and saving snapshots--------------------------------
+	import { snapshot, saveSnapshot, loadSnapshot, resetSnapshot } from '$lib/stores/snapshots';
+	import { onMount } from 'svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	export let data;
+	let lessonId: string;
+
+	// Subscribe to the lessonId from the page store
+	$: lessonId = $page.params.lessonId;
+
+	// Load snapshot data for the current lesson when the component mounts or lessonId changes
+	$: {
+		if (lessonId) {
+			loadSnapshot(lessonId);
+		}
+	}
+
+	// Save the current snapshot before navigating to another route
+	beforeNavigate(() => {
+		if (lessonId) {
+			saveSnapshot(lessonId, $snapshot);
+		}
+	});
+
+	// Reset snapshot on initial load for a fresh start
+	onMount(() => {
+		resetSnapshot();
+	});
+	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables
 	let activeStringId: number | null = null;

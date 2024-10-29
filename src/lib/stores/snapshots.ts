@@ -1,17 +1,16 @@
 // src/lib/stores/snapshots.ts
 import { writable } from 'svelte/store';
-import type { VariableType } from '../types';
 
-// Store to track user-created variables in editor
-export const snapshot = writable<VariableType[]>([]);
+// Store to track user-created variables in editor, for current lesson
+export const snapshot = writable<any[]>([]);
 
 // Stores a snapshot for each lesson using the lessonId as the key
 export const snapshots = writable<Record<string, any>>({});
 
-// Function to save the current snapshot to snapshots under the current lessonId
-export function saveSnapshot(lessonId: string) {
+// Function to save the current Editor snapshot to snapshots under the current lessonId
+export function saveSnapshot(lessonId: string, editorSnapshot: any[]) {
 	snapshots.update((allSnapshots) => {
-		allSnapshots[lessonId] = JSON.parse(JSON.stringify(snapshot)); // Deep clone to avoid reference issues
+		allSnapshots[lessonId] = JSON.parse(JSON.stringify(editorSnapshot)); // Deep clone to avoid reference issues
 		return allSnapshots;
 	});
 }
