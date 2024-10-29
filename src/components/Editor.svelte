@@ -32,9 +32,12 @@
 	});
 
 	// Reset snapshot on initial load for a fresh start
-	onMount(() => {
-		resetSnapshot();
-	});
+	// Possibly not needed
+	//onMount(() => {
+	//console.log('Editor mounted, resetting snapshot');
+	//$snapshot = [];
+	//resetSnapshot();
+	//});
 	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables

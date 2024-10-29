@@ -23,6 +23,7 @@ export function loadSnapshot(lessonId: string) {
 }
 
 // Function to clear snapshot for a new lesson
+// NB currently not in use, $snapshot is reset onMount directly in Editor.svelte
 export function resetSnapshot() {
 	snapshot.set([]); // Clear the current snapshot
 }
