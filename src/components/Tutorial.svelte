@@ -14,6 +14,11 @@
 </script>
 
 <div class="p-4 md:overflow-x-scroll">
+	{#if data.prevLesson}
+		<p class="mb-4">
+			<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; Previous</a>
+		</p>
+	{/if}
 	<div class="markdown">
 		<h2>{data.title}</h2>
 		{#each data.content as content}
@@ -23,8 +28,10 @@
 				{@html marked(content)}
 			{/if}
 		{/each}
-		<p>
-			<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Next lesson &gt;&gt;</a>
-		</p>
 	</div>
+	{#if data.nextLesson}
+		<p>
+			<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Next &gt;&gt;</a>
+		</p>
+	{/if}
 </div>

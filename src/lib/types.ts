@@ -2,7 +2,8 @@ export interface LessonData {
 	tutorial: {
 		title: string;
 		content: string[];
-		nextLesson: string;
+		prevLesson: string | null;
+		nextLesson: string | null;
 	};
 	editor: {
 		defaultCode: string;
