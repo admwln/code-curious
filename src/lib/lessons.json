@@ -2,8 +2,9 @@
 	"welcome-to-funnel": {
 		"tutorial": {
 			"title": "Welcome to Funnel!",
-			"description": "---",
-			"content": "### A fun and interactive way to learn the basics of programming\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nYou can then use this variable in your code.",
+			"content": [
+				"### A fun and interactive way to learn the basics of programming\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nYou can then use this variable in your code. Here's a sample markdown list:\n\n- Item 1\n- Item 2\n- Item 3\n\nClick on the button marked `Variable` to reveal the available data types."
+			],
 			"nextLesson": "lesson-1"
 		},
 		"editor": {
@@ -19,8 +20,11 @@
 	"lesson-1": {
 		"tutorial": {
 			"title": "Lesson 1: Introduction to Variables",
-			"description": "---",
-			"content": "### Variables in JavaScript\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nYou can then use this variable in your code. [Variable Declaration](https://example.com/variable-example.png \"Variable Example\")",
+			"content": [
+				"### Variables in JavaScript\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nClick on the button marked `Variable` to reveal the available data types.\n\nYou can then use this variable in your code.",
+				"{{VariableButton",
+				"### Data Types in JavaScript\n\nJavaScript has several data types, including:\n\n- Number\n- String\n- Boolean\n- Object\n- Array\n- Function\n\nYou can use these data types to store different kinds of data."
+			],
 			"nextLesson": "lesson-2"
 		},
 		"editor": {
@@ -41,8 +45,10 @@
 	"lesson-2": {
 		"tutorial": {
 			"title": "Lesson 2: Introduction to Functions",
-			"description": "---",
-			"content": "### Functions in JavaScript\n\nFunctions are blocks of code that can be reused. Here is how you can declare a function:\n\n```javascript\nfunction sayHello() {\n  console.log('Hello, World!');\n}\n```\n\nYou can then call this function in your code.",
+			"content": [
+				"### Functions in JavaScript\n\nFunctions are blocks of code that can be reused. Here is how you can declare a function:\n\n```javascript\nfunction sayHello() {\n  console.log('Hello, World!');\n}\n```\n\nYou can then call this function in your code.",
+				"{{StringModal, occupation, web developer"
+			],
 			"nextLesson": "lesson-3"
 		},
 		"editor": {
@@ -63,8 +69,9 @@
 	"lesson-3": {
 		"tutorial": {
 			"title": "Lesson 3: Introduction to Loops",
-			"description": "---",
-			"content": "### Loops in JavaScript\n\nLoops are used to repeat a block of code. Here is how you can declare a loop:\n\n```javascript\nfor (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n```\n\nYou can then use this loop in your code.",
+			"content": [
+				"### Loops in JavaScript\n\nLoops are used to repeat a block of code. Here is how you can declare a loop:\n\n```javascript\nfor (let i = 0; i < 5; i++) {\n  console.log(i);\n}\n```\n\nYou can then use this loop in your code."
+			],
 			"nextLesson": "lesson-4"
 		},
 		"editor": {

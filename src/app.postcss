@@ -20,3 +20,23 @@
 .markdown p {
 	margin: 0.5rem 0;
 }
+
+.markdown ul {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.markdown li:before {
+	content: '\2022\00a0';
+	color: white;
+}
+
+.markdown li {
+	margin-left: 1rem;
+	display: flex;
+	align-items: center;
+}
+
+.markdown .flex-auto {
+	flex-grow: 1;
+}
