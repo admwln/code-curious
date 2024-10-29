@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { snapshot } from '$lib/store';
+	import { snapshot } from '$lib/stores/snapshots';
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';

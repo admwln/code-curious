@@ -4,7 +4,7 @@
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { BooleanVariable } from '$lib/types';
-	import { snapshot } from '$lib/store'; // Snapshot store
+	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
