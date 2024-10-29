@@ -259,18 +259,18 @@
 		</tbody>
 	</table>
 
-	<div class="flex gap-1">
+	<div class="flex gap-1 items-center">
 		<button
 			type="button"
 			on:click={addKeyValuePair}
-			class="btn btn-sm variant-ghost-secondary flex gap-2"
-			><FontAwesomeIcon icon={faPlus} /> <span class="sr-only">Add key/value pair</span></button
+			class="btn btn-sm variant-ghost-secondary flex gap-1"
+			><FontAwesomeIcon icon={faPlus} /><span class="sr-only">Add</span>Key-value</button
 		>
 		<button
 			type="button"
 			on:click={removeKeyValuePair}
-			class="btn btn-sm variant-ghost-primary flex gap-2"
-			><FontAwesomeIcon icon={faMinus} /> <span class="sr-only">Remove key/value pair</span></button
+			class="btn btn-sm variant-ghost-primary flex gap-1"
+			><FontAwesomeIcon icon={faMinus} /><span class="sr-only">Remove</span>Key-value</button
 		>
 	</div>
 </div>
