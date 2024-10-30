@@ -117,13 +117,7 @@
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
 			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
 			<svelte:fragment slot="content">
-				<div class="rounded-md bg-slate-800 p-4">
-					{#if lessonData}
-						<Console data={lessonData.console} />
-					{:else}
-						<p>Loading...</p>
-					{/if}
-				</div>
+				<Console data={lessonData.console ? lessonData.console : null} />
 			</svelte:fragment>
 		</AccordionItem>
 	</Accordion>

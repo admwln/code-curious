@@ -9,19 +9,29 @@
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId;
-	console.log('LogModal', variableId);
 
 	let variable: LogVariable;
+	let selectedObject: Record<string, any> = {};
 
-	if (editMode && variableId !== undefined) {
+	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
 		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogVariable;
+		// Check if an object is being logged
+		if (variable.selectedType === 'object') {
+			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
+			selectedObject = { ...selectedVariable.value };
+		}
 	} else {
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
 			type: 'log',
-			message: '',
+			selectedId: null,
+			selectedIndex: null,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+			displayName: '',
 		};
 	}
 
@@ -54,6 +64,18 @@
 	const handleMessageChange = (event: Event) => {
 		variable.message = (event.target as HTMLInputElement).value;
 	};
+
+	const updateSelectedVariable = () => {
+		const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
+		// Update the selected variable type
+		variable.selectedType = selectedVariable.type;
+		variable.displayName = selectedVariable.name;
+		console.log('Selected variable type', selectedVariable.type);
+		//If the selected variable is an object, clone it to selectedObject
+		if (selectedVariable.type === 'object') {
+			selectedObject = { ...selectedVariable.value };
+		}
+	};
 </script>
 
 <Modal {isOpen}>
@@ -64,7 +86,7 @@
 				<h4 class="text-sm text-secondary-500">Console Log</h4>
 			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? 'Edit Console Log' : 'New Console Log'}
+				{editMode ? 'Edit' : 'New Console Log'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -74,7 +96,7 @@
 		on:submit|preventDefault={onSave}
 		class="px-4 flex flex-col gap-4 items-start"
 	>
-		<!-- Value Input -->
+		<!-- Message Input -->
 		<label class="label">
 			<span>Message</span>
 			<input
@@ -83,9 +105,68 @@
 				bind:value={variable.message}
 				on:input={handleMessageChange}
 				name="text"
+				placeholder="Hello, World!"
 				required
 			/>
 		</label>
+		<div class="flex gap-4">
+			<!-- Select variable to log -->
+			<div class="label">
+				<span>Variable</span>
+				<!-- Select Dropdown: when a variable to log is selected (by id), we need
+			 to look up that variable in $snapshot to determine its type -->
+				<select
+					name="variable"
+					class="select"
+					bind:value={variable.selectedId}
+					on:change={updateSelectedVariable}
+				>
+					{#each $snapshot as snap (snap.id)}
+						<!-- Exclude variables of type log -->
+						{#if snap.type !== 'log'}
+							<option value={snap.id}>{snap.name}</option>
+						{/if}
+					{/each}
+				</select>
+			</div>
+			{#if variable.selectedType === 'array'}
+				<label class="flex items-center space-x-2">
+					<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
+					<p>Use index</p>
+				</label>
+			{/if}
+			{#if variable.selectedType === 'object'}
+				<label class="flex items-center space-x-2">
+					<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+					<p>Use key</p>
+				</label>
+			{/if}
+		</div>
+		<!-- Index Input -->
+		{#if variable.selectedType === 'array' && variable.useIndex}
+			<label class="label w-20">
+				<span>Index</span>
+				<input
+					class="input"
+					type="number"
+					min="0"
+					bind:value={variable.selectedIndex}
+					name="index"
+				/>
+			</label>
+		{/if}
+		<!-- Key selection -->
+		{#if variable.selectedType === 'object' && variable.useKey}
+			<div class="label">
+				<span>Key</span>
+				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->
+				<select name="key" class="select" bind:value={variable.selectedKey}>
+					{#each Object.entries(selectedObject) as [key]}
+						<option value={key}>{key}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
 	</form>

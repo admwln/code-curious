@@ -16,6 +16,10 @@ export interface LessonData {
 	};
 }
 
+export interface ConsoleData {
+	defaultCode: string[];
+}
+
 export interface MatterInstance {
 	engine: Matter.Engine;
 	runner: Matter.Runner;
@@ -77,5 +81,12 @@ export interface ObjectVariable {
 export interface LogVariable {
 	id: number;
 	type: string;
-	message: string;
+	message?: string;
+	selectedId: number | null;
+	selectedType?: string;
+	selectedIndex: number | null;
+	selectedKey: string | null;
+	useIndex: boolean;
+	useKey: boolean;
+	displayName: string;
 }

@@ -4,7 +4,6 @@
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let placeholder: string[];
-	console.log('Placeholder prop received', placeholder);
 </script>
 
 {#if placeholder[0] === 'StringModal'}

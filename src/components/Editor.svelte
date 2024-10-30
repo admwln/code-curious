@@ -160,7 +160,9 @@
 							type="button"
 							class="btn btn-sm"
 						>
-							{variable.message ? variable.message : 'Log content'}
+							{variable.useKey ? variable.selectedKey + ' of ' : ''}
+							{variable.message ? variable.message : variable.displayName}
+							{variable.useIndex ? ' at index ' + variable.selectedIndex : ''}
 						</button>
 					{/if}
 				</div>
