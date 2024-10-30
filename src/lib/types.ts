@@ -1,9 +1,9 @@
 export interface LessonData {
 	tutorial: {
 		title: string;
-		description: string;
-		content: string;
-		nextLesson: string;
+		content: string[];
+		prevLesson: string | null;
+		nextLesson: string | null;
 	};
 	editor: {
 		defaultCode: string;
