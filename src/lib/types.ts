@@ -71,5 +71,11 @@ export interface ObjectVariable {
 	id: number;
 	name: string;
 	type: string;
-	value: object;
+	value: Record<string, any>;
+}
+
+export interface LogVariable {
+	id: number;
+	type: string;
+	message: string;
 }

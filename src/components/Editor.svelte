@@ -5,6 +5,12 @@
 	import ObjectModal from './ObjectModal.svelte';
 	import ArrayModal from './ArrayModal.svelte';
 	import NewVariable from './NewVariable.svelte';
+	import LogModal from './LogModal.svelte';
+	import NewLog from './NewLog.svelte';
+
+	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+
 	// START: New logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot, resetSnapshot } from '$lib/stores/snapshots';
 	import { onMount } from 'svelte';
@@ -46,6 +52,7 @@
 	let activeBooleanId: number | null = null;
 	let activeObjectId: number | null = null;
 	let activeArrayId: number | null = null;
+	let activeLogId: number | null = null;
 
 	const handleClose = () => {
 		activeStringId = null;
@@ -53,18 +60,21 @@
 		activeBooleanId = null;
 		activeObjectId = null;
 		activeArrayId = null;
+		activeLogId = null;
 	};
 
 	console.log('Editor data', data);
 </script>
 
-<div class="min-h-[320px] flex flex-col justify-start gap-2">
+<div class="min-h-[320px] flex flex-col justify-start gap-4">
 	<div class="flex flex-col items-start gap-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
 			{#each $snapshot as variable (variable.id)}
 				<div class="flex rounded-l-full border border-secondary-900 text-sm">
-					<div class="bg-secondary-900 rounded-l-full px-2 py-1">{variable.name}</div>
+					<div class="bg-secondary-900 rounded-l-full px-2 py-1">
+						{variable.name ? variable.name : 'Console Log'}
+					</div>
 
 					<!-- String Variable -->
 					{#if variable.type === 'string'}
@@ -141,6 +151,18 @@
 							{/if}
 						</button>
 					{/if}
+					<!-- Log block -->
+					{#if variable.type === 'log'}
+						<button
+							on:click={() => {
+								activeLogId = variable.id;
+							}}
+							type="button"
+							class="btn btn-sm"
+						>
+							{variable.message ? variable.message : 'Log content'}
+						</button>
+					{/if}
 				</div>
 			{/each}
 		{/if}
@@ -192,8 +214,23 @@
 		/>
 	{/if}
 
-	<!-- New Variable Creation -->
-	<div>
-		<NewVariable />
-	</div>
+	{#if activeLogId !== null}
+		<LogModal
+			editMode={true}
+			isOpen={activeLogId !== null}
+			variableId={activeLogId}
+			on:close={handleClose}
+		/>
+	{/if}
+
+	<!-- In the following section, the user can choose to create a new variable,
+	 a new console log, etc -->
+	<section class="flex flex-col gap-2 items-start">
+		<div>
+			<NewVariable />
+		</div>
+		<div>
+			<NewLog />
+		</div>
+	</section>
 </div>
