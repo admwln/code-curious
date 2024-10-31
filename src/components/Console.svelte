@@ -56,10 +56,15 @@
 	const formatArray = (arr: any[]): { summary: string; details: string } => {
 		const summary = `(${arr.length}) ${arr
 			.map((item, index) => {
+				// Except for object items, show the value directly
+				if (typeof item !== 'object') {
+					return formatValue(item);
+				}
+				// For object items, show a summary for the first item and {...} for the rest
 				if (index === 0) {
 					return formatObjectSummary(item);
 				} else {
-					return `&lcub;...&rcub;`;
+					return `&lcub;...&rcub;`; // {...}
 				}
 			})
 			.join(', ')}`;
