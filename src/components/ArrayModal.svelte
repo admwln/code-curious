@@ -38,6 +38,7 @@
 	} else {
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'array',
 			itemType: 'string',
@@ -257,6 +258,7 @@
 									objectVariable={array[i]
 										? {
 												id: Date.now(),
+												blockType: 'variable',
 												name: '',
 												type: 'object',
 												value: { ...array[i] },

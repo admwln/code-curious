@@ -70,78 +70,78 @@
 	<div class="flex flex-col items-start gap-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
-			{#each $snapshot as variable (variable.id)}
-				<div class="flex rounded-l-full border border-secondary-900 text-sm">
-					<div class="bg-secondary-900 rounded-l-full px-2 py-1">
-						{variable.name ? variable.name : 'Console Log'}
+			{#each $snapshot as block (block.id)}
+				<div class="flex border border-secondary-900 text-sm">
+					<div class="bg-secondary-900 px-2 py-1">
+						{block.name ? block.name : 'Console Log'}
 					</div>
 
 					<!-- String Variable -->
-					{#if variable.type === 'string'}
+					{#if block.type === 'string'}
 						<button
 							on:click={() => {
-								activeStringId = variable.id;
+								activeStringId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{variable.value}
+							{block.value}
 						</button>
 					{/if}
 
 					<!-- Number Variable -->
-					{#if variable.type === 'number'}
+					{#if block.type === 'number'}
 						<button
 							on:click={() => {
-								activeNumberId = variable.id;
+								activeNumberId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{variable.value}
+							{block.value}
 						</button>
 					{/if}
 
 					<!-- Boolean Variable -->
-					{#if variable.type === 'boolean'}
+					{#if block.type === 'boolean'}
 						<button
 							on:click={() => {
-								activeBooleanId = variable.id;
+								activeBooleanId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{variable.value}
+							{block.value}
 						</button>
 					{/if}
 					<!-- Object Variable -->
-					{#if variable.type === 'object'}
+					{#if block.type === 'object'}
 						<button
 							on:click={() => {
-								activeObjectId = variable.id;
+								activeObjectId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{JSON.stringify(variable.value).substring(0, 30)} ...
+							{JSON.stringify(block.value).substring(0, 30)} ...
 						</button>
 					{/if}
 
 					<!-- Array Variable -->
-					{#if variable.type === 'array'}
+					{#if block.type === 'array'}
 						<button
 							on:click={() => {
-								activeArrayId = variable.id;
+								activeArrayId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{#if Array.isArray(variable.value)}
-								{#each variable.value as item, i}
+							{#if Array.isArray(block.value)}
+								{#each block.value as item, i}
 									{#if typeof item === 'object' && i === 0}
 										{JSON.stringify(item).substring(0, 30)} ...
 									{:else if typeof item !== 'object'}
-										{#if i < variable.value.length - 1}
+										{#if i < block.value.length - 1}
 											{item},{' '}
 										{:else}
 											{item}
@@ -152,17 +152,17 @@
 						</button>
 					{/if}
 					<!-- Log block -->
-					{#if variable.type === 'log'}
+					{#if block.blockType === 'log'}
 						<button
 							on:click={() => {
-								activeLogId = variable.id;
+								activeLogId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm"
 						>
-							{variable.useKey ? variable.selectedKey + ' of ' : ''}
-							{variable.message ? variable.message : variable.displayName}
-							{variable.useIndex ? ' at index ' + variable.selectedIndex : ''}
+							{block.useKey ? block.selectedKey + ' of ' : ''}
+							{block.message ? block.message : block.displayName}
+							{block.useIndex ? ' at index ' + block.selectedIndex : ''}
 						</button>
 					{/if}
 				</div>

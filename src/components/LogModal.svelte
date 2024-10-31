@@ -8,10 +8,19 @@
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
-	export let variableId;
+	export let variableId: number;
 
 	let variable: LogVariable;
 	let selectedObject: Record<string, any> = {};
+
+	// Snapshot holds several block types, variable is one type of block, we need a count of all variable blocks
+	let variableCount: number = 0;
+	$snapshot.forEach((v) => {
+		if (v.blockType === 'variable') {
+			variableCount++;
+		}
+	});
+	console.log('Variable count', variableCount);
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
@@ -25,7 +34,7 @@
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
-			type: 'log',
+			blockType: 'log',
 			selectedId: null,
 			selectedIndex: null,
 			selectedKey: null,
@@ -83,10 +92,10 @@
 		<div class="flex flex-col">
 			<!-- Display item type if in edit mode -->
 			{#if editMode}
-				<h4 class="text-sm text-secondary-500">Console Log</h4>
+				<h4 class="text-sm text-secondary-500">Edit</h4>
 			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? 'Edit' : 'New Console Log'}
+				{editMode ? 'Console Log' : 'New Console Log'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -109,39 +118,42 @@
 				required
 			/>
 		</label>
-		<div class="flex gap-4">
-			<!-- Select variable to log -->
-			<div class="label">
-				<span>Variable</span>
-				<!-- Select Dropdown: when a variable to log is selected (by id), we need
+		<!-- Check if there is a variable to log -->
+		{#if variableCount > 0}
+			<div class="flex gap-4">
+				<!-- Select variable to log -->
+				<div class="label">
+					<span>Variable</span>
+					<!-- Select Dropdown: when a variable to log is selected (by id), we need
 			 to look up that variable in $snapshot to determine its type -->
-				<select
-					name="variable"
-					class="select"
-					bind:value={variable.selectedId}
-					on:change={updateSelectedVariable}
-				>
-					{#each $snapshot as snap (snap.id)}
-						<!-- Exclude variables of type log -->
-						{#if snap.type !== 'log'}
-							<option value={snap.id}>{snap.name}</option>
-						{/if}
-					{/each}
-				</select>
+					<select
+						name="variable"
+						class="select"
+						bind:value={variable.selectedId}
+						on:change={updateSelectedVariable}
+					>
+						{#each $snapshot as snap (snap.id)}
+							<!-- Exclude variables of type log -->
+							{#if snap.blockType !== 'log'}
+								<option value={snap.id}>{snap.name}</option>
+							{/if}
+						{/each}
+					</select>
+				</div>
+				{#if variable.selectedType === 'array'}
+					<label class="flex items-center space-x-2">
+						<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
+						<p>Use index</p>
+					</label>
+				{/if}
+				{#if variable.selectedType === 'object'}
+					<label class="flex items-center space-x-2">
+						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+						<p>Use key</p>
+					</label>
+				{/if}
 			</div>
-			{#if variable.selectedType === 'array'}
-				<label class="flex items-center space-x-2">
-					<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
-					<p>Use index</p>
-				</label>
-			{/if}
-			{#if variable.selectedType === 'object'}
-				<label class="flex items-center space-x-2">
-					<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
-					<p>Use key</p>
-				</label>
-			{/if}
-		</div>
+		{/if}
 		<!-- Index Input -->
 		{#if variable.selectedType === 'array' && variable.useIndex}
 			<label class="label w-20">

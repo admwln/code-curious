@@ -16,6 +16,7 @@
 	} else {
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'number',
 			value: 0,
