@@ -8,7 +8,7 @@
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
 
-	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	// START: New logic for loading and saving snapshots--------------------------------
@@ -16,6 +16,7 @@
 	import { onMount } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import Console from './Console.svelte';
 
 	export let data;
 	let lessonId: string;
@@ -72,8 +73,12 @@
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
 				<div class="flex border border-secondary-900 text-sm">
-					<div class="bg-secondary-900 px-2 py-1">
-						{block.name ? block.name : 'Console Log'}
+					<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
+						{#if block.name}
+							{block.name}
+						{:else}
+							<FontAwesomeIcon icon={faEye} /> Console Log
+						{/if}
 					</div>
 
 					<!-- String Variable -->

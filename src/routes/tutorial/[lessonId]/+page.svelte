@@ -10,7 +10,7 @@
 		faAngleUp,
 		faChalkboardUser,
 		faCode,
-		faDesktop,
+		faEye,
 		faFilter,
 		faRotateRight,
 		faStop,
@@ -114,7 +114,7 @@
 		<AccordionItem open>
 			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faAngleUp} /></svelte:fragment>
 			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faAngleDown} /></svelte:fragment>
-			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faDesktop} /></svelte:fragment>
+			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faEye} /></svelte:fragment>
 			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
 			<svelte:fragment slot="content">
 				<Console data={lessonData.console ? lessonData.console : null} />
