@@ -93,11 +93,19 @@
 							{block.message}
 						{/if}
 						{#if block.selectedId && block.selectedType !== 'array' && block.selectedType !== 'object'}
+							<!-- Selected variable is string, number, boolean -->
 							{getVariableToLog(block.selectedId).value}
+						{:else if block.selectedId && block.selectedType === 'array' && block.useIndex}
+							<!-- Selected variable is array with index -->
+							{getVariableToLog(block.selectedId).value[block.selectedIndex]}
+						{:else if block.selectedId && block.selectedType === 'object' && block.useKey}
+							<!-- Selected variable is object with key -->
+							{getVariableToLog(block.selectedId).value[block.selectedKey]}
 						{/if}
 					</code>
 				</p>
-				{#if block.selectedId && block.selectedType === 'array'}
+				{#if block.selectedId && block.selectedType === 'array' && !block.useIndex}
+					<!-- Selected variable is array without index -->
 					<details>
 						<summary
 							><code>{@html formatArray(getVariableToLog(block.selectedId).value).summary}</code
@@ -107,7 +115,8 @@
 							></pre>
 					</details>
 				{/if}
-				{#if block.selectedId && block.selectedType === 'object'}
+				{#if block.selectedId && block.selectedType === 'object' && !block.useKey}
+					<!-- Selected variable is object without key -->
 					<details>
 						<summary>
 							<code>{@html formatObjectSummary(getVariableToLog(block.selectedId).value)}</code>
@@ -115,8 +124,8 @@
 						<pre><code>{@html formatObject(getVariableToLog(block.selectedId).value)}</code></pre>
 					</details>
 				{/if}
+				<hr class="opacity-50" />
 			{/if}
-			<hr class="opacity-50" />
 		{/each}
 	{/if}
 </div>
