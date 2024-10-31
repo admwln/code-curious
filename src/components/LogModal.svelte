@@ -182,7 +182,12 @@
 			<div class="label">
 				<span>Key</span>
 				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->
-				<select name="key" class="select" bind:value={variable.selectedKey}>
+				<select
+					name="key"
+					class="select"
+					bind:value={variable.selectedKey}
+					size={Object.keys(selectedObject).length}
+				>
 					{#each Object.entries(selectedObject) as [key]}
 						<option value={key}>{key}</option>
 					{/each}
