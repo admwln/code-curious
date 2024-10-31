@@ -25,6 +25,11 @@
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
 		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogVariable;
+		// Check if an array is being logged
+		if (variable.selectedType === 'array') {
+			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
+			arrayLength = selectedVariable.value.length;
+		}
 		// Check if an object is being logged
 		if (variable.selectedType === 'object') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
@@ -36,7 +41,7 @@
 			id: Date.now(),
 			blockType: 'log',
 			selectedId: null,
-			selectedIndex: null,
+			selectedIndex: 0,
 			selectedKey: null,
 			useIndex: false,
 			useKey: false,
