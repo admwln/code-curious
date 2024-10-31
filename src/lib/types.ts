@@ -16,6 +16,10 @@ export interface LessonData {
 	};
 }
 
+export interface ConsoleData {
+	defaultCode: string[];
+}
+
 export interface MatterInstance {
 	engine: Matter.Engine;
 	runner: Matter.Runner;
@@ -32,6 +36,7 @@ export interface InitialBody {
 }
 
 export interface VariableType {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
@@ -39,6 +44,7 @@ export interface VariableType {
 }
 
 export interface StringVariable {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
@@ -46,6 +52,7 @@ export interface StringVariable {
 }
 
 export interface NumberVariable {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
@@ -53,6 +60,7 @@ export interface NumberVariable {
 }
 
 export interface BooleanVariable {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
@@ -60,6 +68,7 @@ export interface BooleanVariable {
 }
 
 export interface ArrayVariable {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
@@ -68,8 +77,22 @@ export interface ArrayVariable {
 }
 
 export interface ObjectVariable {
+	blockType: string;
 	id: number;
 	name: string;
 	type: string;
-	value: object;
+	value: Record<string, any>;
+}
+
+export interface LogVariable {
+	blockType: string;
+	id: number;
+	message?: string;
+	selectedId: number | null;
+	selectedType?: string;
+	selectedIndex: number | null;
+	selectedKey: string | null;
+	useIndex: boolean;
+	useKey: boolean;
+	displayName: string;
 }

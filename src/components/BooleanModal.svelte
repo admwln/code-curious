@@ -21,6 +21,7 @@
 	} else {
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'boolean',
 			value: false,

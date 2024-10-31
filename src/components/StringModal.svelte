@@ -20,6 +20,7 @@
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'string',
 			value: '',

@@ -21,6 +21,7 @@
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'object',
 			value: { key1: '' },
@@ -103,6 +104,7 @@
 				objectVariable={variable
 					? {
 							id: Date.now(),
+							blockType: 'variable',
 							name: '',
 							type: 'object',
 							value: { ...variable.value },
