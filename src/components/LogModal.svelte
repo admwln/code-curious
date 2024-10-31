@@ -8,13 +8,13 @@
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
-	export let variableId: number;
+	export let variableId: number | null;
 
 	let variable: LogVariable;
 	let selectedObject: Record<string, any> = {};
+	let variableCount: number = 0; // To determine if to show the variable selection dropdown
+	let arrayLength: number;
 
-	// Snapshot holds several block types, variable is one type of block, we need a count of all variable blocks
-	let variableCount: number = 0;
 	$snapshot.forEach((v) => {
 		if (v.blockType === 'variable') {
 			variableCount++;
@@ -80,6 +80,10 @@
 		variable.selectedType = selectedVariable.type;
 		variable.displayName = selectedVariable.name;
 		console.log('Selected variable type', selectedVariable.type);
+		// If variable is an array, get the length
+		if (selectedVariable.type === 'array') {
+			arrayLength = selectedVariable.value.length;
+		}
 		//If the selected variable is an object, clone it to selectedObject
 		if (selectedVariable.type === 'object') {
 			selectedObject = { ...selectedVariable.value };
@@ -162,6 +166,7 @@
 					class="input"
 					type="number"
 					min="0"
+					max={arrayLength - 1}
 					bind:value={variable.selectedIndex}
 					name="index"
 				/>
