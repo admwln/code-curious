@@ -8,15 +8,15 @@
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
 
-	import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faEye } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
-	// START: New logic for loading and saving snapshots--------------------------------
-	import { snapshot, saveSnapshot, loadSnapshot, resetSnapshot } from '$lib/stores/snapshots';
-	import { onMount } from 'svelte';
+	// START: Logic for loading and saving snapshots--------------------------------
+	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Console from './Console.svelte';
+
+	$: _snapshot = $snapshot;
 
 	export let data;
 	let lessonId: string;
@@ -34,17 +34,9 @@
 	// Save the current snapshot before navigating to another route
 	beforeNavigate(() => {
 		if (lessonId) {
-			saveSnapshot(lessonId, $snapshot);
+			saveSnapshot(lessonId, _snapshot);
 		}
 	});
-
-	// Reset snapshot on initial load for a fresh start
-	// Possibly not needed
-	//onMount(() => {
-	//console.log('Editor mounted, resetting snapshot');
-	//$snapshot = [];
-	//resetSnapshot();
-	//});
 	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables
@@ -64,14 +56,20 @@
 		activeLogId = null;
 	};
 
+	// Get name of variable with the given ID
+	const getVariableName = (id: number) => {
+		const variable = _snapshot.find((v) => v.id === id);
+		return variable ? variable.name : '';
+	};
+
 	console.log('Editor data', data);
 </script>
 
 <div class="min-h-[320px] flex flex-col justify-start gap-4">
 	<div class="flex flex-col items-start gap-2">
 		<!--- Loop through each object in snapshot -->
-		{#if $snapshot.length > 0}
-			{#each $snapshot as block (block.id)}
+		{#if _snapshot.length > 0}
+			{#each _snapshot as block (block.id)}
 				<div class="flex border border-secondary-900 text-sm">
 					<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
 						{#if block.name}
@@ -166,9 +164,11 @@
 							class="btn btn-sm"
 						>
 							{block.message ? `"${block.message}"` : ``}
-							{block.displayName && !block.useKey && !block.useIndex ? `${block.displayName}` : ``}
-							{block.useKey ? `${block.displayName}.${block.selectedKey}` : ``}
-							{block.useIndex ? `${block.displayName}[${block.selectedIndex}]` : ``}
+							{block.selectedId && !block.useKey && !block.useIndex
+								? `${getVariableName(block.selectedId)}`
+								: ``}
+							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
+							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
 						</button>
 					{/if}
 				</div>

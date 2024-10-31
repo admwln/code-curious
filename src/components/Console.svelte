@@ -3,21 +3,27 @@
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
 
-	import { formatObject, formatObjectSummary, formatArray } from '$lib/utils/logFormat';
+	import {
+		formatArray,
+		formatObject,
+		formatObjectSummary,
+		formatValue,
+	} from '$lib/utils/logFormat';
 
 	export let data: ConsoleData | null;
 
-	$: running = $isRunning;
+	$: _isRunning = $isRunning;
+	$: _snapshot = $snapshot;
 
 	// Function to retrieve and return any selected variable from snapshot
 	const getVariableToLog = (selectedId: number): Record<string, any> => {
-		return $snapshot.find((v) => v.id === selectedId);
+		return _snapshot.find((v) => v.id === selectedId);
 	};
 </script>
 
 <div class="rounded-md bg-slate-800 p-4 flex flex-col gap-2">
-	{#if running && data}
-		{#each $snapshot as block}
+	{#if _isRunning && data}
+		{#each _snapshot as block}
 			{#if block.blockType === 'log'}
 				<p>
 					<code>
@@ -26,13 +32,13 @@
 						{/if}
 						{#if block.selectedId && block.selectedType !== 'array' && block.selectedType !== 'object'}
 							<!-- Selected variable is string, number, boolean -->
-							{getVariableToLog(block.selectedId).value}
+							{@html formatValue(getVariableToLog(block.selectedId).value)}
 						{:else if block.selectedId && block.selectedType === 'array' && block.useIndex}
 							<!-- Selected variable is array with index -->
-							{getVariableToLog(block.selectedId).value[block.selectedIndex]}
+							{@html formatValue(getVariableToLog(block.selectedId).value[block.selectedIndex])}
 						{:else if block.selectedId && block.selectedType === 'object' && block.useKey}
 							<!-- Selected variable is object with key -->
-							{getVariableToLog(block.selectedId).value[block.selectedKey]}
+							{@html formatValue(getVariableToLog(block.selectedId).value[block.selectedKey])}
 						{/if}
 					</code>
 				</p>

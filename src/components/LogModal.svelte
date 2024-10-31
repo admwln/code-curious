@@ -10,6 +10,8 @@
 	export let isOpen: boolean;
 	export let variableId: number | null;
 
+	$: _snapshot = $snapshot;
+
 	let variable: LogVariable;
 	let selectedObject: Record<string, any> = {};
 	let variableCount: number = 0; // To determine if to show the variable selection dropdown
@@ -56,21 +58,18 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Console log deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};
@@ -80,7 +79,7 @@
 	};
 
 	const updateSelectedVariable = () => {
-		const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
+		const selectedVariable = _snapshot.find((v) => v.id === variable.selectedId);
 		// Update the selected variable type
 		variable.selectedType = selectedVariable.type;
 		variable.displayName = selectedVariable.name;
@@ -134,14 +133,14 @@
 				<div class="label">
 					<span>Variable</span>
 					<!-- Select Dropdown: when a variable to log is selected (by id), we need
-			 to look up that variable in $snapshot to determine its type -->
+			 to look up that variable in _snapshot to determine its type -->
 					<select
 						name="variable"
 						class="select"
 						bind:value={variable.selectedId}
 						on:change={updateSelectedVariable}
 					>
-						{#each $snapshot as snap (snap.id)}
+						{#each _snapshot as snap (snap.id)}
 							<!-- Exclude variables of type log -->
 							{#if snap.blockType !== 'log'}
 								<option value={snap.id}>{snap.name}</option>

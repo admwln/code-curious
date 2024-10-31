@@ -27,6 +27,8 @@
 	// Import the `load` function result from page.server.ts
 	export let data;
 
+	$: _isRunning = $isRunning;
+
 	let lessonData = data.lessonData;
 	let lessonId = data.lessonId; // Use the lessonId passed from the load function
 
@@ -135,10 +137,10 @@
 	>
 		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
 		<button type="button" on:click={toggleRun} class="btn btn-sm bg-primary-900 flex gap-2">
-			{#if $isRunning}
+			{#if _isRunning}
 				<FontAwesomeIcon icon={faStop} /> Running
 			{/if}
-			{#if !$isRunning}
+			{#if !_isRunning}
 				<FontAwesomeIcon icon={faRotateRight} /> Run
 			{/if}
 		</button>
