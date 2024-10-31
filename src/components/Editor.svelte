@@ -166,8 +166,9 @@
 							class="btn btn-sm"
 						>
 							{block.message ? `"${block.message}"` : ``}
-							{block.useKey ? `${block.displayName}.${block.selectedKey}` : ``}
-							{block.useIndex ? `${block.displayName}[${block.selectedIndex}]` : ``}
+							{block.displayName ? `${block.displayName}` : ``}
+							{block.useKey ? `.${block.selectedKey}` : ``}
+							{block.useIndex ? `[${block.selectedIndex}]` : ``}
 						</button>
 					{/if}
 				</div>
