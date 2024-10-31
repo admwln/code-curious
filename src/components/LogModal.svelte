@@ -133,7 +133,7 @@
 				<div class="label">
 					<span>Variable</span>
 					<!-- Select Dropdown: when a variable to log is selected (by id), we need
-			 to look up that variable in _snapshot to determine its type -->
+			 to look up that variable in to determine its type -->
 					<select
 						name="variable"
 						class="select"

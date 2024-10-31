@@ -47,7 +47,6 @@
 		} else {
 			// Add variable to snapshot store
 			$snapshot = [..._snapshot, variable];
-			console.log('New variable added', _snapshot);
 		}
 		dispatch('close');
 	};

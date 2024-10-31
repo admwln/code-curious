@@ -14,9 +14,6 @@
 	let scale: number = 0.8;
 	let innerWidth: number;
 
-	// Track the running state reactively
-	$: _isRunning = $isRunning;
-
 	// Helper to clean up the current Matter.js instance
 	function cleanupMatterInstance() {
 		if (matterInstance) {
@@ -36,7 +33,7 @@
 	$: if (data && matterContainer) {
 		cleanupMatterInstance(); // First, clean up the old instance
 		// Toggle running state to false, NB must be run after cleanup
-		_isRunning = false;
+		$isRunning = false;
 		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color, scale); // Reinitialize with new data
 	}
 
@@ -83,7 +80,7 @@
 	});
 
 	// Reactively control Matter.js based on the running state
-	$: if (_isRunning && matterInstance) {
+	$: if ($isRunning && matterInstance) {
 		resetBodies(matterInstance.engine);
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {

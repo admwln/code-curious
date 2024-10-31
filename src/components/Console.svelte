@@ -12,18 +12,15 @@
 
 	export let data: ConsoleData | null;
 
-	$: _isRunning = $isRunning;
-	$: _snapshot = $snapshot;
-
 	// Function to retrieve and return any selected variable from snapshot
 	const getVariableToLog = (selectedId: number): Record<string, any> => {
-		return _snapshot.find((v) => v.id === selectedId);
+		return $snapshot.find((v) => v.id === selectedId);
 	};
 </script>
 
 <div class="rounded-md bg-slate-800 p-4 flex flex-col gap-2">
-	{#if _isRunning && data}
-		{#each _snapshot as block}
+	{#if $isRunning && data}
+		{#each $snapshot as block}
 			{#if block.blockType === 'log'}
 				<p>
 					<code>
