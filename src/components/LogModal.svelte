@@ -13,7 +13,7 @@
 	$: _snapshot = $snapshot;
 
 	let variable: LogBlock;
-	let selectedObject: Record<string, any> = {};
+	let selectedObject: Record<string, any>;
 	let variableCount: number = 0; // To determine if to show the variable selection dropdown
 	let arrayLength: number;
 
