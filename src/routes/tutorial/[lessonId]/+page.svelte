@@ -71,7 +71,19 @@
 				//if (block.blockType === 'matterAction') await executeMatterAction(block);
 			} catch (error: any) {
 				// Capture and log error to the Console component
-				consoleOutput.update((output) => [...output, `Error: ${error.message}`]);
+				// Create a new log block with the error message
+				const errorBlock: LogBlock = {
+					id: Date.now(),
+					blockType: 'log',
+					message: `Error: ${error.message}`,
+					selectedId: null,
+					selectedIndex: 0,
+					selectedKey: null,
+					useIndex: false,
+					useKey: false,
+					selectedType: 'string',
+				};
+				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
 
