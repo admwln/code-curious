@@ -84,7 +84,7 @@ export interface ObjectVariable {
 	value: Record<string, any>;
 }
 
-export interface LogVariable {
+export interface LogBlock {
 	blockType: string;
 	id: number;
 	message?: string;
@@ -94,5 +94,4 @@ export interface LogVariable {
 	selectedKey: string | null;
 	useIndex: boolean;
 	useKey: boolean;
-	displayName: string;
 }

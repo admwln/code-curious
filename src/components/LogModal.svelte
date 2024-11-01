@@ -3,14 +3,16 @@
 	import Modal from './Modal.svelte';
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import type { LogVariable } from '$lib/types';
+	import type { LogBlock } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId: number | null;
 
-	let variable: LogVariable;
+	$: _snapshot = $snapshot;
+
+	let variable: LogBlock;
 	let selectedObject: Record<string, any> = {};
 	let variableCount: number = 0; // To determine if to show the variable selection dropdown
 	let arrayLength: number;
@@ -20,17 +22,20 @@
 			variableCount++;
 		}
 	});
-	console.log('Variable count', variableCount);
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
-		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogVariable;
+		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogBlock;
 		// Check if an array is being logged
 		if (variable.selectedType === 'array') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
 			arrayLength = selectedVariable.value.length;
+			// If the selected variable is an array of objects, set selectedObject to array[0]
+			if (selectedVariable.value[0] && typeof selectedVariable.value[0] === 'object') {
+				selectedObject = { ...selectedVariable.value[0] };
+			}
 		}
-		// Check if an object is being logged
+		// Check if an object is being logged and update selectedObject
 		if (variable.selectedType === 'object') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
 			selectedObject = { ...selectedVariable.value };
@@ -45,7 +50,6 @@
 			selectedKey: null,
 			useIndex: false,
 			useKey: false,
-			displayName: '',
 		};
 	}
 
@@ -56,21 +60,18 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Console log deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};
@@ -80,14 +81,17 @@
 	};
 
 	const updateSelectedVariable = () => {
-		const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
+		const selectedVariable = _snapshot.find((v) => v.id === variable.selectedId);
 		// Update the selected variable type
 		variable.selectedType = selectedVariable.type;
-		variable.displayName = selectedVariable.name;
-		console.log('Selected variable type', selectedVariable.type);
 		// If variable is an array, get the length
 		if (selectedVariable.type === 'array') {
 			arrayLength = selectedVariable.value.length;
+			// If the selected variable is an array of objects, set selectedObject to {}
+			if (selectedVariable.value[0] && typeof selectedVariable.value[0] === 'object') {
+				selectedObject = { ...selectedVariable.value[0] };
+				console.log('Array of objects, selectedObject', selectedObject);
+			}
 		}
 		//If the selected variable is an object, clone it to selectedObject
 		if (selectedVariable.type === 'object') {
@@ -134,14 +138,14 @@
 				<div class="label">
 					<span>Variable</span>
 					<!-- Select Dropdown: when a variable to log is selected (by id), we need
-			 to look up that variable in $snapshot to determine its type -->
+			 to look up that variable in to determine its type -->
 					<select
 						name="variable"
 						class="select"
 						bind:value={variable.selectedId}
 						on:change={updateSelectedVariable}
 					>
-						{#each $snapshot as snap (snap.id)}
+						{#each _snapshot as snap (snap.id)}
 							<!-- Exclude variables of type log -->
 							{#if snap.blockType !== 'log'}
 								<option value={snap.id}>{snap.name}</option>
@@ -152,7 +156,7 @@
 				{#if variable.selectedType === 'array'}
 					<label class="flex items-center space-x-2">
 						<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
-						<p>Use index</p>
+						<p>Index</p>
 					</label>
 				{/if}
 				{#if variable.selectedType === 'object'}
@@ -165,20 +169,46 @@
 		{/if}
 		<!-- Index Input -->
 		{#if variable.selectedType === 'array' && variable.useIndex}
-			<label class="label w-20">
-				<span>Index</span>
-				<input
-					class="input"
-					type="number"
-					min="0"
-					max={arrayLength - 1}
-					bind:value={variable.selectedIndex}
-					name="index"
-				/>
-			</label>
+			<div class="flex gap-4">
+				<label class="label w-20">
+					<span>Index</span>
+					<input
+						class="input"
+						type="number"
+						min="0"
+						max={arrayLength - 1}
+						bind:value={variable.selectedIndex}
+						name="index"
+					/>
+				</label>
+				<!-- If it's an array of objects, option to select Key -->
+				{#if variable.useIndex && variable.useKey && selectedObject}
+					<label class="flex items-center space-x-2">
+						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+						<p>Key</p>
+					</label>
+				{/if}
+			</div>
 		{/if}
 		<!-- Key selection -->
 		{#if variable.selectedType === 'object' && variable.useKey}
+			<div class="label">
+				<span>Key</span>
+				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->
+				<select
+					name="key"
+					class="select"
+					bind:value={variable.selectedKey}
+					size={Object.keys(selectedObject).length}
+				>
+					{#each Object.entries(selectedObject) as [key]}
+						<option value={key}>{key}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
+		<!-- Key selection for object in array -->
+		{#if variable.selectedType === 'array' && variable.useIndex && variable.useKey}
 			<div class="label">
 				<span>Key</span>
 				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->

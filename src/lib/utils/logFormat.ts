@@ -24,7 +24,7 @@ export const formatObjectSummary = (obj: Record<string, any>): string => {
 // Helper to format individual values based on type
 export const formatValue = (value: any): string => {
 	if (typeof value === 'string') {
-		return `<span style="color: lightgreen;">'${value}'</span>`;
+		return `<span style="color: lightgreen;">${value}</span>`;
 	} else if (typeof value === 'number') {
 		return `<span style="color: orange;">${value}</span>`;
 	} else if (typeof value === 'boolean') {

@@ -11,6 +11,8 @@
 	export let variableId;
 	let variable: NumberVariable;
 
+	$: _snapshot = $snapshot;
+
 	if (variableId !== undefined) {
 		variable = $snapshot.find((v) => v.id === variableId) as NumberVariable;
 	} else {
@@ -30,21 +32,18 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};

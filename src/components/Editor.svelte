@@ -8,15 +8,13 @@
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
 
-	import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faEye } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
-	// START: New logic for loading and saving snapshots--------------------------------
-	import { snapshot, saveSnapshot, loadSnapshot, resetSnapshot } from '$lib/stores/snapshots';
-	import { onMount } from 'svelte';
+	// START: Logic for loading and saving snapshots--------------------------------
+	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Console from './Console.svelte';
 
 	export let data;
 	let lessonId: string;
@@ -37,14 +35,6 @@
 			saveSnapshot(lessonId, $snapshot);
 		}
 	});
-
-	// Reset snapshot on initial load for a fresh start
-	// Possibly not needed
-	//onMount(() => {
-	//console.log('Editor mounted, resetting snapshot');
-	//$snapshot = [];
-	//resetSnapshot();
-	//});
 	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables
@@ -62,6 +52,12 @@
 		activeObjectId = null;
 		activeArrayId = null;
 		activeLogId = null;
+	};
+
+	// Get name of variable with the given ID
+	const getVariableName = (id: number) => {
+		const variable = $snapshot.find((v) => v.id === id);
+		return variable ? variable.name : '';
 	};
 
 	console.log('Editor data', data);
@@ -166,9 +162,11 @@
 							class="btn btn-sm"
 						>
 							{block.message ? `"${block.message}"` : ``}
-							{block.displayName && !block.useKey && !block.useIndex ? `${block.displayName}` : ``}
-							{block.useKey ? `${block.displayName}.${block.selectedKey}` : ``}
-							{block.useIndex ? `${block.displayName}[${block.selectedIndex}]` : ``}
+							{block.selectedId && !block.useKey && !block.useIndex
+								? `${getVariableName(block.selectedId)}`
+								: ``}
+							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
+							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
 						</button>
 					{/if}
 				</div>

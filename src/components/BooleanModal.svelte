@@ -15,6 +15,8 @@
 	// The value of the radio button must be a string. Is converted to boolean when saving.
 	let _boolString: string;
 
+	$: _snapshot = $snapshot;
+
 	if (variableId) {
 		variable = $snapshot.find((v) => v.id === variableId) as BooleanVariable;
 		_boolString = variable.value ? 'true' : 'false';
@@ -36,8 +38,7 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
@@ -45,16 +46,14 @@
 		if (editMode) {
 			// Convert string to boolean and update variable value
 			variable.value = _boolString === 'true';
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Convert string to boolean and update variable value
 			variable.value = _boolString === 'true';
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};

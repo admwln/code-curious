@@ -24,6 +24,8 @@
 	let itemCount = 1;
 	let array: any[] = [];
 
+	$: _snapshot = $snapshot;
+
 	//If array of booleans, store as strings temporarily and convert to booleans on save
 	let _boolStringArray: string[] = [];
 
@@ -53,8 +55,7 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
@@ -69,12 +70,10 @@
 		// Update snapshot store
 		if (!editMode) {
 			// Add new variable to snapshot store, if not in edit mode
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		} else {
 			// Update existing variable in snapshot store
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 		}
 		dispatch('close');
 	};
