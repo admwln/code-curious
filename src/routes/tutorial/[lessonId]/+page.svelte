@@ -63,7 +63,6 @@
 	async function runner() {
 		isRunning.set(true); // Set the running state to true at the start
 
-		console.log('snapshot accessed in runner', $snapshot);
 		for (const block of $snapshot) {
 			try {
 				if (block.blockType === 'variable') continue;
