@@ -22,7 +22,6 @@
 			variableCount++;
 		}
 	});
-	console.log('Variable count', variableCount);
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
@@ -31,8 +30,12 @@
 		if (variable.selectedType === 'array') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
 			arrayLength = selectedVariable.value.length;
+			// If the selected variable is an array of objects, set selectedObject to array[0]
+			if (selectedVariable.value[0] && typeof selectedVariable.value[0] === 'object') {
+				selectedObject = { ...selectedVariable.value[0] };
+			}
 		}
-		// Check if an object is being logged
+		// Check if an object is being logged and update selectedObject
 		if (variable.selectedType === 'object') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
 			selectedObject = { ...selectedVariable.value };
@@ -81,10 +84,14 @@
 		const selectedVariable = _snapshot.find((v) => v.id === variable.selectedId);
 		// Update the selected variable type
 		variable.selectedType = selectedVariable.type;
-		console.log('Selected variable type', selectedVariable.type);
 		// If variable is an array, get the length
 		if (selectedVariable.type === 'array') {
 			arrayLength = selectedVariable.value.length;
+			// If the selected variable is an array of objects, set selectedObject to {}
+			if (selectedVariable.value[0] && typeof selectedVariable.value[0] === 'object') {
+				selectedObject = { ...selectedVariable.value[0] };
+				console.log('Array of objects, selectedObject', selectedObject);
+			}
 		}
 		//If the selected variable is an object, clone it to selectedObject
 		if (selectedVariable.type === 'object') {
@@ -149,7 +156,7 @@
 				{#if variable.selectedType === 'array'}
 					<label class="flex items-center space-x-2">
 						<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
-						<p>Use index</p>
+						<p>Index</p>
 					</label>
 				{/if}
 				{#if variable.selectedType === 'object'}
@@ -162,20 +169,46 @@
 		{/if}
 		<!-- Index Input -->
 		{#if variable.selectedType === 'array' && variable.useIndex}
-			<label class="label w-20">
-				<span>Index</span>
-				<input
-					class="input"
-					type="number"
-					min="0"
-					max={arrayLength - 1}
-					bind:value={variable.selectedIndex}
-					name="index"
-				/>
-			</label>
+			<div class="flex gap-4">
+				<label class="label w-20">
+					<span>Index</span>
+					<input
+						class="input"
+						type="number"
+						min="0"
+						max={arrayLength - 1}
+						bind:value={variable.selectedIndex}
+						name="index"
+					/>
+				</label>
+				<!-- If it's an array of objects, option to select Key -->
+				{#if variable.useIndex && variable.useKey && selectedObject}
+					<label class="flex items-center space-x-2">
+						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+						<p>Key</p>
+					</label>
+				{/if}
+			</div>
 		{/if}
 		<!-- Key selection -->
 		{#if variable.selectedType === 'object' && variable.useKey}
+			<div class="label">
+				<span>Key</span>
+				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->
+				<select
+					name="key"
+					class="select"
+					bind:value={variable.selectedKey}
+					size={Object.keys(selectedObject).length}
+				>
+					{#each Object.entries(selectedObject) as [key]}
+						<option value={key}>{key}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
+		<!-- Key selection for object in array -->
+		{#if variable.selectedType === 'array' && variable.useIndex && variable.useKey}
 			<div class="label">
 				<span>Key</span>
 				<!-- Select Dropdown: when an object is selected for console logging, and the user has opted to specify a key to log, we need to display the available keys -->

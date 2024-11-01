@@ -13,8 +13,7 @@
 	} from '$lib/utils/logFormat';
 
 	//We probably don't need to pass from lesson data to the console
-	export let data: ConsoleData | null;
-	console.log('Console data', data);
+	//export let data: ConsoleData | null;
 
 	// Function to retrieve and return any selected variable from snapshot
 	const getVariableToLog = (selectedId: number): Record<string, any> => {
@@ -39,29 +38,42 @@
 </script>
 
 <div bind:this={consoleScrollContainer} class="max-h-[240px] overflow-scroll">
-	<div bind:this={consoleContainer} class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-8">
+	<div
+		bind:this={consoleContainer}
+		class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-[64px]"
+	>
 		{#each $consoleOutput as log}
-			<p in:fade={{ duration: 300 }}>
+			<p in:fade={{ duration: 150 }}>
 				<code>
 					{#if log.message && log.message !== ''}
 						{log.message}
 					{/if}
+					<!-- Selected variable is string, number, boolean: -->
 					{#if log.selectedId && log.selectedType !== 'array' && log.selectedType !== 'object'}
-						<!-- Selected variable is string, number, boolean -->
 						{@html formatValue(getVariableToLog(log.selectedId).value)}
-					{:else if log.selectedId && log.selectedType === 'array' && log.useIndex && log.selectedIndex}
-						<!-- Selected variable is array with index -->
-						{@html formatValue(getVariableToLog(log.selectedId).value[log.selectedIndex])}
-					{:else if log.selectedId && log.selectedType === 'object' && log.useKey && log.selectedKey}
-						<!-- Selected variable is object with key -->
+
+						<!-- Selected variable is array of objects with index and key: -->
+					{:else if log.selectedId && log.selectedType === 'array' && log.useIndex && log.useKey && log.selectedIndex !== null && log.selectedKey !== null}
+						{@html formatValue(
+							getVariableToLog(log.selectedId).value[log.selectedIndex][log.selectedKey],
+						)}
+
+						<!-- Selected variable is array with index: -->
+					{:else if log.selectedId && log.selectedType === 'array' && log.useIndex && !log.useKey && log.selectedIndex !== null}
+						<!-- Check that the item is not an object -->
+						{#if typeof getVariableToLog(log.selectedId).value[log.selectedIndex] !== 'object'}
+							{@html formatValue(getVariableToLog(log.selectedId).value[log.selectedIndex])}
+						{/if}
+						<!-- Selected variable is object with key: -->
+					{:else if log.selectedId && log.selectedType === 'object' && log.useKey && log.selectedKey !== null}
 						{@html formatValue(getVariableToLog(log.selectedId).value[log.selectedKey])}
 					{/if}
 				</code>
 			</p>
 			{#if log.selectedId && log.selectedType === 'array' && !log.useIndex}
 				<!-- Selected variable is array without index -->
-				<details in:fade={{ duration: 300 }}>
-					<summary
+				<details>
+					<summary in:fade={{ duration: 300 }}
 						><code>{@html formatArray(getVariableToLog(log.selectedId).value).summary}</code
 						></summary
 					>
@@ -69,14 +81,34 @@
 						></pre>
 				</details>
 			{/if}
+			<!-- Selected variable is object without key: -->
 			{#if log.selectedId && log.selectedType === 'object' && !log.useKey}
-				<!-- Selected variable is object without key -->
-				<details in:fade={{ duration: 300 }}>
-					<summary>
+				<details>
+					<summary in:fade={{ duration: 300 }}>
 						<code>{@html formatObjectSummary(getVariableToLog(log.selectedId).value)}</code>
 					</summary>
 					<pre><code>{@html formatObject(getVariableToLog(log.selectedId).value)}</code></pre>
 				</details>
+			{/if}
+			<!-- Selected variable is object in array with index, without key: -->
+			{#if log.selectedId && log.selectedType === 'array' && log.useIndex && !log.useKey && log.selectedIndex !== null}
+				<!-- Check that the item is an object -->
+				{#if typeof getVariableToLog(log.selectedId).value[log.selectedIndex] === 'object'}
+					<details>
+						<summary in:fade={{ duration: 300 }}>
+							<code
+								>{@html formatObjectSummary(
+									getVariableToLog(log.selectedId).value[log.selectedIndex],
+								)}</code
+							>
+						</summary>
+						<pre><code
+								>{@html formatObject(
+									getVariableToLog(log.selectedId).value[log.selectedIndex],
+								)}</code
+							></pre>
+					</details>
+				{/if}
 			{/if}
 			<hr class="opacity-50" in:fade={{ duration: 300 }} />
 		{/each}

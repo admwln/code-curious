@@ -152,7 +152,8 @@
 			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faEye} /></svelte:fragment>
 			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
 			<svelte:fragment slot="content">
-				<Console data={lessonData.console ? lessonData.console : null} />
+				<!-- Used to include data from lesson.json <Console data={lessonData.console ? lessonData.console : null} /> -->
+				<Console />
 			</svelte:fragment>
 		</AccordionItem>
 	</Accordion>

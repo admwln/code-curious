@@ -165,8 +165,8 @@
 							{block.selectedId && !block.useKey && !block.useIndex
 								? `${getVariableName(block.selectedId)}`
 								: ``}
-							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
 							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
+							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
 						</button>
 					{/if}
 				</div>
