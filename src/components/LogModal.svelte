@@ -182,7 +182,7 @@
 					/>
 				</label>
 				<!-- If it's an array of objects, option to select Key -->
-				{#if variable.useIndex && variable.useKey && selectedObject}
+				{#if variable.useIndex && selectedObject}
 					<label class="flex items-center space-x-2">
 						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
 						<p>Key</p>
