@@ -4,7 +4,7 @@
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { BooleanVariable } from '$lib/types';
-	import { snapshot } from '$lib/store'; // Snapshot store
+	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
@@ -12,16 +12,23 @@
 	export let isOpen: boolean;
 	export let variableId;
 	let variable: BooleanVariable;
+	// The value of the radio button must be a string. Is converted to boolean when saving.
+	let _boolString: string;
 
-	if (variableId !== undefined) {
+	$: _snapshot = $snapshot;
+
+	if (variableId) {
 		variable = $snapshot.find((v) => v.id === variableId) as BooleanVariable;
+		_boolString = variable.value ? 'true' : 'false';
 	} else {
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'boolean',
-			value: 'false',
+			value: false,
 		};
+		_boolString = 'false';
 	}
 
 	const dispatch = createEventDispatcher();
@@ -31,21 +38,22 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			// Convert string to boolean and update variable value
+			variable.value = _boolString === 'true';
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
+			// Convert string to boolean and update variable value
+			variable.value = _boolString === 'true';
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};
@@ -55,7 +63,7 @@
 	};
 
 	const handleValueChange = (event: Event) => {
-		variable.value = (event.target as HTMLInputElement).value;
+		_boolString = (event.target as HTMLInputElement).value;
 	};
 </script>
 
@@ -93,13 +101,13 @@
 			<span>Value</span>
 			<RadioGroup>
 				<RadioItem
-					bind:group={variable.value}
+					bind:group={_boolString}
 					name="justify"
 					value={'true'}
 					on:change={handleValueChange}>True</RadioItem
 				>
 				<RadioItem
-					bind:group={variable.value}
+					bind:group={_boolString}
 					name="justify"
 					value={'false'}
 					on:change={handleValueChange}>False</RadioItem

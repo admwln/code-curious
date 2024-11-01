@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { isRunning } from '$lib/store';
+	import { isRunning } from '$lib/stores/store';
 	import { initMatterJS, startMatter, stopMatter, resetBodies } from '$lib/matter';
 	import Matter from 'matter-js';
 	import type { MatterInstance } from '../lib/types';
@@ -10,12 +10,9 @@
 	let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
-	// Scale factor
+	// Scale factor!
 	let scale: number = 0.8;
 	let innerWidth: number;
-
-	// Track the running state reactively
-	$: running = $isRunning;
 
 	// Helper to clean up the current Matter.js instance
 	function cleanupMatterInstance() {
@@ -83,7 +80,7 @@
 	});
 
 	// Reactively control Matter.js based on the running state
-	$: if (running && matterInstance) {
+	$: if ($isRunning && matterInstance) {
 		resetBodies(matterInstance.engine);
 		startMatter(matterInstance.runner, matterInstance.engine);
 	} else if (matterInstance) {

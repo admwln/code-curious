@@ -4,14 +4,15 @@
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { StringVariable } from '$lib/types';
-	import { snapshot } from '$lib/store'; // Snapshot store
+	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId;
-	console.log('StringModal', variableId);
-
 	let variable: StringVariable;
+
+	// Snapshot store
+	$: _snapshot = $snapshot;
 
 	if (editMode && variableId !== undefined) {
 		// Clone the variable to avoid directly modifying the store object
@@ -20,6 +21,7 @@
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'string',
 			value: '',
@@ -33,20 +35,18 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
+			$snapshot = [..._snapshot, variable];
 			console.log('New variable added', $snapshot);
 		}
 		dispatch('close');

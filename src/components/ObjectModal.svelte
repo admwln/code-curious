@@ -5,14 +5,14 @@
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { ObjectVariable } from '$lib/types';
-	import { snapshot } from '$lib/store'; // Snapshot store
+	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId;
-	console.log('ObjectModal', variableId);
-
 	let variable: ObjectVariable;
+
+	$: _snapshot = $snapshot;
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
@@ -21,6 +21,7 @@
 		// If not in edit mode, create a new variable
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'object',
 			value: { key1: '' },
@@ -34,21 +35,18 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
 		} else {
 			// Add variable to snapshot store
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		}
 		dispatch('close');
 	};
@@ -68,10 +66,10 @@
 		<div class="flex flex-col">
 			<!-- Display item type if in edit mode -->
 			{#if editMode}
-				<h4 class="text-sm text-secondary-500">String</h4>
+				<h4 class="text-sm text-secondary-500">Object</h4>
 			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? variable.name : 'New String'}
+				{editMode ? variable.name : 'New Object'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -103,6 +101,7 @@
 				objectVariable={variable
 					? {
 							id: Date.now(),
+							blockType: 'variable',
 							name: '',
 							type: 'object',
 							value: { ...variable.value },

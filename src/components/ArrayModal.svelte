@@ -13,7 +13,7 @@
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { ArrayVariable } from '$lib/types';
-	import { snapshot } from '$lib/store'; // Snapshot store
+	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
@@ -23,20 +23,24 @@
 	let variable: ArrayVariable;
 	let itemCount = 1;
 	let array: any[] = [];
-	const sampleObject = {
-		id: Date.now(),
-		name: 'sample',
-		type: 'object',
-		value: { name: 'John Doe', age: 30 },
-	};
 
-	if (variableId !== undefined) {
+	$: _snapshot = $snapshot;
+
+	//If array of booleans, store as strings temporarily and convert to booleans on save
+	let _boolStringArray: string[] = [];
+
+	if (variableId) {
 		variable = $snapshot.find((v) => v.id === variableId) as ArrayVariable;
 		itemCount = variable.value.length;
 		array = variable.value;
+		// Convert booleans to strings temporarily, if variable to be edited has item type boolean
+		if (variable.itemType === 'boolean') {
+			_boolStringArray = variable.value.map((v) => v.toString());
+		}
 	} else {
 		variable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'array',
 			itemType: 'string',
@@ -51,23 +55,25 @@
 	};
 
 	const deleteVariable = () => {
-		$snapshot = $snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
+		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
-		// Update variable value
-		variable.value = array;
+		if (variable.itemType !== 'boolean') {
+			// Update variable value
+			variable.value = array;
+		} else {
+			// Convert strings to booleans
+			variable.value = _boolStringArray.map((v) => v === 'true');
+		}
 		// Update snapshot store
 		if (!editMode) {
 			// Add new variable to snapshot store, if not in edit mode
-			$snapshot = [...$snapshot, variable];
-			console.log('New variable added', $snapshot);
+			$snapshot = [..._snapshot, variable];
 		} else {
 			// Update existing variable in snapshot store
-			$snapshot = $snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
+			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 		}
 		dispatch('close');
 	};
@@ -78,11 +84,22 @@
 
 	const handleItemDataTypeChange = (event: Event) => {
 		variable.itemType = (event.target as HTMLInputElement).value;
+		// Reset itemCount and array if item type is changed
+		itemCount = 1;
+		array = [];
+		// Reset _boolStringArray if item type is boolean
+		if (variable.itemType === 'boolean') {
+			_boolStringArray = ['false'];
+		}
 	};
 
 	const handleRemoveItem = () => {
 		itemCount -= 1;
-		array.pop();
+		if (variable.itemType !== 'boolean') {
+			array.pop();
+		} else {
+			_boolStringArray.pop();
+		}
 	};
 
 	// Listen for object updates from ObjectEdit component
@@ -209,8 +226,10 @@
 				<div class="label flex flex-row items-center gap-2">
 					<span>{i}</span>
 					<RadioGroup>
-						<RadioItem bind:group={array[i]} name="justify" value="true">True</RadioItem>
-						<RadioItem bind:group={array[i]} name="justify" value="false">False</RadioItem>
+						<RadioItem bind:group={_boolStringArray[i]} name="justify" value="true">True</RadioItem>
+						<RadioItem bind:group={_boolStringArray[i]} name="justify" value="false"
+							>False</RadioItem
+						>
 					</RadioGroup>
 				</div>
 			{/each}
@@ -238,6 +257,7 @@
 									objectVariable={array[i]
 										? {
 												id: Date.now(),
+												blockType: 'variable',
 												name: '',
 												type: 'object',
 												value: { ...array[i] },
@@ -247,7 +267,7 @@
 								/>
 							{/if}
 						</div>
-						<div class="rounded-b-xl p-2 bg-surface-200-700-token mt-3"></div>
+						<div class="p-0.5 bg-surface-200-700-token mt-3"></div>
 					</div>
 				{/each}
 			</div>
