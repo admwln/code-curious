@@ -3,7 +3,7 @@
 	import Modal from './Modal.svelte';
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import type { LogVariable } from '$lib/types';
+	import type { LogBlock } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	export let editMode: boolean;
@@ -12,7 +12,7 @@
 
 	$: _snapshot = $snapshot;
 
-	let variable: LogVariable;
+	let variable: LogBlock;
 	let selectedObject: Record<string, any> = {};
 	let variableCount: number = 0; // To determine if to show the variable selection dropdown
 	let arrayLength: number;
@@ -26,7 +26,7 @@
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
-		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogVariable;
+		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogBlock;
 		// Check if an array is being logged
 		if (variable.selectedType === 'array') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
@@ -47,7 +47,6 @@
 			selectedKey: null,
 			useIndex: false,
 			useKey: false,
-			displayName: '',
 		};
 	}
 
@@ -82,7 +81,6 @@
 		const selectedVariable = _snapshot.find((v) => v.id === variable.selectedId);
 		// Update the selected variable type
 		variable.selectedType = selectedVariable.type;
-		variable.displayName = selectedVariable.name;
 		console.log('Selected variable type', selectedVariable.type);
 		// If variable is an array, get the length
 		if (selectedVariable.type === 'array') {

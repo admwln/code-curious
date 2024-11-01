@@ -2,6 +2,7 @@
 	import type { ConsoleData } from '$lib/types';
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
+	import { consoleOutput } from '$lib/utils/consoleActions';
 
 	import {
 		formatArray,
@@ -19,6 +20,9 @@
 </script>
 
 <div class="rounded-md bg-slate-800 p-4 flex flex-col gap-2">
+	{#each $consoleOutput as log}
+		<p>{log}</p>
+	{/each}
 	{#if $isRunning && data}
 		{#each $snapshot as block}
 			{#if block.blockType === 'log'}

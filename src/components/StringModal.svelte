@@ -36,14 +36,12 @@
 
 	const deleteVariable = () => {
 		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
-		console.log('Variable deleted', $snapshot);
 		dispatch('close');
 	};
 
 	const onSave = () => {
 		if (editMode) {
 			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
-			console.log('Variable updated', $snapshot);
 			dispatch('close');
 			return;
 		} else {
