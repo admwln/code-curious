@@ -25,9 +25,8 @@
 	import Editor from '../../../components/Editor.svelte';
 	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
-	import Accordion from '../../../components/skeleton/Accordion.svelte';
-	import AccordionItem from '../../../components/skeleton/AccordionItem.svelte';
-	import type { LogBlock, VariableType } from '$lib/types';
+	import Accordion from '../../../components/Accordion.svelte';
+	import type { LogBlock } from '$lib/types';
 
 	// Import the `load` function result from page.server.ts
 	export let data;
@@ -128,34 +127,26 @@
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion>
-		<AccordionItem open>
-			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faAngleUp} /></svelte:fragment>
-			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faAngleDown} /></svelte:fragment>
-			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faCode} /></svelte:fragment>
-			<svelte:fragment slot="summary">
-				<div class="flex justify-between">
-					<h2>Editor</h2>
-				</div>
-			</svelte:fragment>
-			<svelte:fragment slot="content">
-				{#if lessonData}
-					<Editor data={lessonData.editor} />
-				{:else}
-					<p>Loading...</p>
-				{/if}
-			</svelte:fragment>
-		</AccordionItem>
-		<AccordionItem open>
-			<svelte:fragment slot="iconClosed"><FontAwesomeIcon icon={faAngleUp} /></svelte:fragment>
-			<svelte:fragment slot="iconOpen"><FontAwesomeIcon icon={faAngleDown} /></svelte:fragment>
-			<svelte:fragment slot="lead"><FontAwesomeIcon icon={faEye} /></svelte:fragment>
-			<svelte:fragment slot="summary"><h2>Console</h2></svelte:fragment>
-			<svelte:fragment slot="content">
-				<!-- Used to include data from lesson.json <Console data={lessonData.console ? lessonData.console : null} /> -->
-				<Console />
-			</svelte:fragment>
-		</AccordionItem>
+	<Accordion open={true}>
+		<div slot="summary">
+			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
+		</div>
+		<div slot="content" class="p-2">
+			{#if lessonData}
+				<Editor data={lessonData.editor} />
+			{:else}
+				<p>Loading...</p>
+			{/if}
+		</div>
+	</Accordion>
+	<Accordion open={true}>
+		<div slot="summary">
+			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
+		</div>
+		<div slot="content" class="p-2">
+			<!-- Used to include data from lesson.json <Console data={lessonData.console ? lessonData.console : null} /> -->
+			<Console />
+		</div>
 	</Accordion>
 </section>
 
