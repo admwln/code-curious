@@ -15,6 +15,8 @@
 	let variable: VariableType = { ...$snapshot.find((v) => v.id === variableId) };
 	let action: Action;
 
+	const actions: string[] = ['drop'];
+
 	// Snapshot store
 	$: _snapshot = $snapshot;
 
@@ -30,7 +32,6 @@
 			blockType: 'action',
 			variableId: variableId,
 			action: '',
-			name: '',
 		};
 	}
 
@@ -43,6 +44,7 @@
 
 	const deleteAction = () => {
 		$snapshot = _snapshot.filter((a) => a.id !== action.id);
+		console.log('Action deleted', $snapshot);
 		dispatch('close');
 	};
 
@@ -60,14 +62,6 @@
 		handleClose();
 		dispatch('close');
 	};
-
-	const handleNameChange = (event: Event) => {
-		action.name = (event.target as HTMLInputElement).value;
-	};
-
-	const handleValueChange = (event: Event) => {
-		action.action = (event.target as HTMLInputElement).value;
-	};
 </script>
 
 <Modal {isOpen}>
@@ -79,7 +73,7 @@
 			{:else}<h4 class="text-sm text-secondary-500">{variable.name}</h4>
 			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? action.name : 'New Action'}
+				{editMode ? action.action : 'New Action'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -89,31 +83,15 @@
 		on:submit|preventDefault={onSave}
 		class="px-4 flex flex-col gap-4 items-start"
 	>
-		<!-- Action Name Input -->
-		<label class="label">
-			<span>Name</span>
-			<input
-				class="input"
-				type="text"
-				bind:value={action.name}
-				on:input={handleNameChange}
-				name="name"
-				autocomplete="off"
-				required
-			/>
-		</label>
-		<!-- Value Input -->
-		<label class="label">
-			<span>Value</span>
-			<input
-				class="input"
-				type="text"
-				bind:value={action.action}
-				on:input={handleValueChange}
-				name="text"
-				required
-			/>
-		</label>
+		<!-- Action select -->
+		<div class="label">
+			<span>Action</span>
+			<select name="action" class="select" bind:value={action.action} size={actions.length}>
+				{#each actions as action}
+					<option value={action}>{action}</option>
+				{/each}
+			</select>
+		</div>
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
 	</form>

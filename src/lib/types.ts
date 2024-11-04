@@ -101,5 +101,4 @@ export interface Action {
 	blockType: string;
 	variableId: number;
 	action: string;
-	name: string;
 }

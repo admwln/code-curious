@@ -66,7 +66,7 @@
 			try {
 				if (block.blockType === 'variable') continue;
 				if (block.blockType === 'log') await logToConsole(block);
-				//if (block.blockType === 'matterAction') await executeMatterAction(block);
+				if (block.blockType === 'action') await executeMatterAction(block);
 			} catch (error: any) {
 				// Capture and log error to the Console component
 				// Create a new log block with the error message
