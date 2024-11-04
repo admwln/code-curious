@@ -145,10 +145,10 @@
 						bind:value={variable.selectedId}
 						on:change={updateSelectedVariable}
 					>
-						{#each _snapshot as snap (snap.id)}
+						{#each _snapshot as block (block.id)}
 							<!-- Exclude variables of type log -->
-							{#if snap.blockType !== 'log'}
-								<option value={snap.id}>{snap.name}</option>
+							{#if block.blockType === 'variable'}
+								<option value={block.id}>{block.name}</option>
 							{/if}
 						{/each}
 					</select>

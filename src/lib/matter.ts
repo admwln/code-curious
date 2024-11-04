@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import type { MatterOptions, InitialBody } from './types';
+import type { MatterOptions, InitialBody, MatterInstance } from './types';
 
 // Create aliases to avoid "Matter." prefixes
 const { Engine, Render, World, Bodies, Runner } = Matter;
@@ -13,7 +13,7 @@ export function initMatterJS(
 	options: MatterOptions,
 	circleColor: string,
 	scale: number,
-) {
+): MatterInstance | null {
 	// Helper function to apply scale to a pixel value
 	// Remove unnecessary decimal points by rounding
 	const s = (value: number) => Math.round(value * scale);
