@@ -26,7 +26,7 @@
 	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
 	import Accordion from '../../../components/Accordion.svelte';
-	import type { LogBlock } from '$lib/types';
+	import type { Log } from '$lib/types';
 
 	// Import the `load` function result from page.server.ts
 	export let data;
@@ -70,7 +70,7 @@
 			} catch (error: any) {
 				// Capture and log error to the Console component
 				// Create a new log block with the error message
-				const errorBlock: LogBlock = {
+				const errorBlock: Log = {
 					id: Date.now(),
 					blockType: 'log',
 					message: `Error: ${error.message}`,

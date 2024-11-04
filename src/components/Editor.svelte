@@ -7,7 +7,8 @@
 	import NewVariable from './NewVariable.svelte';
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
-	import VarBlock from './VariableBlock.svelte';
+	import VariableBlock from './VariableBlock.svelte';
+	import ActionModal from './ActionModal.svelte';
 
 	import { faEye, faBolt } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
@@ -16,7 +17,6 @@
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import VariableBlock from './VariableBlock.svelte';
 
 	export let data;
 	let lessonId: string;
@@ -46,6 +46,7 @@
 	let activeObjectId: number | null = null;
 	let activeArrayId: number | null = null;
 	let activeLogId: number | null = null;
+	let activeActionId: number | null = null;
 
 	const handleClose = () => {
 		activeStringId = null;
@@ -54,6 +55,7 @@
 		activeObjectId = null;
 		activeArrayId = null;
 		activeLogId = null;
+		activeActionId = null;
 	};
 
 	// Get name of variable with the given ID
@@ -105,6 +107,21 @@
 								: ``}
 							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
 							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
+						</button>
+					{/if}
+					<!-- Action block -->
+					{#if block.blockType === 'action'}
+						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
+							{getVariableName(block.variableId)}
+						</div>
+						<button
+							on:click={() => {
+								activeActionId = block.id;
+							}}
+							type="button"
+							class="btn btn-sm flex gap-2"
+							><FontAwesomeIcon icon={faBolt} />
+							{block.action}
 						</button>
 					{/if}
 				</div>
@@ -163,6 +180,17 @@
 			editMode={true}
 			isOpen={activeLogId !== null}
 			variableId={activeLogId}
+			on:close={handleClose}
+		/>
+	{/if}
+
+	{#if activeActionId !== null}
+		<ActionModal
+			editMode={true}
+			isOpen={activeActionId !== null}
+			variableId={null}
+			actionId={activeActionId}
+			{handleClose}
 			on:close={handleClose}
 		/>
 	{/if}

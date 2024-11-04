@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ActionModal from './ActionModal.svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faBolt } from '@fortawesome/free-solid-svg-icons';
 
@@ -6,6 +7,16 @@
 	export let block;
 	export let onActivate: () => void;
 	export let showActionButton = false;
+
+	let isOpen: boolean = false;
+
+	const openAction = () => {
+		isOpen = true;
+	};
+
+	const handleClose = () => {
+		isOpen = false;
+	};
 </script>
 
 <div class="flex border border-secondary-900 text-sm">
@@ -36,8 +47,9 @@
 	</button>
 
 	{#if showActionButton}
-		<button type="button" class="btn btn-sm">
+		<button on:click={openAction} type="button" class="btn btn-sm">
 			<FontAwesomeIcon icon={faBolt} /> <span class="sr-only">Add Action</span>
 		</button>
 	{/if}
 </div>
+<ActionModal editMode={false} {isOpen} variableId={block.id} actionId={null} {handleClose} />
