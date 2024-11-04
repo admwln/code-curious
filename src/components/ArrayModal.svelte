@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
 	import ObjectEdit from './ObjectEdit.svelte';
+	import Accordion from './Accordion.svelte';
 	import {
 		faAngleDown,
 		faAngleUp,
@@ -238,36 +239,39 @@
 			<div class="w-full flex flex-col gap-4">
 				{#each { length: itemCount } as _, i}
 					<!-- Accordion -->
-					<div class="w-full">
-						<div class="rounded-t-xl flex justify-between p-2 bg-surface-200-700-token mb-2">
-							<h4>Object {i}</h4>
-							<button type="button" class="btn btn-sm"
-								><FontAwesomeIcon icon={faAngleDown} /></button
-							>
-						</div>
-						<div>
-							{#if !editMode}
-								<ObjectEdit
-									objectVariable={null}
-									on:update={(e) => handleObjectUpdate(i, e.detail)}
-								/>
-							{/if}
-							{#if editMode}
-								<ObjectEdit
-									objectVariable={array[i]
-										? {
-												id: Date.now(),
-												blockType: 'variable',
-												name: '',
-												type: 'object',
-												value: { ...array[i] },
-											}
-										: null}
-									on:update={(e) => handleObjectUpdate(i, e.detail)}
-								/>
-							{/if}
-						</div>
-						<div class="p-0.5 bg-surface-200-700-token mt-3"></div>
+					<div class="bg-[#0000001a] rounded-t-xl rounded-b-xl">
+						<Accordion
+							open={false}
+							topBorder={false}
+							rounded={true}
+							color={'bg-surface-200-700-token'}
+						>
+							<div slot="summary">
+								<h4>Object {i}</h4>
+							</div>
+							<div slot="content" class="mt-1 mb-4">
+								{#if !editMode}
+									<ObjectEdit
+										objectVariable={null}
+										on:update={(e) => handleObjectUpdate(i, e.detail)}
+									/>
+								{/if}
+								{#if editMode}
+									<ObjectEdit
+										objectVariable={array[i]
+											? {
+													id: Date.now(),
+													blockType: 'variable',
+													name: '',
+													type: 'object',
+													value: { ...array[i] },
+												}
+											: null}
+										on:update={(e) => handleObjectUpdate(i, e.detail)}
+									/>
+								{/if}
+							</div>
+						</Accordion>
 					</div>
 				{/each}
 			</div>
