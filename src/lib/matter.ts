@@ -1,5 +1,5 @@
 import Matter from 'matter-js';
-import type { MatterOptions, InitialBody, MatterInstance } from './types';
+import type { Action, InitialBody, MatterInstance, MatterOptions, VariableType } from './types';
 
 // Create aliases to avoid "Matter." prefixes
 const { Engine, Render, World, Bodies, Runner } = Matter;
@@ -7,6 +7,11 @@ const { Engine, Render, World, Bodies, Runner } = Matter;
 let engine: Matter.Engine | null = null;
 
 let initialBodies: InitialBody[] = [];
+let userBodies: InitialBody[] = [];
+
+let _scale: number = 1;
+// Helper function to apply scale to a pixel value
+const s = (value: number) => Math.round(value * _scale);
 
 export function initMatterJS(
 	container: HTMLElement,
@@ -14,9 +19,8 @@ export function initMatterJS(
 	circleColor: string,
 	scale: number,
 ): MatterInstance | null {
-	// Helper function to apply scale to a pixel value
 	// Remove unnecessary decimal points by rounding
-	const s = (value: number) => Math.round(value * scale);
+	_scale = scale;
 
 	// First, check if there is any existing eninge
 	if (engine) {
@@ -35,24 +39,6 @@ export function initMatterJS(
 			background: 'rgb(30 30 30)', // Adjust background color
 		},
 	});
-
-	// Create a circle body
-	const circle = Bodies.circle(s(55), s(55), s(20), {
-		isStatic: false,
-		restitution: 1,
-		render: { fillStyle: circleColor },
-	});
-
-	// Add the bodies to the world
-	World.add(engine.world, [circle]);
-
-	// Store initial state of dynamic bodies
-	initialBodies = [
-		{
-			body: circle,
-			initialPosition: { x: circle.position.x, y: circle.position.y },
-		},
-	];
 
 	// Create static walls
 	World.add(engine.world, [
@@ -112,6 +98,8 @@ export function startMatter(runner: Matter.Runner, engine: Matter.Engine) {
 
 export function stopMatter(runner: Matter.Runner) {
 	Runner.stop(runner);
+	// Remove all user-created bodies, so that next time the simulation starts fresh
+	userBodies = [];
 }
 
 // Reset all dynamic bodies to their initial positions
@@ -122,11 +110,54 @@ export function resetBodies(engine: Matter.Engine) {
 		World.remove(engine.world, body);
 	});
 
-	// Re-add the bodies at their initial positions
-	initialBodies.forEach((initialBody) => {
-		const { body, initialPosition } = initialBody;
+	// // Re-add the bodies at their initial positions
+	// initialBodies.forEach((initialBody) => {
+	// 	const { body, initialPosition } = initialBody;
+	// 	Matter.Body.setPosition(body, initialPosition); // Reset to initial position
+	// 	Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
+	// 	World.add(engine.world, body); // Add back to the world
+	// });
+
+	// Add user-created bodies to the world
+	userBodies.forEach((userBody) => {
+		const { body, initialPosition } = userBody;
 		Matter.Body.setPosition(body, initialPosition); // Reset to initial position
 		Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
 		World.add(engine.world, body); // Add back to the world
 	});
+}
+
+// Define the handler function for various instructions
+export function handleInstruction(
+	matterInstance: MatterInstance,
+	instruction: Action,
+	snapshot: Record<string, any>[],
+) {
+	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
+	switch (instruction.action) {
+		case 'drop':
+			// NB presupposes that the variable is a color string
+			const fill = variable.value;
+			if (typeof fill === 'string') {
+				const circle = Bodies.circle(s(55), s(55), s(20), {
+					isStatic: false,
+					restitution: 1,
+					render: { fillStyle: fill },
+				});
+				World.add(matterInstance.engine.world, circle);
+				userBodies = [
+					...userBodies,
+					{
+						body: circle,
+						initialPosition: { x: circle.position.x, y: circle.position.y },
+					},
+				];
+			}
+			break;
+
+		// Add more case blocks for additional instructions as needed
+		default:
+			console.warn(`Unknown instruction type: ${instruction.action}`);
+			break;
+	}
 }

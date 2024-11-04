@@ -1,14 +1,31 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { isRunning } from '$lib/stores/store';
-	import { initMatterJS, startMatter, stopMatter, resetBodies } from '$lib/matter';
+	import { actionOutput } from '$lib/utils/matterActions'; // Import actionOutput store
+	import {
+		initMatterJS,
+		startMatter,
+		stopMatter,
+		resetBodies,
+		handleInstruction,
+	} from '$lib/matter';
 	import Matter from 'matter-js';
-	import type { MatterInstance } from '../lib/types';
+	import type { MatterInstance, Action } from '../lib/types';
+	import { snapshot } from '$lib/stores/snapshots';
+	import { isRunning } from '$lib/stores/store';
+
+	let matterInstance: MatterInstance | null = null;
+	let matterContainer: HTMLElement | null = null;
+
+	// Handle updates from actionOutput store
+	actionOutput.subscribe((instructions: Action[]) => {
+		if (matterInstance && instructions.length > 0) {
+			const latestInstruction = instructions[instructions.length - 1];
+			handleInstruction(matterInstance, latestInstruction, $snapshot); // Pass the latest instruction to matter.ts
+		}
+	});
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;
-	let matterInstance: MatterInstance | null = null;
-	let matterContainer: HTMLElement | null = null;
 
 	// Scale factor!
 	let scale: number = 0.8;
