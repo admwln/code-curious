@@ -43,7 +43,7 @@
 		class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-[64px]"
 	>
 		{#each $consoleOutput as log}
-			<p in:fade={{ duration: 150 }}>
+			<p>
 				<code>
 					{#if log.message && log.message !== ''}
 						{log.message}
@@ -73,7 +73,7 @@
 			{#if log.selectedId && log.selectedType === 'array' && !log.useIndex}
 				<!-- Selected variable is array without index -->
 				<details>
-					<summary in:fade={{ duration: 300 }}
+					<summary
 						><code>{@html formatArray(getVariableToLog(log.selectedId).value).summary}</code
 						></summary
 					>
@@ -84,7 +84,7 @@
 			<!-- Selected variable is object without key: -->
 			{#if log.selectedId && log.selectedType === 'object' && !log.useKey}
 				<details>
-					<summary in:fade={{ duration: 300 }}>
+					<summary>
 						<code>{@html formatObjectSummary(getVariableToLog(log.selectedId).value)}</code>
 					</summary>
 					<pre><code>{@html formatObject(getVariableToLog(log.selectedId).value)}</code></pre>
@@ -95,7 +95,7 @@
 				<!-- Check that the item is an object -->
 				{#if typeof getVariableToLog(log.selectedId).value[log.selectedIndex] === 'object'}
 					<details>
-						<summary in:fade={{ duration: 300 }}>
+						<summary>
 							<code
 								>{@html formatObjectSummary(
 									getVariableToLog(log.selectedId).value[log.selectedIndex],
@@ -110,7 +110,7 @@
 					</details>
 				{/if}
 			{/if}
-			<hr class="opacity-50" in:fade={{ duration: 300 }} />
+			<hr class="opacity-50" />
 		{/each}
 		{#if $consoleOutput.length > 0}
 			<div class="flex justify-end">
