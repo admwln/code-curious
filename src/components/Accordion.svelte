@@ -3,11 +3,14 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	// Local `isOpen` state for each instance
-	export let open;
+	export let open: boolean;
+	export let topBorder: boolean;
+	export let rounded: boolean;
+	export let color: string;
 	let isOpen: boolean = open ?? false;
 
 	// Generate a unique ID for accessibility attributes
-	const uniqueId = `accordion-${Math.random().toString(36).substr(2, 9)}`;
+	const uniqueId = `accordion-${Math.random().toString(36)}`;
 
 	// Toggle open/close state
 	function toggleAccordion() {
@@ -15,7 +18,11 @@
 	}
 </script>
 
-<div class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#ec489a2A]">
+<div
+	class="w-full flex items-center justify-between space-x-4 py-3 px-4 {color} {topBorder
+		? 'border-t border-zinc-700'
+		: ''} {rounded ? 'rounded-t-xl' : ''} {rounded && !isOpen ? 'rounded-b-xl' : ''}"
+>
 	<slot name="summary" id={`${uniqueId}-summary`}></slot>
 	<button
 		type="button"
@@ -40,5 +47,7 @@
 	role="region"
 	aria-labelledby={`${uniqueId}-summary`}
 >
-	<slot name="content"></slot>
+	<div>
+		<slot name="content"></slot>
+	</div>
 </div>

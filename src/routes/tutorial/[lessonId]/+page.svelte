@@ -127,7 +127,7 @@
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion open={true}>
+	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#ec489a2A]'}>
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
 		</div>
@@ -139,7 +139,7 @@
 			{/if}
 		</div>
 	</Accordion>
-	<Accordion open={true}>
+	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#ec489a2A]'}>
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
 		</div>

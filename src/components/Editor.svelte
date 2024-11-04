@@ -63,7 +63,7 @@
 	console.log('Editor data', data);
 </script>
 
-<div class="min-h-[320px] flex flex-col justify-start gap-4">
+<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
 	<div class="flex flex-col items-start gap-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
