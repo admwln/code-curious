@@ -7,14 +7,16 @@
 	import NewVariable from './NewVariable.svelte';
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
+	import VarBlock from './VariableBlock.svelte';
 
-	import { faEye } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faBolt } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	// START: Logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import VariableBlock from './VariableBlock.svelte';
 
 	export let data;
 	let lessonId: string;
@@ -61,6 +63,14 @@
 	};
 
 	console.log('Editor data', data);
+
+	function activateBlock(block: Record<string, any>) {
+		if (block.type === 'string') activeStringId = block.id;
+		else if (block.type === 'number') activeNumberId = block.id;
+		else if (block.type === 'boolean') activeBooleanId = block.id;
+		else if (block.type === 'object') activeObjectId = block.id;
+		else if (block.type === 'array') activeArrayId = block.id;
+	}
 </script>
 
 <div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
@@ -69,91 +79,19 @@
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
 				<div class="flex border border-secondary-900 text-sm">
-					<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-						{#if block.name}
-							{block.name}
-						{:else}
-							<FontAwesomeIcon icon={faEye} /> Console Log
-						{/if}
-					</div>
-
-					<!-- String Variable -->
-					{#if block.type === 'string'}
-						<button
-							on:click={() => {
-								activeStringId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-
-					<!-- Number Variable -->
-					{#if block.type === 'number'}
-						<button
-							on:click={() => {
-								activeNumberId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-
-					<!-- Boolean Variable -->
-					{#if block.type === 'boolean'}
-						<button
-							on:click={() => {
-								activeBooleanId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-					<!-- Object Variable -->
-					{#if block.type === 'object'}
-						<button
-							on:click={() => {
-								activeObjectId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{JSON.stringify(block.value).substring(0, 30)} ...
-						</button>
-					{/if}
-
-					<!-- Array Variable -->
-					{#if block.type === 'array'}
-						<button
-							on:click={() => {
-								activeArrayId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{#if Array.isArray(block.value)}
-								{#each block.value as item, i}
-									{#if typeof item === 'object' && i === 0}
-										{JSON.stringify(item).substring(0, 30)} ...
-									{:else if typeof item !== 'object'}
-										{#if i < block.value.length - 1}
-											{item},{' '}
-										{:else}
-											{item}
-										{/if}
-									{/if}
-								{/each}
-							{/if}
-						</button>
+					<!-- Variable block -->
+					{#if block.blockType === 'variable'}
+						<VariableBlock
+							{block}
+							onActivate={() => activateBlock(block)}
+							showActionButton={true}
+						/>
 					{/if}
 					<!-- Log block -->
 					{#if block.blockType === 'log'}
+						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
+							<FontAwesomeIcon icon={faEye} /> Console Log
+						</div>
 						<button
 							on:click={() => {
 								activeLogId = block.id;
