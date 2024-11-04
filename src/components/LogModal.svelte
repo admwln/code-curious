@@ -3,7 +3,7 @@
 	import Modal from './Modal.svelte';
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import type { LogBlock } from '$lib/types';
+	import type { Log } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
 	export let editMode: boolean;
@@ -12,7 +12,7 @@
 
 	$: _snapshot = $snapshot;
 
-	let variable: LogBlock;
+	let variable: Log;
 	let selectedObject: Record<string, any>;
 	let variableCount: number = 0; // To determine if to show the variable selection dropdown
 	let arrayLength: number;
@@ -25,7 +25,7 @@
 
 	if (editMode && variableId) {
 		// Clone the variable to avoid directly modifying the store object
-		variable = { ...$snapshot.find((v) => v.id === variableId) } as LogBlock;
+		variable = { ...$snapshot.find((v) => v.id === variableId) } as Log;
 		// Check if an array is being logged
 		if (variable.selectedType === 'array') {
 			const selectedVariable = $snapshot.find((v) => v.id === variable.selectedId);
@@ -145,10 +145,10 @@
 						bind:value={variable.selectedId}
 						on:change={updateSelectedVariable}
 					>
-						{#each _snapshot as snap (snap.id)}
+						{#each _snapshot as block (block.id)}
 							<!-- Exclude variables of type log -->
-							{#if snap.blockType !== 'log'}
-								<option value={snap.id}>{snap.name}</option>
+							{#if block.blockType === 'variable'}
+								<option value={block.id}>{block.name}</option>
 							{/if}
 						{/each}
 					</select>
