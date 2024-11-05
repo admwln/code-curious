@@ -102,3 +102,7 @@ export interface Action {
 	variableId: number;
 	action: string;
 }
+
+export type ColorMap = {
+	[key: string]: string;
+};

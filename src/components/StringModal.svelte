@@ -1,15 +1,19 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
+	import ColorPicker from './ColorPicker.svelte';
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { StringVariable } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
+	import { colors } from '$lib/utils/colors';
+
 	export let editMode: boolean;
 	export let isOpen: boolean;
 	export let variableId;
 	let variable: StringVariable;
+	let showColorPicker: boolean = false;
 
 	// Snapshot store
 	$: _snapshot = $snapshot;
@@ -92,18 +96,38 @@
 				required
 			/>
 		</label>
-		<!-- Value Input -->
-		<label class="label">
-			<span>Value</span>
-			<input
-				class="input"
-				type="text"
-				bind:value={variable.value}
-				on:input={handleValueChange}
-				name="text"
-				required
-			/>
+		<div class="flex gap-4 items-end">
+			<!-- Value Input -->
+			<label class="label">
+				<span>Value</span>
+				<input
+					class="input"
+					type="text"
+					bind:value={variable.value}
+					on:input={handleValueChange}
+					name="text"
+					required
+				/>
+			</label>
+			{#if showColorPicker && variable.value in colors}
+				<div
+					class="w-[45px] h-[45px] rounded-full border-2 border-white"
+					style="background-color: {colors[variable.value]};"
+				></div>
+			{/if}
+		</div>
+		<label class="flex items-center space-x-2">
+			<input class="checkbox" type="checkbox" bind:checked={showColorPicker} />
+			<p>Show color picker</p>
 		</label>
+
+		<!-- Color Picker -->
+		{#if showColorPicker}
+			<div class="label">
+				<span>Color Picker</span>
+				<ColorPicker bind:value={variable.value} />
+			</div>
+		{/if}
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
 	</form>
