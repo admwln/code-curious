@@ -6,6 +6,7 @@ export interface LessonData {
 		nextLesson: string | null;
 	};
 	editor?: {
+		snapshot?: Record<string, any>[];
 		defaultCode?: string;
 	};
 	console?: {

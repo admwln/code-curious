@@ -16,9 +16,15 @@ export function saveSnapshot(lessonId: string, editorSnapshot: any[]) {
 }
 
 // Function to load a snapshot from snapshots into snapshot store based on lessonId
-export function loadSnapshot(lessonId: string) {
+export function loadSnapshot(lessonId: string, defaultSnapshot: Record<string, any>[]) {
 	snapshots.subscribe((allSnapshots) => {
-		snapshot.set(allSnapshots[lessonId] || []);
+		if (allSnapshots[lessonId]) {
+			snapshot.set(allSnapshots[lessonId]);
+		} else if (defaultSnapshot) {
+			snapshot.set(defaultSnapshot);
+		} else {
+			snapshot.set([]);
+		}
 	});
 }
 

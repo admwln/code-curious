@@ -30,7 +30,7 @@
 	// Load snapshot data for the current lesson when the component mounts or lessonId changes
 	$: {
 		if (lessonId) {
-			loadSnapshot(lessonId);
+			loadSnapshot(lessonId, data.snapshot);
 		}
 	}
 
@@ -84,7 +84,9 @@
 			// TODO: We should first check in the fetched lesson data if there is a
 			// snapshot for the current lesson, and load it if it exists:
 			console.log('check lesson data for snapshot', data);
-			$snapshot = [];
+			if (data.snapshot) {
+				$snapshot = data.snapshot;
+			} else $snapshot = [];
 			// Toggle the flag to reset the Matter.js simulation
 			resetMatterFlag.update((flag) => (flag = true));
 		}

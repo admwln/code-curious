@@ -41,7 +41,9 @@
 			prevLesson: '',
 			nextLesson: '',
 		},
-		editor: {},
+		editor: {
+			snapshot: [],
+		},
 		funnel: {},
 	};
 
@@ -62,6 +64,15 @@
 			prevLesson: data.prev_lesson,
 			nextLesson: data.next_lesson,
 		};
+		if (data.snapshot) {
+			lessonData.editor = {
+				snapshot: data.snapshot,
+			};
+		} else {
+			lessonData.editor = {
+				snapshot: [],
+			};
+		}
 	};
 	fetchLesson();
 
