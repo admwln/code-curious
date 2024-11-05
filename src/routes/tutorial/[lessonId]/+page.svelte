@@ -4,7 +4,8 @@
 	// Imports for runner function:
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
-	import { consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+
 	import { executeMatterAction } from '$lib/utils/matterActions';
 	import { supabase } from '$lib/supabaseClient';
 
@@ -54,7 +55,7 @@
 		if (error) {
 			console.error('Error fetching data', error);
 		}
-		console.log(data);
+		//console.log(data);
 		lessonData.tutorial = {
 			title: data.title,
 			content: data.content,
@@ -68,6 +69,7 @@
 	$: if ($page.params.lessonId !== lessonId) {
 		lessonId = $page.params.lessonId;
 		//lessonData = data.lessonData; // Reassign the new lessonData when the route changes
+		clearConsole(); // Clear the console when the route changes
 		fetchLesson();
 	}
 
