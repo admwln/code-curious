@@ -13,13 +13,15 @@
 	import { faEye, faBolt } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
+	import { resetMatterFlag } from '$lib/stores/store';
+
 	// START: Logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	export let data;
-	console.log('Editor data', data);
+
 	let lessonId: string;
 
 	// Subscribe to the lessonId from the page store
@@ -72,6 +74,21 @@
 		else if (block.type === 'object') activeObjectId = block.id;
 		else if (block.type === 'array') activeArrayId = block.id;
 	}
+
+	const resetEditor = () => {
+		// Ask the user to confirm, then clear the snapshot
+		// TODO: The default confirm modal could be replaced by a modal component
+		// from Skeleton, or a Confirm button could appear in the editor, next
+		// to the Reset button
+		if (confirm('Are you sure you want to reset the editor?')) {
+			// TODO: We should first check in the fetched lesson data if there is a
+			// snapshot for the current lesson, and load it if it exists:
+			console.log('check lesson data for snapshot', data);
+			$snapshot = [];
+			// Toggle the flag to reset the Matter.js simulation
+			resetMatterFlag.update((flag) => (flag = true));
+		}
+	};
 </script>
 
 <div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
@@ -203,5 +220,10 @@
 		<div>
 			<NewLog />
 		</div>
+		{#if $snapshot.length > 0}
+			<div class="w-full flex justify-end">
+				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
+			</div>
+		{/if}
 	</section>
 </div>

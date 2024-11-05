@@ -11,7 +11,7 @@
 	import Matter from 'matter-js';
 	import type { MatterInstance, Action } from '../lib/types';
 	import { snapshot } from '$lib/stores/snapshots';
-	import { isRunning } from '$lib/stores/store';
+	import { isRunning, resetMatterFlag } from '$lib/stores/store';
 
 	let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
@@ -46,12 +46,24 @@
 		}
 	}
 
-	// Reinitialize Matter.js whenever the lesson `data` changes
-	$: if (data && matterContainer) {
+	const reinitMatterJs = () => {
 		cleanupMatterInstance(); // First, clean up the old instance
 		// Toggle running state to false, NB must be run after cleanup
 		$isRunning = false;
-		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale); // Reinitialize with new data
+		if (matterContainer) {
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+		}
+	};
+
+	// Reinitialize Matter.js whenever the lesson `data` changes
+	$: if (data && matterContainer) {
+		reinitMatterJs();
+	}
+
+	// Reinitialize Matter.js whenever the flag is changed
+	$: if ($resetMatterFlag) {
+		reinitMatterJs();
+		resetMatterFlag.update((flag) => (flag = false)); // Reset the flag
 	}
 
 	function updateScale(innerWidth: number) {
