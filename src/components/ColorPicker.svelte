@@ -6,8 +6,9 @@
 	let color: string = value;
 
 	// When the color changes, update the value prop
+	// this will be used to update the string value in
+	// the parent StringModal component
 	$: {
-		console.log('Color changed', color);
 		value = color;
 	}
 </script>
