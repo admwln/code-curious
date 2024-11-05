@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
+	import ColorPicker from './ColorPicker.svelte';
 	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { StringVariable } from '$lib/types';
@@ -10,6 +11,7 @@
 	export let isOpen: boolean;
 	export let variableId;
 	let variable: StringVariable;
+	let showColors: boolean = false;
 
 	// Snapshot store
 	$: _snapshot = $snapshot;
@@ -104,6 +106,17 @@
 				required
 			/>
 		</label>
+
+		<label class="flex items-center space-x-2">
+			<input class="checkbox" type="checkbox" bind:checked={showColors} />
+			<p>Show color picker</p>
+		</label>
+
+		<!-- Color Selection -->
+		<div class="label">
+			<span>Color Picker</span>
+			<ColorPicker bind:value={variable.value} />
+		</div>
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
 	</form>
