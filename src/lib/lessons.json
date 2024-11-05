@@ -22,7 +22,7 @@
 		"tutorial": {
 			"title": "Lesson 1: Introduction to Variables",
 			"content": [
-				"### Variables in JavaScript\n\nVariables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nClick on the button marked `Variable` to reveal the available data types.\n\nYou can then use this variable in your code.",
+				"Variables are used to store data. Here is how you can declare a variable:\n\n```javascript\nlet x = 5;\n```\n\nClick on the button marked `Variable` to reveal the available data types.\n\nYou can then use this variable in your code.",
 				"{{VariableButton",
 				"### Data Types in JavaScript\n\nJavaScript has several data types, including:\n\n- Number\n- String\n- Boolean\n- Object\n- Array\n- Function\n\nYou can use these data types to store different kinds of data."
 			],

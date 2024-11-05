@@ -9,10 +9,8 @@
 	import { supabase } from '$lib/supabaseClient';
 
 	import {
-		faAngleDown,
 		faAngleLeft,
 		faAngleRight,
-		faAngleUp,
 		faChalkboardUser,
 		faCode,
 		faEye,
@@ -29,8 +27,10 @@
 	import Accordion from '../../../components/Accordion.svelte';
 	import type { LessonData, Log } from '$lib/types';
 
-	// Import the `load` function result from page.server.ts
+	// Import the `load` function result from +page.server.ts:
+	// NB not used in this file, as lesson data is loaded in the script block
 	//export let data;
+
 	//let lessonId = data.lessonId; // Use the lessonId passed from the load function
 	let lessonId = $page.params.lessonId; // Use the lessonId from the route params
 	let lessonData: LessonData = {
@@ -40,12 +40,11 @@
 			prevLesson: '',
 			nextLesson: '',
 		},
-		funnel: {
-			color: 'gold',
-		},
+		editor: {},
+		funnel: {},
 	};
 
-	// use supabase client to fetch data from countries table
+	// Use Supabase client to fetch data from countries table
 	const fetchLesson = async () => {
 		const { data, error } = await supabase
 			.from('lessons')
@@ -71,10 +70,6 @@
 		//lessonData = data.lessonData; // Reassign the new lessonData when the route changes
 		fetchLesson();
 	}
-
-	// function toggleRun() {
-	// 	$isRunning = !$isRunning;
-	// }
 
 	// Panel width logic
 	let panel1Width = 'lg:w-1/3'; // Initially 1/3 of the screen width
@@ -176,7 +171,6 @@
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
 		</div>
 		<div slot="content" class="p-2">
-			<!-- Used to include data from lesson.json <Console data={lessonData.console ? lessonData.console : null} /> -->
 			<Console />
 		</div>
 	</Accordion>

@@ -19,6 +19,7 @@
 	import { page } from '$app/stores';
 
 	export let data;
+	console.log('Editor data', data);
 	let lessonId: string;
 
 	// Subscribe to the lessonId from the page store
@@ -63,8 +64,6 @@
 		const variable = $snapshot.find((v) => v.id === id);
 		return variable ? variable.name : '';
 	};
-
-	console.log('Editor data', data);
 
 	function activateBlock(block: Record<string, any>) {
 		if (block.type === 'string') activeStringId = block.id;

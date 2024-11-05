@@ -51,7 +51,7 @@
 		cleanupMatterInstance(); // First, clean up the old instance
 		// Toggle running state to false, NB must be run after cleanup
 		$isRunning = false;
-		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color, scale); // Reinitialize with new data
+		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale); // Reinitialize with new data
 	}
 
 	function updateScale(innerWidth: number) {
@@ -82,12 +82,7 @@
 		});
 
 		if (matterContainer) {
-			matterInstance = initMatterJS(
-				matterContainer,
-				{ width: 450, height: 700 },
-				data.color,
-				scale,
-			);
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
 		}
 	});
 

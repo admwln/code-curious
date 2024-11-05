@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { ConsoleData } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots';
-	import { isRunning } from '$lib/stores/store';
 	import { clearConsole, consoleOutput } from '$lib/utils/consoleActions';
 	import { fade } from 'svelte/transition';
 
@@ -11,9 +9,6 @@
 		formatObjectSummary,
 		formatValue,
 	} from '$lib/utils/logFormat';
-
-	//We probably don't need to pass from lesson data to the console
-	//export let data: ConsoleData | null;
 
 	// Function to retrieve and return any selected variable from snapshot
 	const getVariableToLog = (selectedId: number): Record<string, any> => {
