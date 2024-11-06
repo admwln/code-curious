@@ -100,7 +100,7 @@ export interface Log {
 export interface Action {
 	id: number;
 	blockType: string;
-	variableId: number;
+	variableId?: number;
 	action: string;
 }
 
