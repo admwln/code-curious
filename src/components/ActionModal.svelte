@@ -12,10 +12,14 @@
 	export let variableId;
 	let variable: VariableType;
 
+	// A constant to hold the variables from the snapshot store
+	const availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
+
 	// Actions multidimensional array. Each sub-array contains the action name and the type of value it requires.
 	const actions: string[][] = [
 		['drop', 'string'],
 		['increase', 'number'],
+		['decrease', 'number'],
 	];
 	// Available actions for the current variable
 	let availableActions: string[][] = actions;
@@ -52,7 +56,8 @@
 		};
 		// Filter available actions based on the variable type
 		availableActions = actions.filter((a) => a[1] === variable.type);
-	} // Else create a new action without a variable
+	}
+	// Else create a new action without a variable
 	else {
 		action = {
 			id: Date.now(),
@@ -112,18 +117,23 @@
 		class="px-4 flex flex-col gap-4 items-start"
 	>
 		<!-- Action select -->
-		<div class="label">
-			<span>Actions</span>
-			<select
-				name="action"
-				class="select"
-				bind:value={action.action}
-				size={availableActions.length + 1}
-			>
-				{#each availableActions as action}
-					<option value={action[0]}>{action[0]}</option>
-				{/each}
-			</select>
+		<div class="flex gap-4">
+			<div class="label">
+				<span>Actions</span>
+				<select name="action" class="select" bind:value={action.action} size={3}>
+					{#each availableActions as action}
+						<option value={action[0]}>{action[0]}</option>
+					{/each}
+				</select>
+			</div>
+			<div class="label">
+				<span>Variables</span>
+				<select name="variables" class="select" bind:value={action.variableId} size={3}>
+					{#each availableVariables as availableVar}
+						<option value={availableVar.id}>{availableVar.name}</option>
+					{/each}
+				</select>
+			</div>
 		</div>
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
