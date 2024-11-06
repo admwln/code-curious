@@ -5,14 +5,15 @@ export interface LessonData {
 		prevLesson: string | null;
 		nextLesson: string | null;
 	};
-	editor: {
-		defaultCode: string;
+	editor?: {
+		snapshot?: Record<string, any>[];
+		defaultCode?: string;
 	};
-	console: {
-		defaultCode: string[];
+	console?: {
+		defaultCode?: string[];
 	};
-	funnel: {
-		color: string;
+	funnel?: {
+		color?: string;
 	};
 }
 

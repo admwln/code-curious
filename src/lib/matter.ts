@@ -16,7 +16,6 @@ const s = (value: number) => Math.round(value * _scale);
 export function initMatterJS(
 	container: HTMLElement,
 	options: MatterOptions,
-	circleColor: string,
 	scale: number,
 ): MatterInstance | null {
 	// Remove unnecessary decimal points by rounding

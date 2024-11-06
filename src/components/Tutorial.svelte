@@ -31,7 +31,12 @@
 	</div>
 	{#if data.nextLesson}
 		<p>
-			<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Next &gt;&gt;</a>
+			<!-- The 'next lesson' link text content defaults to 'Next >>' -->
+			{#if data.nextLesson === 'lesson-1'}
+				<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Start the tutorial &gt;&gt;</a>
+			{:else}
+				<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Next &gt;&gt;</a>
+			{/if}
 		</p>
 	{/if}
 </div>

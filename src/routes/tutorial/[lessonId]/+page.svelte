@@ -4,14 +4,14 @@
 	// Imports for runner function:
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
-	import { consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+
 	import { executeMatterAction } from '$lib/utils/matterActions';
+	import { supabase } from '$lib/supabaseClient';
 
 	import {
-		faAngleDown,
 		faAngleLeft,
 		faAngleRight,
-		faAngleUp,
 		faChalkboardUser,
 		faCode,
 		faEye,
@@ -26,23 +26,63 @@
 	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
 	import Accordion from '../../../components/Accordion.svelte';
-	import type { Log } from '$lib/types';
+	import type { LessonData, Log } from '$lib/types';
 
-	// Import the `load` function result from page.server.ts
-	export let data;
+	// Import the `load` function result from +page.server.ts:
+	// NB not used in this file, as lesson data is loaded in the script block
+	//export let data;
 
-	let lessonData = data.lessonData;
-	let lessonId = data.lessonId; // Use the lessonId passed from the load function
+	//let lessonId = data.lessonId; // Use the lessonId passed from the load function
+	let lessonId = $page.params.lessonId; // Use the lessonId from the route params
+	let lessonData: LessonData = {
+		tutorial: {
+			title: '',
+			content: [''],
+			prevLesson: '',
+			nextLesson: '',
+		},
+		editor: {
+			snapshot: [],
+		},
+		funnel: {},
+	};
+
+	// Use Supabase client to fetch data from countries table
+	const fetchLesson = async () => {
+		const { data, error } = await supabase
+			.from('lessons')
+			.select('*')
+			.eq('slug', lessonId)
+			.single();
+		if (error) {
+			console.error('Error fetching data', error);
+		}
+		//console.log(data);
+		lessonData.tutorial = {
+			title: data.title,
+			content: data.content,
+			prevLesson: data.prev_lesson,
+			nextLesson: data.next_lesson,
+		};
+		if (data.snapshot) {
+			lessonData.editor = {
+				snapshot: data.snapshot,
+			};
+		} else {
+			lessonData.editor = {
+				snapshot: [],
+			};
+		}
+	};
+	fetchLesson();
 
 	// Reactive declaration to update when the route changes
 	$: if ($page.params.lessonId !== lessonId) {
 		lessonId = $page.params.lessonId;
-		lessonData = data.lessonData; // Reassign the new lessonData when the route changes
+		//lessonData = data.lessonData; // Reassign the new lessonData when the route changes
+		clearConsole(); // Clear the console when the route changes
+		fetchLesson();
 	}
-
-	// function toggleRun() {
-	// 	$isRunning = !$isRunning;
-	// }
 
 	// Panel width logic
 	let panel1Width = 'lg:w-1/3'; // Initially 1/3 of the screen width
@@ -144,7 +184,6 @@
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
 		</div>
 		<div slot="content" class="p-2">
-			<!-- Used to include data from lesson.json <Console data={lessonData.console ? lessonData.console : null} /> -->
 			<Console />
 		</div>
 	</Accordion>
