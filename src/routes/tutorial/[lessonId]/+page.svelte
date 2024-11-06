@@ -106,9 +106,7 @@
 
 	// Function to run the user's code
 	async function runner() {
-		// Deep clone $snapshot to avoid modifying the original store
-		$actionSnapshot = structuredClone($snapshot); // Copy the snapshot from the store
-		console.log('Running the code... Clone of snapshot just created:', $actionSnapshot);
+		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
 		for (const block of $actionSnapshot) {
 			// If the current block has a variableId associated with it, create a deep clone of the variable

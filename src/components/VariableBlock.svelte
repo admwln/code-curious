@@ -52,10 +52,13 @@
 		</button>
 	{/if}
 </div>
-<ActionModal
-	editMode={false}
-	{isOpen}
-	variableId={block.id}
-	actionId={null}
-	on:close={closeAction}
-/>
+
+{#if isOpen}
+	<ActionModal
+		editMode={false}
+		{isOpen}
+		variableId={block.id}
+		actionId={null}
+		on:close={closeAction}
+	/>
+{/if}

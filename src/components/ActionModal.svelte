@@ -54,17 +54,18 @@
 			variableId: variableId,
 			action: '',
 		};
+		console.log('New action created with a variable', action);
 		// Filter available actions based on the variable type
 		availableActions = actions.filter((a) => a[1] === variable.type);
 	}
 	// Else create a new action without a variable
 	else {
-		console.log('New action created without a variable');
 		action = {
 			id: Date.now(),
 			blockType: 'action',
 			action: '',
 		};
+		console.log('New action created without a variable', action);
 	}
 
 	// When action.variableId changes, update the available actions
@@ -94,15 +95,10 @@
 
 	const onSave = () => {
 		if (editMode) {
-			// Update the action's id
-			action.id = Date.now();
 			$snapshot = _snapshot.map((a) => (a.id === action.id ? action : a));
 			dispatch('close');
 			return;
 		} else {
-			// Update the action's id
-			action.id = Date.now();
-			// Add action to snapshot store
 			$snapshot = [..._snapshot, action];
 			console.log('New action added', $snapshot);
 		}
