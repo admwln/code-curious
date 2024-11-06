@@ -12,8 +12,8 @@
 	export let variableId;
 	let variable: VariableType;
 
-	// A constant to hold the variables from the snapshot store
-	const availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
+	// Hold the variables from the snapshot store
+	let availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
 
 	// Actions multidimensional array. Each sub-array contains the action name and the type of value it requires.
 	const actions: string[][] = [
@@ -64,6 +64,19 @@
 			blockType: 'action',
 			action: '',
 		};
+	}
+
+	// When action.variableId changes, update the available actions
+	$: {
+		if (action.variableId) {
+			const type = getVariableType(action.variableId);
+			availableActions = actions.filter((a) => a[1] === type);
+		}
+	}
+
+	// When the snapshot store changes, update the available variables
+	$: {
+		availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
 	}
 
 	const dispatch = createEventDispatcher();
