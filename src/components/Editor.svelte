@@ -10,7 +10,7 @@
 	import VariableBlock from './VariableBlock.svelte';
 	import ActionModal from './ActionModal.svelte';
 
-	import { faEye, faBolt } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faBolt, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	import { resetMatterFlag } from '$lib/stores/store';
@@ -51,6 +51,8 @@
 	let activeLogId: number | null = null;
 	let activeActionId: number | null = null;
 
+	let newAction: boolean = false;
+
 	const handleClose = () => {
 		activeStringId = null;
 		activeNumberId = null;
@@ -59,6 +61,7 @@
 		activeArrayId = null;
 		activeLogId = null;
 		activeActionId = null;
+		newAction = false;
 	};
 
 	// Get name of variable with the given ID
@@ -110,7 +113,7 @@
 					<!-- Log block -->
 					{#if block.blockType === 'log'}
 						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							<FontAwesomeIcon icon={faEye} /> Console Log
+							<FontAwesomeIcon icon={faEye} /> Log
 						</div>
 						<button
 							on:click={() => {
@@ -212,6 +215,16 @@
 		/>
 	{/if}
 
+	{#if newAction}
+		<ActionModal
+			editMode={false}
+			isOpen={newAction}
+			variableId={null}
+			actionId={null}
+			on:close={handleClose}
+		/>
+	{/if}
+
 	<!-- In the following section, the user can choose to create a new variable,
 	 a new console log, etc -->
 	<section class="flex flex-col gap-2 items-start">
@@ -220,6 +233,17 @@
 		</div>
 		<div>
 			<NewLog />
+		</div>
+		<div>
+			<button
+				on:click={() => {
+					newAction = true;
+				}}
+				type="button"
+				class="btn btn-sm bg-primary-900 flex gap-2"
+			>
+				<FontAwesomeIcon icon={faPlus} /> Action
+			</button>
 		</div>
 		{#if $snapshot.length > 0}
 			<div class="w-full flex justify-end">

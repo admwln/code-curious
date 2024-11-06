@@ -59,6 +59,7 @@
 	}
 	// Else create a new action without a variable
 	else {
+		console.log('New action created without a variable');
 		action = {
 			id: Date.now(),
 			blockType: 'action',
@@ -113,13 +114,8 @@
 <Modal {isOpen}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
-			<!-- Display item type if in edit mode -->
-			{#if editMode}
-				<h4 class="text-sm text-secondary-500">Edit Action</h4>
-			{:else}<h4 class="text-sm text-secondary-500">{variable.name ? variable.name : ''}</h4>
-			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? action.action : 'New Action'}
+				{!editMode ? 'New Action' : 'Edit Action'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -129,21 +125,22 @@
 		on:submit|preventDefault={onSave}
 		class="px-4 flex flex-col gap-4 items-start"
 	>
-		<!-- Action select -->
 		<div class="flex gap-4">
+			<!-- Variable select -->
 			<div class="label">
-				<span>Actions</span>
-				<select name="action" class="select" bind:value={action.action} size={3}>
-					{#each availableActions as action}
-						<option value={action[0]}>{action[0]}</option>
-					{/each}
-				</select>
-			</div>
-			<div class="label">
-				<span>Variables</span>
+				<span>Variable</span>
 				<select name="variables" class="select" bind:value={action.variableId} size={3}>
 					{#each availableVariables as availableVar}
 						<option value={availableVar.id}>{availableVar.name}</option>
+					{/each}
+				</select>
+			</div>
+			<!-- Action select -->
+			<div class="label">
+				<span>Action</span>
+				<select name="action" class="select" bind:value={action.action} size={3}>
+					{#each availableActions as action}
+						<option value={action[0]}>{action[0]}</option>
 					{/each}
 				</select>
 			</div>
