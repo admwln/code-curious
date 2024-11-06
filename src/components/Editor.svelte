@@ -84,7 +84,7 @@
 		// from Skeleton, or a Confirm button could appear in the editor, next
 		// to the Reset button
 		if (confirm('Are you sure you want to reset the editor?')) {
-			// TODO: We should first check in the fetched lesson data if there is a
+			// Check in the fetched lesson data if there is a
 			// snapshot for the current lesson, and load it if it exists:
 			console.log('check lesson data for snapshot', data);
 			if (data.snapshot) {

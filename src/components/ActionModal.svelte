@@ -94,10 +94,14 @@
 
 	const onSave = () => {
 		if (editMode) {
+			// Update the action's id
+			action.id = Date.now();
 			$snapshot = _snapshot.map((a) => (a.id === action.id ? action : a));
 			dispatch('close');
 			return;
 		} else {
+			// Update the action's id
+			action.id = Date.now();
 			// Add action to snapshot store
 			$snapshot = [..._snapshot, action];
 			console.log('New action added', $snapshot);
