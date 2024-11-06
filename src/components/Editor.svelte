@@ -10,7 +10,7 @@
 	import VariableBlock from './VariableBlock.svelte';
 	import ActionModal from './ActionModal.svelte';
 
-	import { faEye, faBolt } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faBolt, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	import { resetMatterFlag } from '$lib/stores/store';
@@ -51,6 +51,8 @@
 	let activeLogId: number | null = null;
 	let activeActionId: number | null = null;
 
+	let newAction: boolean = false;
+
 	const handleClose = () => {
 		activeStringId = null;
 		activeNumberId = null;
@@ -59,6 +61,7 @@
 		activeArrayId = null;
 		activeLogId = null;
 		activeActionId = null;
+		newAction = false;
 	};
 
 	// Get name of variable with the given ID
@@ -81,7 +84,7 @@
 		// from Skeleton, or a Confirm button could appear in the editor, next
 		// to the Reset button
 		if (confirm('Are you sure you want to reset the editor?')) {
-			// TODO: We should first check in the fetched lesson data if there is a
+			// Check in the fetched lesson data if there is a
 			// snapshot for the current lesson, and load it if it exists:
 			console.log('check lesson data for snapshot', data);
 			if (data.snapshot) {
@@ -110,7 +113,7 @@
 					<!-- Log block -->
 					{#if block.blockType === 'log'}
 						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							<FontAwesomeIcon icon={faEye} /> Console Log
+							<FontAwesomeIcon icon={faEye} /> Log
 						</div>
 						<button
 							on:click={() => {
@@ -130,7 +133,8 @@
 					<!-- Action block -->
 					{#if block.blockType === 'action'}
 						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							{getVariableName(block.variableId)}
+							<FontAwesomeIcon icon={faBolt} />
+							{block.action}
 						</div>
 						<button
 							on:click={() => {
@@ -138,8 +142,7 @@
 							}}
 							type="button"
 							class="btn btn-sm flex gap-2"
-							><FontAwesomeIcon icon={faBolt} />
-							{block.action}
+							>{getVariableName(block.variableId)}
 						</button>
 					{/if}
 				</div>
@@ -208,7 +211,16 @@
 			isOpen={activeActionId !== null}
 			variableId={null}
 			actionId={activeActionId}
-			{handleClose}
+			on:close={handleClose}
+		/>
+	{/if}
+
+	{#if newAction}
+		<ActionModal
+			editMode={false}
+			isOpen={newAction}
+			variableId={null}
+			actionId={null}
 			on:close={handleClose}
 		/>
 	{/if}
@@ -221,6 +233,17 @@
 		</div>
 		<div>
 			<NewLog />
+		</div>
+		<div>
+			<button
+				on:click={() => {
+					newAction = true;
+				}}
+				type="button"
+				class="btn btn-sm bg-primary-900 flex gap-2"
+			>
+				<FontAwesomeIcon icon={faPlus} /> Action
+			</button>
 		</div>
 		{#if $snapshot.length > 0}
 			<div class="w-full flex justify-end">

@@ -4,9 +4,10 @@
 	// Imports for runner function:
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
+	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
 
-	import { executeMatterAction } from '$lib/utils/matterActions';
+	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
 
 	import {
@@ -98,15 +99,32 @@
 		panel2Width = isPanel1Collapsed ? 'lg:w-1/2' : 'lg:w-1/3'; // Expand panel 2 accordingly
 	}
 
+	// // Reactive statement to update actionSnapshot any time $snapshot changes
+	// $: {
+	// 	$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot each time it updates
+	// }
+
 	// Function to run the user's code
 	async function runner() {
+		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
+		for (const block of $actionSnapshot) {
+			// If the current block has a variableId associated with it, create a deep clone of the variable
+			let variable = null;
 
-		for (const block of $snapshot) {
+			// // Action blocks can have a variableId associated with them
+			// if (block.blockType === 'action' && block.variableId) {
+			// 	variable = structuredClone($actionSnapshot.find((v) => v.id === block.variableId));
+			// }
+			// Log blocks can have a selectedId associated with them
+			if (block.blockType === 'log' && block.selectedId) {
+				variable = structuredClone($actionSnapshot.find((v) => v.id === block.selectedId));
+			}
+
 			try {
 				if (block.blockType === 'variable') continue;
-				if (block.blockType === 'log') await logToConsole(block);
-				if (block.blockType === 'action') await executeMatterAction(block);
+				if (block.blockType === 'log') await logToConsole(block, variable);
+				if (block.blockType === 'action') await executeAction(block);
 			} catch (error: any) {
 				// Capture and log error to the Console component
 				// Create a new log block with the error message

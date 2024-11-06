@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { actionOutput } from '$lib/utils/matterActions'; // Import actionOutput store
+	import { matterActionOutput } from '$lib/utils/actions'; // Import matterActionOutput store
 	import {
 		initMatterJS,
 		startMatter,
@@ -16,8 +16,8 @@
 	let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
-	// Handle updates from actionOutput store
-	actionOutput.subscribe((instructions: Action[]) => {
+	// Handle updates from matterActionOutput store
+	matterActionOutput.subscribe((instructions: Action[]) => {
 		if (matterInstance && instructions.length > 0) {
 			const latestInstruction = instructions[instructions.length - 1];
 			handleInstruction(matterInstance, latestInstruction, $snapshot); // Pass the latest instruction to matter.ts

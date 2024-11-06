@@ -8,14 +8,29 @@
 
 	export let editMode: boolean;
 	export let isOpen: boolean;
-	export let variableId;
 	export let actionId;
-	export let handleClose: () => void;
-	// There should always be a variable, because an action is always associated with a variable
-	let variable: VariableType = { ...$snapshot.find((v) => v.id === variableId) };
-	let action: Action;
+	export let variableId;
+	let variable: VariableType;
 
-	const actions: string[] = ['drop'];
+	// Hold the variables from the snapshot store
+	let availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
+
+	// Actions multidimensional array. Each sub-array contains the action name and the type of value it requires.
+	const actions: string[][] = [
+		['drop', 'string'],
+		['increase', 'number'],
+		['decrease', 'number'],
+	];
+	// Available actions for the current variable
+	let availableActions: string[][] = actions;
+
+	// Not all actions are associated with a variable
+	if (variableId) {
+		variable = { ...$snapshot.find((v) => v.id === variableId) };
+		// Filter available actions based on the variable type
+		availableActions = actions.filter((a) => a[1] === variable.type);
+	}
+	let action: Action;
 
 	// Snapshot store
 	$: _snapshot = $snapshot;
@@ -24,21 +39,51 @@
 	if (editMode && actionId !== null) {
 		// Clone the action to avoid directly modifying the store object
 		action = { ...$snapshot.find((a) => a.id === actionId) };
-	} // If not in edit mode, create a new action
-	else {
-		console.log('Creating new action');
+		if (action.variableId) {
+			// Get the type of the associated variable
+			const type = getVariableType(action.variableId);
+			// Filter available actions based on the variable type
+			availableActions = actions.filter((a) => a[1] === type);
+		}
+	}
+	// Else if not in edit mode but with existing variableId, create a new action
+	else if (!editMode && variableId !== null) {
 		action = {
 			id: Date.now(),
 			blockType: 'action',
 			variableId: variableId,
 			action: '',
 		};
+		console.log('New action created with a variable', action);
+		// Filter available actions based on the variable type
+		availableActions = actions.filter((a) => a[1] === variable.type);
+	}
+	// Else create a new action without a variable
+	else {
+		action = {
+			id: Date.now(),
+			blockType: 'action',
+			action: '',
+		};
+		console.log('New action created without a variable', action);
+	}
+
+	// When action.variableId changes, update the available actions
+	$: {
+		if (action.variableId) {
+			const type = getVariableType(action.variableId);
+			availableActions = actions.filter((a) => a[1] === type);
+		}
+	}
+
+	// When the snapshot store changes, update the available variables
+	$: {
+		availableVariables = $snapshot.filter((v) => v.blockType === 'variable');
 	}
 
 	const dispatch = createEventDispatcher();
 
 	const closeModal = () => {
-		handleClose();
 		dispatch('close');
 	};
 
@@ -51,29 +96,26 @@
 	const onSave = () => {
 		if (editMode) {
 			$snapshot = _snapshot.map((a) => (a.id === action.id ? action : a));
-			handleClose();
 			dispatch('close');
 			return;
 		} else {
-			// Add action to snapshot store
 			$snapshot = [..._snapshot, action];
 			console.log('New action added', $snapshot);
 		}
-		handleClose();
 		dispatch('close');
 	};
+
+	function getVariableType(id: number) {
+		const variable = $snapshot.find((v) => v.id === id);
+		return variable ? variable.type : '';
+	}
 </script>
 
 <Modal {isOpen}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
-			<!-- Display item type if in edit mode -->
-			{#if editMode}
-				<h4 class="text-sm text-secondary-500">Action</h4>
-			{:else}<h4 class="text-sm text-secondary-500">{variable.name}</h4>
-			{/if}
 			<h4 class="text-lg font-semibold">
-				{editMode ? action.action : 'New Action'}
+				{!editMode ? 'New Action' : 'Edit Action'}
 			</h4>
 		</div>
 		<button on:click={closeModal}><FontAwesomeIcon icon={faXmark} /></button>
@@ -83,14 +125,25 @@
 		on:submit|preventDefault={onSave}
 		class="px-4 flex flex-col gap-4 items-start"
 	>
-		<!-- Action select -->
-		<div class="label">
-			<span>Action</span>
-			<select name="action" class="select" bind:value={action.action} size={actions.length}>
-				{#each actions as action}
-					<option value={action}>{action}</option>
-				{/each}
-			</select>
+		<div class="flex gap-4">
+			<!-- Variable select -->
+			<div class="label">
+				<span>Variable</span>
+				<select name="variables" class="select" bind:value={action.variableId} size={3}>
+					{#each availableVariables as availableVar}
+						<option value={availableVar.id}>{availableVar.name}</option>
+					{/each}
+				</select>
+			</div>
+			<!-- Action select -->
+			<div class="label">
+				<span>Action</span>
+				<select name="action" class="select" bind:value={action.action} size={3}>
+					{#each availableActions as action}
+						<option value={action[0]}>{action[0]}</option>
+					{/each}
+				</select>
+			</div>
 		</div>
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>

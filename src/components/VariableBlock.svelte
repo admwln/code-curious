@@ -14,7 +14,7 @@
 		isOpen = true;
 	};
 
-	const handleClose = () => {
+	const closeAction = () => {
 		isOpen = false;
 	};
 </script>
@@ -52,4 +52,13 @@
 		</button>
 	{/if}
 </div>
-<ActionModal editMode={false} {isOpen} variableId={block.id} actionId={null} {handleClose} />
+
+{#if isOpen}
+	<ActionModal
+		editMode={false}
+		{isOpen}
+		variableId={block.id}
+		actionId={null}
+		on:close={closeAction}
+	/>
+{/if}

@@ -95,12 +95,13 @@ export interface Log {
 	selectedKey: string | null;
 	useIndex: boolean;
 	useKey: boolean;
+	value?: string | number | boolean | any[] | object;
 }
 
 export interface Action {
 	id: number;
 	blockType: string;
-	variableId: number;
+	variableId?: number;
 	action: string;
 }
 
