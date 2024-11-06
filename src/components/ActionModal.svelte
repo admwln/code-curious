@@ -10,7 +10,7 @@
 	export let isOpen: boolean;
 	export let variableId;
 	export let actionId;
-	export let handleClose: () => void;
+
 	// There should always be a variable, because an action is always associated with a variable
 	let variable: VariableType = { ...$snapshot.find((v) => v.id === variableId) };
 	let action: Action;
@@ -38,7 +38,6 @@
 	const dispatch = createEventDispatcher();
 
 	const closeModal = () => {
-		handleClose();
 		dispatch('close');
 	};
 
@@ -51,7 +50,6 @@
 	const onSave = () => {
 		if (editMode) {
 			$snapshot = _snapshot.map((a) => (a.id === action.id ? action : a));
-			handleClose();
 			dispatch('close');
 			return;
 		} else {
@@ -59,7 +57,6 @@
 			$snapshot = [..._snapshot, action];
 			console.log('New action added', $snapshot);
 		}
-		handleClose();
 		dispatch('close');
 	};
 </script>

@@ -130,7 +130,8 @@
 					<!-- Action block -->
 					{#if block.blockType === 'action'}
 						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							{getVariableName(block.variableId)}
+							<FontAwesomeIcon icon={faBolt} />
+							{block.action}
 						</div>
 						<button
 							on:click={() => {
@@ -138,8 +139,7 @@
 							}}
 							type="button"
 							class="btn btn-sm flex gap-2"
-							><FontAwesomeIcon icon={faBolt} />
-							{block.action}
+							>{getVariableName(block.variableId)}
 						</button>
 					{/if}
 				</div>
@@ -208,7 +208,6 @@
 			isOpen={activeActionId !== null}
 			variableId={null}
 			actionId={activeActionId}
-			{handleClose}
 			on:close={handleClose}
 		/>
 	{/if}
