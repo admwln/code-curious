@@ -13,14 +13,14 @@
 	};
 </script>
 
-<div class="p-4 md:overflow-x-scroll">
+<div class="p-4 mb-[48px] md:mb-[58px] lg:mb-0 md:overflow-x-scroll">
 	{#if data.prevLesson}
 		<p class="mb-4">
 			<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; Previous</a>
 		</p>
 	{/if}
 	<div class="markdown">
-		<h3 class="mb-2 text-xl">{data.title}</h3>
+		<h3 class="mb-2 text-3xl">{data.title}</h3>
 		{#each data.content as content}
 			{#if content.startsWith('{{')}
 				<Parser placeholder={parsePlaceholder(content)} />

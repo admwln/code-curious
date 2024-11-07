@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { faPlus } from '@fortawesome/free-solid-svg-icons';
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 </script>
 
 <section>
@@ -16,11 +14,5 @@
 			</article>
 		</div>
 		<hr class="opacity-50" />
-		<!-- <footer class="p-4 flex justify-start items-center space-x-4">
-			<div class="flex-auto flex justify-between items-center">
-				<h6 class="font-bold" data-toc-ignore>By Adam</h6>
-				<small>On {new Date().toLocaleDateString()}</small>
-			</div>
-		</footer> -->
 	</a>
 </section>
