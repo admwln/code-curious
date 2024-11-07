@@ -18,6 +18,7 @@
 		faEye,
 		faFilter,
 		faRotateRight,
+		faShapes,
 		faStop,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
@@ -45,7 +46,7 @@
 		editor: {
 			snapshot: [],
 		},
-		funnel: {},
+		playfiled: {},
 	};
 
 	// Use Supabase client to fetch data from countries table
@@ -207,7 +208,7 @@
 	</Accordion>
 </section>
 
-<!-- Panel 3: Funnel (matter.js) -->
+<!-- Panel 3: Playfield -->
 <section
 	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:block transition-all duration-250 ease-in-out {$currentPanel !==
 	3
@@ -217,7 +218,7 @@
 	<div
 		class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#ec489a2a]"
 	>
-		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faFilter} /> Funnel</h2>
+		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faShapes} /> Playfield</h2>
 		<button
 			type="button"
 			on:click={runner}
@@ -234,7 +235,7 @@
 	</div>
 	<!-- Dynamic content start -->
 	{#if lessonData}
-		<Matter data={lessonData.funnel} />
+		<Matter data={lessonData.playfiled} />
 	{:else}
 		<p>Loading...</p>
 	{/if}
