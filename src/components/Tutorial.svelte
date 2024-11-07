@@ -20,7 +20,7 @@
 		</p>
 	{/if}
 	<div class="markdown">
-		<h2>{data.title}</h2>
+		<h3 class="mb-2 text-xl">{data.title}</h3>
 		{#each data.content as content}
 			{#if content.startsWith('{{')}
 				<Parser placeholder={parsePlaceholder(content)} />

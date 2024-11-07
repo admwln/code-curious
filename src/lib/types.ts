@@ -12,7 +12,7 @@ export interface LessonData {
 	console?: {
 		defaultCode?: string[];
 	};
-	funnel?: {
+	playfiled?: {
 		color?: string;
 	};
 }
