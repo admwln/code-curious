@@ -13,7 +13,7 @@
 	};
 </script>
 
-<div class="p-4 md:overflow-x-scroll">
+<div class="p-4 mb-[48px] md:mb-[58px] lg:mb-0 md:overflow-x-scroll">
 	{#if data.prevLesson}
 		<p class="mb-4">
 			<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; Previous</a>
