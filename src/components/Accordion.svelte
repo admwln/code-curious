@@ -24,6 +24,7 @@
 		: ''} {rounded ? 'rounded-t-xl' : ''} {rounded && !isOpen ? 'rounded-b-xl' : ''}"
 >
 	<slot name="summary" id={`${uniqueId}-summary`}></slot>
+	<slot name="summary-button"></slot>
 	<button
 		type="button"
 		class="btn btn-sm py-1"

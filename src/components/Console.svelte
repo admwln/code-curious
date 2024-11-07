@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput } from '$lib/utils/consoleActions';
 	import { fade } from 'svelte/transition';
 	import type { Log } from '$lib/types';

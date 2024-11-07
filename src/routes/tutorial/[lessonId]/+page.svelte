@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
-	// Imports for runner function:
+
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
 	import { actionSnapshot } from '$lib/utils/actions';
@@ -14,12 +14,11 @@
 		faAngleLeft,
 		faAngleRight,
 		faChalkboardUser,
+		faCircleExclamation,
 		faCode,
 		faEye,
-		faFilter,
 		faRotateRight,
 		faShapes,
-		faStop,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -143,7 +142,6 @@
 				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
-
 		isRunning.set(false); // Set to false when all blocks are processed
 	}
 </script>
@@ -190,6 +188,22 @@
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
 		</div>
+		<div slot="summary-button">
+			<!-- Run button, only show if currentPanel is 2, that is, not on desktop -->
+			<button
+				on:click={runner}
+				type="button"
+				disabled={$isRunning}
+				class="btn btn-sm p-0 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
+			>
+				{#if $isRunning}
+					<FontAwesomeIcon icon={faCircleExclamation} /> Running
+				{/if}
+				{#if !$isRunning}
+					<FontAwesomeIcon icon={faRotateRight} /> Run
+				{/if}
+			</button>
+		</div>
 		<div slot="content" class="p-2">
 			{#if lessonData}
 				<Editor data={lessonData.editor} />
@@ -226,7 +240,7 @@
 			class="btn btn-sm bg-primary-900 flex gap-2"
 		>
 			{#if $isRunning}
-				<FontAwesomeIcon icon={faStop} /> Running
+				<FontAwesomeIcon icon={faCircleExclamation} /> Running
 			{/if}
 			{#if !$isRunning}
 				<FontAwesomeIcon icon={faRotateRight} /> Run
