@@ -76,6 +76,7 @@ export const colors: ColorMap = {
 	darkseagreen: ['#8FBC8F', 'dark sea green'],
 	darkkhaki: ['#BDB76B', 'dark khaki'],
 	gold: ['#FFD700', 'gold'],
+	yellow: ['#FFFF00', 'yellow'],
 	khaki: ['#F0E68C', 'khaki'],
 	peachpuff: ['#FFDAB9', 'peach puff'],
 	orange: ['#FFA500', 'orange'],

@@ -27,6 +27,7 @@
 	if (!objectVariable) {
 		objectVariable = {
 			id: Date.now(),
+			blockType: 'variable',
 			name: '',
 			type: 'object',
 			value: { key1: '' },

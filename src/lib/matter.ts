@@ -138,9 +138,10 @@ export function handleInstruction(
 	switch (instruction.action) {
 		case 'drop':
 			// NB presupposes that the variable is a color string
-			// Remove all spaces, if any, from variable.value
 			// e.g. so that 'light coral' is converted to 'lightcoral'
 			let fill = variable.value as string;
+			// Remove all spaces, if any, from variable.value
+			fill = fill.replace(/\s/g, '');
 			// Check if the variable value is a valid color
 			try {
 				if (!colors[fill]) {

@@ -63,6 +63,14 @@
 	const handleValueChange = (event: Event) => {
 		variable.value = (event.target as HTMLInputElement).value;
 	};
+
+	// Get color from colors.json
+	const getColor = (value: string) => {
+		const key: string | undefined = value.replace(/\s/g, '');
+		const color = key ? colors[key][0] : '#000000'; // Default to black if no match
+		console.log('Color:', color);
+		return color;
+	};
 </script>
 
 <Modal {isOpen}>
@@ -109,10 +117,10 @@
 					required
 				/>
 			</label>
-			{#if showColorPicker && variable.value in colors}
+			{#if showColorPicker}
 				<div
 					class="w-[45px] h-[45px] rounded-full border-2 border-white"
-					style="background-color: {colors[variable.value]};"
+					style="background-color: {getColor(variable.value)};"
 				></div>
 			{/if}
 		</div>
