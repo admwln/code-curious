@@ -7,7 +7,7 @@
 
 	// Helper function to split placeholder at , into an array
 	const parsePlaceholder = (placeholder: string) => {
-		let placeholderArray: string[] = placeholder.split(',').map((item) => item.trim());
+		let placeholderArray: string[] = placeholder.split('|').map((item) => item.trim());
 		placeholderArray[0] = placeholderArray[0].replace('{{', '');
 		return placeholderArray;
 	};

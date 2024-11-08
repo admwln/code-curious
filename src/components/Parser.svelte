@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import VariableBlock from './VariableBlock.svelte';
 
@@ -40,10 +40,46 @@
 	>
 {:else if placeholder[0] === 'VariableBlock'}
 	<div class="px-4 flex items-start">
-		<VariableBlock
-			block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
-			showActionButton={false}
-			onActivate={() => {}}
-		/>
+		{#if !placeholder[3]}
+			<VariableBlock
+				block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
+				showActionButton={false}
+				onActivate={() => {}}
+			/>
+		{:else if placeholder[3] === 'action'}
+			<VariableBlock
+				block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
+				showActionButton={true}
+				onActivate={() => {}}
+			/>
+		{/if}
+	</div>
+{:else if placeholder[0] === 'LogBlock'}
+	<div class="px-4 flex items-start">
+		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+			<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+				<FontAwesomeIcon icon={faEye} /> Log
+			</div>
+
+			{#if placeholder[1]}
+				<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+					{`"${placeholder[1]}"`}
+				</div>
+			{/if}
+			{#if placeholder[2]}
+				<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+					<span class="badge variant-filled text-md font-bold rounded-none">{placeholder[2]}</span>
+				</div>
+			{/if}
+			{#if placeholder[3]}
+				<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+					{`index: ${placeholder[3]}`}
+				</div>{/if}
+			{#if placeholder[4]}
+				<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+					{`key: ${placeholder[4]}`}
+				</div>
+			{/if}
+		</div>
 	</div>
 {/if}
