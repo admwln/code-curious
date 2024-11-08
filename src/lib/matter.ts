@@ -1,6 +1,8 @@
 import Matter from 'matter-js';
 import type { Action, InitialBody, MatterInstance, MatterOptions, VariableType } from './types';
-
+import { colors } from './utils/colors';
+import { consoleOutput } from './utils/consoleActions';
+import type { Log } from './types';
 // Create aliases to avoid "Matter." prefixes
 const { Engine, Render, World, Bodies, Runner } = Matter;
 
@@ -136,7 +138,32 @@ export function handleInstruction(
 	switch (instruction.action) {
 		case 'drop':
 			// NB presupposes that the variable is a color string
-			const fill = variable.value;
+			// Remove all spaces, if any, from variable.value
+			// e.g. so that 'light coral' is converted to 'lightcoral'
+			let fill = variable.value as string;
+			// Check if the variable value is a valid color
+			try {
+				if (!colors[fill]) {
+					throw new Error(`Huh? Unrecognized color value: ${fill}`);
+				}
+			} catch (error: any) {
+				// Capture and log error to the Console component
+				// Create a new log block with the error message
+				const errorBlock: Log = {
+					id: Date.now(),
+					blockType: 'log',
+					message: `Error: ${error.message}`,
+					selectedId: null,
+					selectedIndex: 0,
+					selectedKey: null,
+					useIndex: false,
+					useKey: false,
+					selectedType: 'string',
+				};
+				consoleOutput.update((output) => [...output, errorBlock]);
+			}
+			fill = fill.replace(/\s/g, '');
+
 			if (typeof fill === 'string') {
 				const circle = Bodies.circle(s(55), s(55), s(20), {
 					isStatic: false,

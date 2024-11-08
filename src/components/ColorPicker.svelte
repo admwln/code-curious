@@ -21,11 +21,12 @@
 				name="color"
 				id="color-{key}"
 				class="color-radio"
-				value={key}
+				value={colors[key][1]}
 				bind:group={color}
-				aria-label={key}
+				aria-label={colors[key][1]}
 			/>
-			<label for="color-{key}" class="color-label" style="background-color: {colors[key]};"></label>
+			<label for="color-{key}" class="color-label" style="background-color: {colors[key][0]};"
+			></label>
 		</div>
 	{/each}
 </div>

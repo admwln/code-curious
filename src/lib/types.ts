@@ -106,5 +106,5 @@ export interface Action {
 }
 
 export type ColorMap = {
-	[key: string]: string;
+	[key: string]: [string, string];
 };
