@@ -107,50 +107,61 @@
 				{/if}
 				<!-- Log block -->
 				{#if block.blockType === 'log'}
-					<div class="flex border border-secondary-900 text-sm">
-						<button
-							on:click={() => {
-								activeLogId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm flex gap-2"
-						>
-							<FontAwesomeIcon icon={faEye} /> Log
-						</button>
-						<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
-							{block.message ? `"${block.message}"` : ``}
-						</div>
-						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							{block.selectedId ? `${getVariableName(block.selectedId)}` : ``}
-						</div>
-						{#if block.useIndex}
-							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
-								{block.useIndex ? `index: ${block.selectedIndex}` : ``}
-							</div>{/if}
-						{#if block.useKey}
-							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
-								{block.useKey ? `key: ${block.selectedKey}` : ``}
+					<button
+						on:click={() => {
+							activeLogId = block.id;
+						}}
+						type="button"
+					>
+						<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+							<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+								<FontAwesomeIcon icon={faEye} /> Log
 							</div>
-						{/if}
-					</div>
+
+							{#if block.message}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{`"${block.message}"`}
+								</div>
+							{/if}
+							{#if block.selectedId}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									<span class="badge variant-filled text-md font-bold rounded-none"
+										>{getVariableName(block.selectedId)}</span
+									>
+								</div>
+							{/if}
+							{#if block.useIndex}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{block.useIndex ? `index: ${block.selectedIndex}` : ``}
+								</div>{/if}
+							{#if block.useKey}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{block.useKey ? `key: ${block.selectedKey}` : ``}
+								</div>
+							{/if}
+						</div>
+					</button>
 				{/if}
 				<!-- Action block -->
 				{#if block.blockType === 'action'}
-					<div class="flex border border-secondary-900 text-sm">
-						<button
-							on:click={() => {
-								activeActionId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm flex gap-2"
-						>
-							<FontAwesomeIcon icon={faBolt} />
-							{block.action.charAt(0).toUpperCase() + block.action.slice(1)}
-						</button>
-						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							{getVariableName(block.variableId)}
+					<button
+						on:click={() => {
+							activeActionId = block.id;
+						}}
+						type="button"
+					>
+						<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+							<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+								<FontAwesomeIcon icon={faBolt} />
+								{block.action.charAt(0).toUpperCase() + block.action.slice(1)}
+							</div>
+							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+								<span class="badge variant-filled text-md font-bold rounded-none">
+									{getVariableName(block.variableId)}
+								</span>
+							</div>
 						</div>
-					</div>
+					</button>
 				{/if}
 			{/each}
 		{/if}

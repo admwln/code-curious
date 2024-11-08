@@ -20,34 +20,35 @@
 </script>
 
 <div class="flex">
-	<div class="flex border border-secondary-900 text-sm">
-		<div class="bg-secondary-900">
-			<button on:click={onActivate} type="button" class="btn btn-sm">
-				{block.name}
-			</button>
-		</div>
-		<div class="px-2 py-1 flex gap-2 items-center">
-			{#if block.type === 'object'}
-				{JSON.stringify(block.value).substring(0, 30)} ...
-			{:else if block.type === 'array'}
-				{#if Array.isArray(block.value)}
-					{#each block.value as item, i}
-						{#if typeof item === 'object' && i === 0}
-							{JSON.stringify(item).substring(0, 30)} ...
-						{:else if typeof item !== 'object'}
-							{#if i < block.value.length - 1}
-								{item},{' '}
-							{:else}
-								{item}
+	<button on:click={onActivate} type="button">
+		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+			<div class="px-2 py-1 flex gap-2 items-center">
+				<span class="badge variant-filled text-md font-bold rounded-none">{block.name}</span>
+			</div>
+			<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+				{#if block.type === 'object'}
+					{JSON.stringify(block.value).substring(0, 30)} ...
+				{:else if block.type === 'array'}
+					{#if Array.isArray(block.value)}
+						{#each block.value as item, i}
+							{#if typeof item === 'object' && i === 0}
+								{JSON.stringify(item).substring(0, 30)} ...
+							{:else if typeof item !== 'object'}
+								{#if i < block.value.length - 1}
+									{item},{' '}
+								{:else}
+									{item}
+								{/if}
 							{/if}
-						{/if}
-					{/each}
+						{/each}
+					{/if}
+				{:else}
+					{block.value}
 				{/if}
-			{:else}
-				{block.value}
-			{/if}
+			</div>
 		</div>
-	</div>
+	</button>
+
 	{#if showActionButton}
 		<button on:click={openAction} type="button" class="btn btn-sm">
 			<FontAwesomeIcon icon={faBolt} /> <span class="sr-only">Add Action</span>
