@@ -101,51 +101,57 @@
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
-				<div class="flex border border-secondary-900 text-sm">
-					<!-- Variable block -->
-					{#if block.blockType === 'variable'}
-						<VariableBlock
-							{block}
-							onActivate={() => activateBlock(block)}
-							showActionButton={true}
-						/>
-					{/if}
-					<!-- Log block -->
-					{#if block.blockType === 'log'}
-						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							<FontAwesomeIcon icon={faEye} /> Log
-						</div>
+				<!-- Variable block -->
+				{#if block.blockType === 'variable'}
+					<VariableBlock {block} onActivate={() => activateBlock(block)} showActionButton={true} />
+				{/if}
+				<!-- Log block -->
+				{#if block.blockType === 'log'}
+					<div class="flex border border-secondary-900 text-sm">
 						<button
 							on:click={() => {
 								activeLogId = block.id;
 							}}
 							type="button"
-							class="btn btn-sm"
+							class="btn btn-sm flex gap-2"
 						>
-							{block.message ? `"${block.message}"` : ``}
-							{block.selectedId && !block.useKey && !block.useIndex
-								? `${getVariableName(block.selectedId)}`
-								: ``}
-							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
-							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
+							<FontAwesomeIcon icon={faEye} /> Log
 						</button>
-					{/if}
-					<!-- Action block -->
-					{#if block.blockType === 'action'}
-						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-							<FontAwesomeIcon icon={faBolt} />
-							{block.action}
+						<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+							{block.message ? `"${block.message}"` : ``}
 						</div>
+						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
+							{block.selectedId ? `${getVariableName(block.selectedId)}` : ``}
+						</div>
+						{#if block.useIndex}
+							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+								{block.useIndex ? `index: ${block.selectedIndex}` : ``}
+							</div>{/if}
+						{#if block.useKey}
+							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+								{block.useKey ? `key: ${block.selectedKey}` : ``}
+							</div>
+						{/if}
+					</div>
+				{/if}
+				<!-- Action block -->
+				{#if block.blockType === 'action'}
+					<div class="flex border border-secondary-900 text-sm">
 						<button
 							on:click={() => {
 								activeActionId = block.id;
 							}}
 							type="button"
 							class="btn btn-sm flex gap-2"
-							>{getVariableName(block.variableId)}
+						>
+							<FontAwesomeIcon icon={faBolt} />
+							{block.action.charAt(0).toUpperCase() + block.action.slice(1)}
 						</button>
-					{/if}
-				</div>
+						<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
+							{getVariableName(block.variableId)}
+						</div>
+					</div>
+				{/if}
 			{/each}
 		{/if}
 	</div>
