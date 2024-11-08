@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { ConsoleData } from '$lib/types';
-	import { snapshot } from '$lib/stores/snapshots';
-	import { isRunning } from '$lib/stores/store';
 	import { clearConsole, consoleOutput } from '$lib/utils/consoleActions';
 	import { fade } from 'svelte/transition';
+	import type { Log } from '$lib/types';
 
 	import {
 		formatArray,
@@ -12,12 +10,10 @@
 		formatValue,
 	} from '$lib/utils/logFormat';
 
-	//We probably don't need to pass from lesson data to the console
-	//export let data: ConsoleData | null;
-
 	// Function to retrieve and return any selected variable from snapshot
-	const getVariableToLog = (selectedId: number): Record<string, any> => {
-		return $snapshot.find((v) => v.id === selectedId);
+	const getVariableToLog = (log: Log): any => {
+		let variableToLog = log.value;
+		return variableToLog;
 	};
 
 	// Function to scroll the console container to the bottom
@@ -43,74 +39,60 @@
 		class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-[64px]"
 	>
 		{#each $consoleOutput as log}
-			<p in:fade={{ duration: 150 }}>
+			<p>
 				<code>
 					{#if log.message && log.message !== ''}
 						{log.message}
 					{/if}
 					<!-- Selected variable is string, number, boolean: -->
 					{#if log.selectedId && log.selectedType !== 'array' && log.selectedType !== 'object'}
-						{@html formatValue(getVariableToLog(log.selectedId).value)}
+						{@html formatValue(getVariableToLog(log))}
 
 						<!-- Selected variable is array of objects with index and key: -->
 					{:else if log.selectedId && log.selectedType === 'array' && log.useIndex && log.useKey && log.selectedIndex !== null && log.selectedKey !== null}
-						{@html formatValue(
-							getVariableToLog(log.selectedId).value[log.selectedIndex][log.selectedKey],
-						)}
+						{@html formatValue(getVariableToLog(log)[log.selectedIndex][log.selectedKey])}
 
 						<!-- Selected variable is array with index: -->
 					{:else if log.selectedId && log.selectedType === 'array' && log.useIndex && !log.useKey && log.selectedIndex !== null}
 						<!-- Check that the item is not an object -->
-						{#if typeof getVariableToLog(log.selectedId).value[log.selectedIndex] !== 'object'}
-							{@html formatValue(getVariableToLog(log.selectedId).value[log.selectedIndex])}
+						{#if typeof getVariableToLog(log)[log.selectedIndex] !== 'object'}
+							{@html formatValue(getVariableToLog(log)[log.selectedIndex])}
 						{/if}
 						<!-- Selected variable is object with key: -->
 					{:else if log.selectedId && log.selectedType === 'object' && log.useKey && log.selectedKey !== null}
-						{@html formatValue(getVariableToLog(log.selectedId).value[log.selectedKey])}
+						{@html formatValue(getVariableToLog(log)[log.selectedKey])}
 					{/if}
 				</code>
 			</p>
 			{#if log.selectedId && log.selectedType === 'array' && !log.useIndex}
 				<!-- Selected variable is array without index -->
 				<details>
-					<summary in:fade={{ duration: 300 }}
-						><code>{@html formatArray(getVariableToLog(log.selectedId).value).summary}</code
-						></summary
-					>
-					<pre><code>{@html formatArray(getVariableToLog(log.selectedId).value).details}</code
-						></pre>
+					<summary><code>{@html formatArray(getVariableToLog(log)).summary}</code></summary>
+					<pre><code>{@html formatArray(getVariableToLog(log)).details}</code></pre>
 				</details>
 			{/if}
 			<!-- Selected variable is object without key: -->
 			{#if log.selectedId && log.selectedType === 'object' && !log.useKey}
 				<details>
-					<summary in:fade={{ duration: 300 }}>
-						<code>{@html formatObjectSummary(getVariableToLog(log.selectedId).value)}</code>
+					<summary>
+						<code>{@html formatObjectSummary(getVariableToLog(log))}</code>
 					</summary>
-					<pre><code>{@html formatObject(getVariableToLog(log.selectedId).value)}</code></pre>
+					<pre><code>{@html formatObject(getVariableToLog(log))}</code></pre>
 				</details>
 			{/if}
 			<!-- Selected variable is object in array with index, without key: -->
 			{#if log.selectedId && log.selectedType === 'array' && log.useIndex && !log.useKey && log.selectedIndex !== null}
 				<!-- Check that the item is an object -->
-				{#if typeof getVariableToLog(log.selectedId).value[log.selectedIndex] === 'object'}
+				{#if typeof getVariableToLog(log)[log.selectedIndex] === 'object'}
 					<details>
-						<summary in:fade={{ duration: 300 }}>
-							<code
-								>{@html formatObjectSummary(
-									getVariableToLog(log.selectedId).value[log.selectedIndex],
-								)}</code
-							>
+						<summary>
+							<code>{@html formatObjectSummary(getVariableToLog(log)[log.selectedIndex])}</code>
 						</summary>
-						<pre><code
-								>{@html formatObject(
-									getVariableToLog(log.selectedId).value[log.selectedIndex],
-								)}</code
-							></pre>
+						<pre><code>{@html formatObject(getVariableToLog(log)[log.selectedIndex])}</code></pre>
 					</details>
 				{/if}
 			{/if}
-			<hr class="opacity-50" in:fade={{ duration: 300 }} />
+			<hr class="opacity-50" />
 		{/each}
 		{#if $consoleOutput.length > 0}
 			<div class="flex justify-end">

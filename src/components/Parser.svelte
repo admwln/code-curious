@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import VariableBlock from './VariableBlock.svelte';
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let placeholder: string[];
@@ -37,4 +38,12 @@
 	<button class="btn btn-sm bg-primary-900 flex gap-2"
 		><FontAwesomeIcon icon={faPlus} /> Variable</button
 	>
+{:else if placeholder[0] === 'VariableBlock'}
+	<div class="px-4 flex items-start">
+		<VariableBlock
+			block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
+			showActionButton={false}
+			onActivate={() => {}}
+		/>
+	</div>
 {/if}

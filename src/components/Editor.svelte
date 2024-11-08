@@ -7,9 +7,13 @@
 	import NewVariable from './NewVariable.svelte';
 	import LogModal from './LogModal.svelte';
 	import NewLog from './NewLog.svelte';
+	import VariableBlock from './VariableBlock.svelte';
+	import ActionModal from './ActionModal.svelte';
 
-	import { faEye } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faBolt, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+
+	import { resetMatterFlag } from '$lib/stores/store';
 
 	// START: Logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
@@ -17,6 +21,7 @@
 	import { page } from '$app/stores';
 
 	export let data;
+
 	let lessonId: string;
 
 	// Subscribe to the lessonId from the page store
@@ -25,7 +30,7 @@
 	// Load snapshot data for the current lesson when the component mounts or lessonId changes
 	$: {
 		if (lessonId) {
-			loadSnapshot(lessonId);
+			loadSnapshot(lessonId, data.snapshot);
 		}
 	}
 
@@ -44,6 +49,9 @@
 	let activeObjectId: number | null = null;
 	let activeArrayId: number | null = null;
 	let activeLogId: number | null = null;
+	let activeActionId: number | null = null;
+
+	let newAction: boolean = false;
 
 	const handleClose = () => {
 		activeStringId = null;
@@ -52,6 +60,8 @@
 		activeObjectId = null;
 		activeArrayId = null;
 		activeLogId = null;
+		activeActionId = null;
+		newAction = false;
 	};
 
 	// Get name of variable with the given ID
@@ -60,116 +70,99 @@
 		return variable ? variable.name : '';
 	};
 
-	console.log('Editor data', data);
+	function activateBlock(block: Record<string, any>) {
+		if (block.type === 'string') activeStringId = block.id;
+		else if (block.type === 'number') activeNumberId = block.id;
+		else if (block.type === 'boolean') activeBooleanId = block.id;
+		else if (block.type === 'object') activeObjectId = block.id;
+		else if (block.type === 'array') activeArrayId = block.id;
+	}
+
+	const resetEditor = () => {
+		// Ask the user to confirm, then clear the snapshot
+		// TODO: The default confirm modal could be replaced by a modal component
+		// from Skeleton, or a Confirm button could appear in the editor, next
+		// to the Reset button
+		if (confirm('Are you sure you want to reset the editor?')) {
+			// Check in the fetched lesson data if there is a
+			// snapshot for the current lesson, and load it if it exists:
+			console.log('check lesson data for snapshot', data);
+			if (data.snapshot) {
+				$snapshot = data.snapshot;
+			} else $snapshot = [];
+			// Toggle the flag to reset the Matter.js simulation
+			resetMatterFlag.update((flag) => (flag = true));
+		}
+	};
 </script>
 
-<div class="min-h-[320px] flex flex-col justify-start gap-4">
+<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
 	<div class="flex flex-col items-start gap-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
-				<div class="flex border border-secondary-900 text-sm">
-					<div class="bg-secondary-900 px-2 py-1 flex gap-2 items-center">
-						{#if block.name}
-							{block.name}
-						{:else}
-							<FontAwesomeIcon icon={faEye} /> Console Log
-						{/if}
-					</div>
+				<!-- Variable block -->
+				{#if block.blockType === 'variable'}
+					<VariableBlock {block} onActivate={() => activateBlock(block)} showActionButton={true} />
+				{/if}
+				<!-- Log block -->
+				{#if block.blockType === 'log'}
+					<button
+						on:click={() => {
+							activeLogId = block.id;
+						}}
+						type="button"
+					>
+						<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+							<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+								<FontAwesomeIcon icon={faEye} /> Log
+							</div>
 
-					<!-- String Variable -->
-					{#if block.type === 'string'}
-						<button
-							on:click={() => {
-								activeStringId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-
-					<!-- Number Variable -->
-					{#if block.type === 'number'}
-						<button
-							on:click={() => {
-								activeNumberId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-
-					<!-- Boolean Variable -->
-					{#if block.type === 'boolean'}
-						<button
-							on:click={() => {
-								activeBooleanId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.value}
-						</button>
-					{/if}
-					<!-- Object Variable -->
-					{#if block.type === 'object'}
-						<button
-							on:click={() => {
-								activeObjectId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{JSON.stringify(block.value).substring(0, 30)} ...
-						</button>
-					{/if}
-
-					<!-- Array Variable -->
-					{#if block.type === 'array'}
-						<button
-							on:click={() => {
-								activeArrayId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{#if Array.isArray(block.value)}
-								{#each block.value as item, i}
-									{#if typeof item === 'object' && i === 0}
-										{JSON.stringify(item).substring(0, 30)} ...
-									{:else if typeof item !== 'object'}
-										{#if i < block.value.length - 1}
-											{item},{' '}
-										{:else}
-											{item}
-										{/if}
-									{/if}
-								{/each}
+							{#if block.message}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{`"${block.message}"`}
+								</div>
 							{/if}
-						</button>
-					{/if}
-					<!-- Log block -->
-					{#if block.blockType === 'log'}
-						<button
-							on:click={() => {
-								activeLogId = block.id;
-							}}
-							type="button"
-							class="btn btn-sm"
-						>
-							{block.message ? `"${block.message}"` : ``}
-							{block.selectedId && !block.useKey && !block.useIndex
-								? `${getVariableName(block.selectedId)}`
-								: ``}
-							{block.useIndex ? `${getVariableName(block.selectedId)}[${block.selectedIndex}]` : ``}
-							{block.useKey ? `${getVariableName(block.selectedId)}.${block.selectedKey}` : ``}
-						</button>
-					{/if}
-				</div>
+							{#if block.selectedId}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									<span class="badge variant-filled text-md font-bold rounded-none"
+										>{getVariableName(block.selectedId)}</span
+									>
+								</div>
+							{/if}
+							{#if block.useIndex}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{block.useIndex ? `index: ${block.selectedIndex}` : ``}
+								</div>{/if}
+							{#if block.useKey}
+								<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+									{block.useKey ? `key: ${block.selectedKey}` : ``}
+								</div>
+							{/if}
+						</div>
+					</button>
+				{/if}
+				<!-- Action block -->
+				{#if block.blockType === 'action'}
+					<button
+						on:click={() => {
+							activeActionId = block.id;
+						}}
+						type="button"
+					>
+						<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+							<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+								<FontAwesomeIcon icon={faBolt} />
+								{block.action.charAt(0).toUpperCase() + block.action.slice(1)}
+							</div>
+							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+								<span class="badge variant-filled text-md font-bold rounded-none">
+									{getVariableName(block.variableId)}
+								</span>
+							</div>
+						</div>
+					</button>
+				{/if}
 			{/each}
 		{/if}
 	</div>
@@ -229,6 +222,26 @@
 		/>
 	{/if}
 
+	{#if activeActionId !== null}
+		<ActionModal
+			editMode={true}
+			isOpen={activeActionId !== null}
+			variableId={null}
+			actionId={activeActionId}
+			on:close={handleClose}
+		/>
+	{/if}
+
+	{#if newAction}
+		<ActionModal
+			editMode={false}
+			isOpen={newAction}
+			variableId={null}
+			actionId={null}
+			on:close={handleClose}
+		/>
+	{/if}
+
 	<!-- In the following section, the user can choose to create a new variable,
 	 a new console log, etc -->
 	<section class="flex flex-col gap-2 items-start">
@@ -238,5 +251,21 @@
 		<div>
 			<NewLog />
 		</div>
+		<div>
+			<button
+				on:click={() => {
+					newAction = true;
+				}}
+				type="button"
+				class="btn btn-sm bg-primary-900 flex gap-2"
+			>
+				<FontAwesomeIcon icon={faPlus} /> Action
+			</button>
+		</div>
+		{#if $snapshot.length > 0}
+			<div class="w-full flex justify-end">
+				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
+			</div>
+		{/if}
 	</section>
 </div>

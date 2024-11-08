@@ -1,14 +1,31 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { isRunning } from '$lib/stores/store';
-	import { initMatterJS, startMatter, stopMatter, resetBodies } from '$lib/matter';
+	import { matterActionOutput } from '$lib/utils/actions'; // Import matterActionOutput store
+	import {
+		initMatterJS,
+		startMatter,
+		stopMatter,
+		resetBodies,
+		handleInstruction,
+	} from '$lib/matter';
 	import Matter from 'matter-js';
-	import type { MatterInstance } from '../lib/types';
+	import type { MatterInstance, Action } from '../lib/types';
+	import { snapshot } from '$lib/stores/snapshots';
+	import { isRunning, resetMatterFlag } from '$lib/stores/store';
+
+	let matterInstance: MatterInstance | null = null;
+	let matterContainer: HTMLElement | null = null;
+
+	// Handle updates from matterActionOutput store
+	matterActionOutput.subscribe((instructions: Action[]) => {
+		if (matterInstance && instructions.length > 0) {
+			const latestInstruction = instructions[instructions.length - 1];
+			handleInstruction(matterInstance, latestInstruction, $snapshot); // Pass the latest instruction to matter.ts
+		}
+	});
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;
-	let matterInstance: MatterInstance | null = null;
-	let matterContainer: HTMLElement | null = null;
 
 	// Scale factor!
 	let scale: number = 0.8;
@@ -29,12 +46,24 @@
 		}
 	}
 
-	// Reinitialize Matter.js whenever the lesson `data` changes
-	$: if (data && matterContainer) {
+	const reinitMatterJs = () => {
 		cleanupMatterInstance(); // First, clean up the old instance
 		// Toggle running state to false, NB must be run after cleanup
 		$isRunning = false;
-		matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, data.color, scale); // Reinitialize with new data
+		if (matterContainer) {
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+		}
+	};
+
+	// Reinitialize Matter.js whenever the lesson `data` changes
+	$: if (data && matterContainer) {
+		reinitMatterJs();
+	}
+
+	// Reinitialize Matter.js whenever the flag is changed
+	$: if ($resetMatterFlag) {
+		reinitMatterJs();
+		resetMatterFlag.update((flag) => (flag = false)); // Reset the flag
 	}
 
 	function updateScale(innerWidth: number) {
@@ -65,12 +94,7 @@
 		});
 
 		if (matterContainer) {
-			matterInstance = initMatterJS(
-				matterContainer,
-				{ width: 450, height: 700 },
-				data.color,
-				scale,
-			);
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
 		}
 	});
 

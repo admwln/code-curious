@@ -5,14 +5,15 @@ export interface LessonData {
 		prevLesson: string | null;
 		nextLesson: string | null;
 	};
-	editor: {
-		defaultCode: string;
+	editor?: {
+		snapshot?: Record<string, any>[];
+		defaultCode?: string;
 	};
-	console: {
-		defaultCode: string[];
+	console?: {
+		defaultCode?: string[];
 	};
-	funnel: {
-		color: string;
+	playfiled?: {
+		color?: string;
 	};
 }
 
@@ -84,7 +85,7 @@ export interface ObjectVariable {
 	value: Record<string, any>;
 }
 
-export interface LogBlock {
+export interface Log {
 	blockType: string;
 	id: number;
 	message?: string;
@@ -94,4 +95,16 @@ export interface LogBlock {
 	selectedKey: string | null;
 	useIndex: boolean;
 	useKey: boolean;
+	value?: string | number | boolean | any[] | object;
 }
+
+export interface Action {
+	id: number;
+	blockType: string;
+	variableId?: number;
+	action: string;
+}
+
+export type ColorMap = {
+	[key: string]: [string, string];
+};

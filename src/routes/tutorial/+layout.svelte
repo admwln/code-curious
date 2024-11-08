@@ -28,7 +28,7 @@
 			on:click={() => ($currentPanel = 3)}
 			class="btn btn-sm {$currentPanel === 3
 				? 'variant-filled-surface focus:variant-filled-surface'
-				: ''}">Funnel</button
+				: ''}">Playfield</button
 		>
 	</class>
 </div>

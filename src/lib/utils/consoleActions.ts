@@ -1,14 +1,18 @@
 // consoleActions.ts
 import { writable } from 'svelte/store';
-import type { LogBlock } from '$lib/types';
+import type { Log } from '$lib/types';
 
 // Store to keep track of console output data
-export const consoleOutput = writable<LogBlock[]>([]);
+export const consoleOutput = writable<Log[]>([]);
 
-export async function logToConsole(block: LogBlock) {
+export async function logToConsole(block: Log, logVar: Record<string, any> | null) {
 	return new Promise((resolve) => {
 		// Example of formatting the message for the Console component
-		const logMessage = block;
+		let logMessage = block;
+		// Add the logVar, if any, to the logMessage.value
+		if (logVar) {
+			logMessage.value = logVar.value;
+		}
 
 		// Update the consoleOutput store with new log entry
 		consoleOutput.update((output) => [...output, logMessage]);
