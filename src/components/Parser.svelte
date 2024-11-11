@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faBolt, faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import VariableBlock from './VariableBlock.svelte';
 
@@ -82,4 +82,17 @@
 			{/if}
 		</div>
 	</div>
-{/if}
+{:else if placeholder[0] === 'ActionBlock'}
+	<div class="px-4 flex items-start">
+		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+			<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
+				<FontAwesomeIcon icon={faBolt} />
+				{placeholder[1]}
+			</div>
+			<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+				<span class="badge variant-filled text-md font-bold rounded-none">
+					{placeholder[2]}
+				</span>
+			</div>
+		</div>
+	</div>{/if}
