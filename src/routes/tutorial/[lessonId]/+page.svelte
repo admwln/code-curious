@@ -6,6 +6,7 @@
 	import { snapshot } from '$lib/stores/snapshots';
 	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+	import { waitForStability } from '$lib/utils/actions';
 
 	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
@@ -142,7 +143,10 @@
 				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
-		isRunning.set(false); // Set to false when all blocks are processed
+
+		// Wait for stability in matterInstance before ending run
+		await waitForStability();
+		isRunning.set(false); // Set to false when all blocks are processed and stable
 	}
 </script>
 
