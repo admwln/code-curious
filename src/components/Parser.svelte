@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { faBolt, faEye, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import VariableBlock from './VariableBlock.svelte';
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let placeholder: string[];
@@ -40,18 +39,18 @@
 	>
 {:else if placeholder[0] === 'VariableBlock'}
 	<div class="px-4 flex items-start mb-2">
-		{#if !placeholder[3]}
-			<VariableBlock
-				block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
-				showActionButton={false}
-				onActivate={() => {}}
-			/>
-		{:else if placeholder[3] === 'action'}
-			<VariableBlock
-				block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
-				showActionButton={true}
-				onActivate={() => {}}
-			/>
+		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
+			<div class="px-2 py-1 flex gap-2 items-center">
+				<span class="badge variant-filled text-md font-bold rounded-none">{placeholder[1]}</span>
+			</div>
+			<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
+				{placeholder[2]}
+			</div>
+		</div>
+		{#if placeholder[3] === 'action'}
+			<div class="font-bold text-sm p-3 items-center justify-center">
+				<FontAwesomeIcon icon={faBolt} />
+			</div>
 		{/if}
 	</div>
 {:else if placeholder[0] === 'LogBlock'}
