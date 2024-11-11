@@ -39,7 +39,7 @@
 		><FontAwesomeIcon icon={faPlus} /> Variable</button
 	>
 {:else if placeholder[0] === 'VariableBlock'}
-	<div class="px-4 flex items-start">
+	<div class="px-4 flex items-start mb-2">
 		{#if !placeholder[3]}
 			<VariableBlock
 				block={{ blockType: 'variable', name: placeholder[1], value: placeholder[2] }}
@@ -55,7 +55,7 @@
 		{/if}
 	</div>
 {:else if placeholder[0] === 'LogBlock'}
-	<div class="px-4 flex items-start">
+	<div class="px-4 flex items-start mb-2">
 		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
 			<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
 				<FontAwesomeIcon icon={faEye} /> Log
@@ -83,7 +83,7 @@
 		</div>
 	</div>
 {:else if placeholder[0] === 'ActionBlock'}
-	<div class="px-4 flex items-start">
+	<div class="px-4 flex items-start mb-2">
 		<div class="p-1 flex border border-secondary-900 text-sm font-normal">
 			<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
 				<FontAwesomeIcon icon={faBolt} />

@@ -153,7 +153,8 @@
 						<div class="p-1 flex border border-secondary-900 text-sm font-normal">
 							<div class="flex gap-2 font-bold text-sm items-center px-2 py-1">
 								<FontAwesomeIcon icon={faBolt} />
-								{block.action.charAt(0).toUpperCase() + block.action.slice(1)}
+								<!-- {block.action.charAt(0).toUpperCase() + block.action.slice(1)} -->
+								{block.action}
 							</div>
 							<div class="px-2 py-1 flex gap-2 items-center border-l-[1px] border-secondary-900">
 								<span class="badge variant-filled text-md font-bold rounded-none">

@@ -9,8 +9,8 @@ export const matterActionOutput = writable<Action[]>([]);
 
 export const executeAction = async (action: Action) => {
 	return new Promise((resolve) => {
-		if (action.action === 'drop') {
-			console.log('Drop action has been called');
+		if (action.action === 'create circle') {
+			console.log('Create circle action has been called');
 			matterActionOutput.update((output) => [...output, action]);
 		}
 
