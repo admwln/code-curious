@@ -7,7 +7,7 @@
 
 	// Helper function to split placeholder at , into an array
 	const parsePlaceholder = (placeholder: string) => {
-		let placeholderArray: string[] = placeholder.split(',').map((item) => item.trim());
+		let placeholderArray: string[] = placeholder.split('|').map((item) => item.trim());
 		placeholderArray[0] = placeholderArray[0].replace('{{', '');
 		return placeholderArray;
 	};
@@ -19,13 +19,15 @@
 			<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; Previous</a>
 		</p>
 	{/if}
-	<div class="markdown">
-		<h3 class="mb-2 text-3xl">{data.title}</h3>
+	<h3 class="mb-2 text-3xl">{data.title}</h3>
+	<div>
 		{#each data.content as content}
 			{#if content.startsWith('{{')}
 				<Parser placeholder={parsePlaceholder(content)} />
 			{:else}
-				{@html marked(content)}
+				<div class="markdown">
+					{@html marked(content)}
+				</div>
 			{/if}
 		{/each}
 	</div>

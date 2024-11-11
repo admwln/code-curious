@@ -6,6 +6,7 @@
 	import { snapshot } from '$lib/stores/snapshots';
 	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+	import { waitForStability } from '$lib/utils/actions';
 
 	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
@@ -142,39 +143,49 @@
 				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
-		isRunning.set(false); // Set to false when all blocks are processed
+
+		// Wait for stability in matterInstance before ending run
+		await waitForStability();
+		isRunning.set(false); // Set to false when all blocks are processed and stable
 	}
 </script>
 
 <!-- Panel 1: Tutorial -->
 <section
-	class="bg-neutral-900 h-screen md:border-r border-zinc-700 lg:border-0 md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-neutral-900 h-screen md:border-r border-zinc-700 lg:border-0 md:w-1/2 transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
 	1
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
 >
-	<div class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#ec489a2A]">
-		<h2 class="flex items-center py-0 gap-4">
-			<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
-		</h2>
-		<!-- Toggle Panel 1 width -->
-		<button
-			type="button"
-			class="btn btn-sm py-0 hidden lg:inline-block"
-			on:click={togglePanel1Width}
+	<div class="flex-1 overflow-y-scroll max-h-screen">
+		<!-- Panel header -->
+		<div
+			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
 		>
-			{#if isPanel1Collapsed}
-				<span><FontAwesomeIcon icon={faAngleRight} /></span>
-			{:else}
-				<span><FontAwesomeIcon icon={faAngleLeft} /></span>
-			{/if}
-		</button>
+			<h2 class="flex items-center py-0 gap-4">
+				<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+			</h2>
+			<!-- Toggle Panel 1 width -->
+			<button
+				type="button"
+				class="btn btn-sm py-0 hidden lg:inline-block"
+				on:click={togglePanel1Width}
+			>
+				{#if isPanel1Collapsed}
+					<span><FontAwesomeIcon icon={faAngleRight} /></span>
+				{:else}
+					<span><FontAwesomeIcon icon={faAngleLeft} /></span>
+				{/if}
+			</button>
+		</div>
+		<!-- Dynamic content start -->
+
+		{#if lessonData}
+			<Tutorial data={lessonData.tutorial} />
+		{:else}
+			<p>Loading...</p>
+		{/if}
 	</div>
-	{#if lessonData}
-		<Tutorial data={lessonData.tutorial} />
-	{:else}
-		<p>Loading...</p>
-	{/if}
 </section>
 
 <!-- Panel 2: Editor & Console -->
@@ -184,7 +195,7 @@
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#ec489a2A]'}>
+	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#3a1d2a]'}>
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
 		</div>
@@ -212,7 +223,7 @@
 			{/if}
 		</div>
 	</Accordion>
-	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#ec489a2A]'}>
+	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#3a1d2a]'}>
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
 		</div>
@@ -229,9 +240,7 @@
 		? 'hidden md:block lg:block'
 		: ''} {panel3Width} overflow-y-scroll"
 >
-	<div
-		class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#ec489a2a]"
-	>
+	<div class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#3a1d2a]">
 		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faShapes} /> Playfield</h2>
 		<button
 			type="button"

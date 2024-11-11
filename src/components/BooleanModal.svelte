@@ -85,7 +85,7 @@
 	>
 		<!-- Variable Name Input -->
 		<label class="label">
-			<span>Name</span>
+			<span>Label</span>
 			<input
 				class="input"
 				type="text"

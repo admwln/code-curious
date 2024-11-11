@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { faFilter } from '@fortawesome/free-solid-svg-icons';
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { supabase } from '$lib/supabaseClient';
 
 	// Define the shape of a country object based on your table schema
@@ -22,7 +20,7 @@
 	fetchCountries();
 </script>
 
-<div class="container h-full my-4 mx-auto flex justify-center items-center">
+<div class="container my-4 mx-auto flex justify-center items-center">
 	<ol class="list">
 		{#each countries as country}
 			<li>

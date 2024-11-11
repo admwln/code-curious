@@ -11,9 +11,10 @@
 	import Matter from 'matter-js';
 	import type { MatterInstance, Action } from '../lib/types';
 	import { snapshot } from '$lib/stores/snapshots';
-	import { isRunning, resetMatterFlag } from '$lib/stores/store';
+	import { isRunning, matterInstanceStore, resetMatterFlag } from '$lib/stores/store';
 
-	let matterInstance: MatterInstance | null = null;
+	// Matter.js instance, needs to be exported to be used by actions.ts
+	export let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
 	// Handle updates from matterActionOutput store
@@ -52,6 +53,7 @@
 		$isRunning = false;
 		if (matterContainer) {
 			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	};
 
@@ -95,6 +97,7 @@
 
 		if (matterContainer) {
 			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	});
 
