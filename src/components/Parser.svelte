@@ -10,7 +10,7 @@
 	<div class="flex flex-col items-start my-4">
 		<div class="card p-4 flex flex-col items-start gap-2">
 			<label class="label">
-				<span>Name</span>
+				<span>Label</span>
 				<input
 					class="input"
 					type="text"
