@@ -11,7 +11,7 @@
 		if (error) {
 			errorMsg = error.message;
 		} else {
-			goto('/login');
+			goto('/sign-in');
 		}
 	}
 </script>

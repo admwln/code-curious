@@ -43,8 +43,8 @@
 			<nav class="flex gap-6">
 				<a href="/tutorial/welcome" class="hover:text-gray-200">Tutorial</a>
 				{#if !loggedIn}
-					<a href="/login" class="hover:text-gray-200 flex gap-2 items-center"
-						><FontAwesomeIcon icon={faUser} />Log in</a
+					<a href="/sign-in" class="hover:text-gray-200 flex gap-2 items-center"
+						><FontAwesomeIcon icon={faUser} />Sign In</a
 					>
 				{:else}
 					<a href="/dashboard" class="hover:text-gray-200 flex gap-2 items-center"

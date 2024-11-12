@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { supabase } from '$lib/supabaseClient';
-	import { user, logout } from '$lib/auth';
+	import { user, signOut } from '$lib/auth';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
@@ -30,7 +30,7 @@
 				});
 			} else {
 				user.set(null);
-				goto('/login');
+				goto('/sign-in');
 			}
 		});
 
@@ -48,7 +48,7 @@
 			displayName = (await getDisplayName()) || '';
 		} else {
 			user.set(null);
-			goto('/login');
+			goto('/sign-in');
 		}
 
 		loading = false;
@@ -129,14 +129,14 @@
 		if (error) console.error(error);
 	}
 	$: if (!$user && !authLoading) {
-		goto('/login');
+		goto('/sign-in');
 	}
 </script>
 
 {#if authLoading || loading}
 	<p>Loading...</p>
 {:else}
-	<div class="flex flex-col gap-4">
+	<div class="flex flex-col gap-4 items-start">
 		<h1>User Dashboard</h1>
 		{#if $user}
 			{#if displayNameStatic !== ''}
@@ -169,7 +169,7 @@
 					<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
 				</div>
 			{/each}
-			<button class="btn" on:click={logout}>Log Out</button>
+			<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
 		{:else}
 			<p>Please log in to view your dashboard.</p>
 		{/if}

@@ -20,14 +20,14 @@ export async function register(email: string, password: string) {
 }
 
 // Function to log in an existing user
-export async function login(email: string, password: string) {
+export async function signIn(email: string, password: string) {
 	const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-	if (data.user) user.set(data.user); // Set user on successful login
+	if (data.user) user.set(data.user); // Set user if successfully signed in
 	return error;
 }
 
-// Function to log out the user
-export async function logout() {
+// Function to sign out the user
+export async function signOut() {
 	await supabase.auth.signOut();
 	user.set(null);
 }
