@@ -47,7 +47,7 @@
 						required
 					/></label
 				>
-				<div class="flex justify-center items-center">
+				<div class="flex items-start">
 					<button type="submit" class="btn bg-primary-700">Sign In</button>
 				</div>
 				{#if errorMsg}

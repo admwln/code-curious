@@ -5,6 +5,9 @@
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
 
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faCheck } from '@fortawesome/free-solid-svg-icons';
+
 	interface Snapshot {
 		lesson_id: string;
 		snapshot_data: any;
@@ -137,30 +140,37 @@
 	<p>Loading...</p>
 {:else}
 	<div class="h-full w-full flex justify-center">
-		<div class="card mt-4 md:mt-12 max-w-96 md:w-1/2">
+		<div class="card mt-4 md:mt-12 md:w-1/2">
 			{#if $user}
 				<header class="card-header">
 					<h2 class="h2">Dashboard</h2>
 				</header>
 				<hr class="opacity-50 mt-4" />
-				<section class="p-4">
+				<section class="p-4 flex flex-col items-start">
 					<form on:submit|preventDefault={updateDisplayName}>
 						<label class="label">
 							<span>Username</span>
-							<input
-								id="displayName"
-								class="input"
-								type="text"
-								bind:value={displayName}
-								placeholder="Choose a username"
-							/>
+							<div class="flex">
+								<input
+									id="displayName"
+									class="input"
+									type="text"
+									bind:value={displayName}
+									placeholder="Choose a username"
+								/>
+								<button type="submit" class="btn bg-initial">
+									<span><FontAwesomeIcon icon={faCheck} /></span>
+									<span>Update</span>
+								</button>
+							</div>
 						</label>
-						<button class="btn" type="submit">Update</button>
+
 						{#if displayNameError}
 							<p class="error">{displayNameError}</p>
 						{/if}
 					</form>
-
+				</section>
+				<section class="p-4 flex flex-col items-start">
 					<h2>Your Snapshots</h2>
 					{#each $snapshots as snapshot}
 						<div>
@@ -168,8 +178,11 @@
 							<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
 						</div>
 					{/each}
-					<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
 				</section>
+				<hr class="opacity-50 my-4" />
+				<footer class="card-footer">
+					<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
+				</footer>
 			{:else}
 				<p>Please log in to view your dashboard.</p>
 			{/if}

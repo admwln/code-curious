@@ -64,7 +64,7 @@
 						required
 					/></label
 				>
-				<div class="flex justify-center items-center">
+				<div class="flex items-start">
 					<button type="submit" class="btn bg-primary-700">Register</button>
 				</div>
 				{#if errorMsg}
