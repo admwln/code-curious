@@ -169,6 +169,11 @@
 			<hr class="opacity-50" />
 			<section class="p-4 flex flex-col items-start">
 				<h3 class="text-xl">Your Snapshots</h3>
+				{#if $snapshots.length > 0}
+					<p class="py-2">The following lessons have a code snapshot saved:</p>
+				{:else}
+					<p>No snapshots available.</p>
+				{/if}
 				{#each $snapshots as snapshot}
 					<div>
 						<p class="flex gap-2 items-center">
