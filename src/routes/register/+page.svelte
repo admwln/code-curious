@@ -2,11 +2,21 @@
 	import { register } from '$lib/auth';
 	import { goto } from '$app/navigation';
 
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+
 	let email = '';
 	let password = '';
+	let confirmPassword = '';
 	let errorMsg = '';
 
 	async function handleRegister() {
+		// Check if passwords match
+		if (password !== confirmPassword) {
+			errorMsg = 'Passwords do not match.';
+			return;
+		}
+
 		const error = await register(email, password);
 		if (error) {
 			errorMsg = error.message;
@@ -17,7 +27,7 @@
 </script>
 
 <div class="h-full w-full flex justify-center">
-	<div class="card mt-12">
+	<div class="card mt-4 md:mt-12 max-w-96 md:w-96">
 		<header class="card-header">
 			<h2 class="h2">Register</h2>
 		</header>
@@ -44,8 +54,30 @@
 						required
 					/></label
 				>
-				<button type="submit">Register</button>
-				<p>{errorMsg}</p>
+				<label class="label"
+					><span>Confirm Password</span><input
+						class="input"
+						name="confirm"
+						bind:value={confirmPassword}
+						type="password"
+						autocomplete="off"
+						required
+					/></label
+				>
+				<div class="flex justify-center items-center">
+					<button type="submit" class="btn bg-primary-700">Register</button>
+				</div>
+				{#if errorMsg}
+					<hr class="opacity-50" />
+					<aside class="alert variant-ghost-error">
+						<!-- Icon -->
+						<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+						<!-- Message -->
+						<div class="alert-message">
+							<p>{errorMsg}</p>
+						</div>
+					</aside>
+				{/if}
 			</form>
 		</section>
 	</div>

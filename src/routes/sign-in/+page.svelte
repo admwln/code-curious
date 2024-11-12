@@ -2,6 +2,9 @@
 	import { signIn } from '$lib/auth';
 	import { goto } from '$app/navigation';
 
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+
 	let email = '';
 	let password = '';
 	let errorMsg = '';
@@ -17,13 +20,13 @@
 </script>
 
 <div class="h-full w-full flex justify-center">
-	<div class="card mt-12">
+	<div class="card mt-4 md:mt-12 max-w-96 md:w-96">
 		<header class="card-header">
 			<h2 class="h2">Sign In</h2>
 		</header>
-		<hr class="opacity-50 mt-2" />
+		<hr class="opacity-50 mt-4" />
 		<section class="p-4">
-			<form on:submit|preventDefault={handleSignIn} class="flex flex-col gap-4 items-start">
+			<form on:submit|preventDefault={handleSignIn} class="flex flex-col gap-4">
 				<label class="label"
 					><span>Email</span><input
 						class="input"
@@ -44,12 +47,25 @@
 						required
 					/></label
 				>
-				<button type="submit" class="btn bg-primary-700">Sign In</button>
-				<p>{errorMsg}</p>
+				<div class="flex justify-center items-center">
+					<button type="submit" class="btn bg-primary-700">Sign In</button>
+				</div>
+				{#if errorMsg}
+					<hr class="opacity-50" />
+					<aside class="alert variant-ghost-error">
+						<!-- Icon -->
+						<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+						<!-- Message -->
+						<div class="alert-message">
+							<p>{errorMsg}</p>
+						</div>
+					</aside>
+				{/if}
 			</form>
-			<p>
+			<hr class="opacity-50 my-4" />
+			<footer>
 				Don't have an account? <a href="/register" class="anchor">Register</a>
-			</p>
+			</footer>
 		</section>
 	</div>
 </div>
