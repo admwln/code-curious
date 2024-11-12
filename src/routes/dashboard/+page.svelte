@@ -4,13 +4,17 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
+	import { fetchLesson } from '$lib/utils/fetchLesson';
 
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faCheck } from '@fortawesome/free-solid-svg-icons';
+	import { faCamera, faCheck, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 	interface Snapshot {
+		id: string;
 		lesson_id: string;
 		snapshot_data: any;
+		lesson_title?: string; // Add optional title field
+		lesson_slug?: string; // Add optional slug field
 	}
 
 	const snapshots = writable<Snapshot[]>([]);
@@ -64,7 +68,20 @@
 				.select('*')
 				.eq('user_id', $user.id);
 			if (error) console.error(error);
-			snapshots.set(snapshotsData || []);
+			else if (snapshotsData) {
+				// Fetch the lesson title for each snapshot
+				const snapshotsWithTitles = await Promise.all(
+					snapshotsData.map(async (snapshot) => {
+						const lesson = await fetchLesson(snapshot.lesson_id);
+						return {
+							...snapshot,
+							lesson_title: lesson?.title,
+							lesson_slug: lesson?.slug || 'Unknown Lesson',
+						};
+					}),
+				);
+				snapshots.set(snapshotsWithTitles);
+			}
 		}
 	};
 
@@ -127,10 +144,15 @@
 		if (error) console.error(error);
 	}
 
-	async function deleteSnapshot(snapshotId: number) {
+	async function deleteSnapshot(snapshotId: string) {
+		console.log('Deleting snapshot:', snapshotId);
 		const { error } = await supabase.from('snapshots').delete().eq('id', snapshotId);
 		if (error) console.error(error);
+		// Update the snapshots store after deleting the snapshot
+		const updatedSnapshots = $snapshots.filter((snapshot) => snapshot.id !== snapshotId);
+		snapshots.set(updatedSnapshots);
 	}
+
 	$: if (!$user && !authLoading) {
 		goto('/sign-in');
 	}
@@ -179,8 +201,21 @@
 				<h2>Your Snapshots</h2>
 				{#each $snapshots as snapshot}
 					<div>
-						<p>Lesson: {snapshot.lesson_id}</p>
-						<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
+						<p class="flex gap-2 items-center">
+							<FontAwesomeIcon icon={faCamera} />
+							{snapshot.lesson_title}
+							<a class="anchor" href={`/tutorial/${snapshot.lesson_slug}`}>
+								<span>View Lesson</span>
+							</a>
+							<!-- Add a button to delete snapshot -->
+							<button
+								class="btn-icon btn-sm variant-filled-warning"
+								on:click={() => deleteSnapshot(snapshot.id)}
+							>
+								<FontAwesomeIcon icon={faTrashCan} />
+								<span class="sr-only">Delete Snapshot</span>
+							</button>
+						</p>
 					</div>
 				{/each}
 			</section>
