@@ -136,56 +136,60 @@
 	}
 </script>
 
-{#if authLoading || loading}
-	<p>Loading...</p>
-{:else}
-	<div class="h-full w-full flex justify-center">
-		<div class="card mt-4 md:mt-12 md:w-1/2">
-			{#if $user}
-				<header class="card-header">
-					<h2 class="h2">Dashboard</h2>
-				</header>
-				<hr class="opacity-50 mt-4" />
-				<section class="p-4 flex flex-col items-start">
-					<form on:submit|preventDefault={updateDisplayName}>
-						<label class="label">
-							<span>Username</span>
-							<div class="flex">
-								<input
-									id="displayName"
-									class="input"
-									type="text"
-									bind:value={displayName}
-									placeholder="Choose a username"
-								/>
-								<button type="submit" class="btn bg-initial">
-									<span><FontAwesomeIcon icon={faCheck} /></span>
-									<span>Update</span>
-								</button>
-							</div>
-						</label>
-
-						{#if displayNameError}
-							<p class="error">{displayNameError}</p>
-						{/if}
-					</form>
-				</section>
-				<section class="p-4 flex flex-col items-start">
-					<h2>Your Snapshots</h2>
-					{#each $snapshots as snapshot}
-						<div>
-							<p>Lesson: {snapshot.lesson_id}</p>
-							<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
+<div class="h-full w-full flex justify-center">
+	<div class="card mt-4 md:mt-12 md:w-1/2">
+		{#if authLoading || loading}
+			<header class="card-header">
+				<h2>Loading...</h2>
+			</header>
+			<section class="p-4">
+				<p>Please wait while we load your dashboard.</p>
+			</section>
+			<footer class="card-footer"></footer>
+		{:else if $user}
+			<header class="card-header">
+				<h2 class="h2">Dashboard</h2>
+			</header>
+			<hr class="opacity-50 mt-4" />
+			<section class="p-4 flex flex-col items-start">
+				<form on:submit|preventDefault={updateDisplayName}>
+					<label class="label">
+						<span>Username</span>
+						<div class="flex">
+							<input
+								id="displayName"
+								class="input"
+								type="text"
+								bind:value={displayName}
+								placeholder="Choose a username"
+							/>
+							<button type="submit" class="btn bg-initial">
+								<span><FontAwesomeIcon icon={faCheck} /></span>
+								<span>Update</span>
+							</button>
 						</div>
-					{/each}
-				</section>
-				<hr class="opacity-50 my-4" />
-				<footer class="card-footer">
-					<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
-				</footer>
-			{:else}
-				<p>Please log in to view your dashboard.</p>
-			{/if}
-		</div>
+					</label>
+
+					{#if displayNameError}
+						<p class="error">{displayNameError}</p>
+					{/if}
+				</form>
+			</section>
+			<section class="p-4 flex flex-col items-start">
+				<h2>Your Snapshots</h2>
+				{#each $snapshots as snapshot}
+					<div>
+						<p>Lesson: {snapshot.lesson_id}</p>
+						<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
+					</div>
+				{/each}
+			</section>
+			<hr class="opacity-50 my-4" />
+			<footer class="card-footer">
+				<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
+			</footer>
+		{:else}
+			<p>Please log in to view your dashboard.</p>
+		{/if}
 	</div>
-{/if}
+</div>
