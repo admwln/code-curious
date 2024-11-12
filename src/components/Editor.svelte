@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { user } from '$lib/auth';
+	import { supabase } from '$lib/supabaseClient';
+	import { writable } from 'svelte/store';
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';
@@ -10,37 +13,36 @@
 	import VariableBlock from './VariableBlock.svelte';
 	import ActionModal from './ActionModal.svelte';
 
-	import { faEye, faBolt, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faBolt, faCameraRetro, faEye, faImage, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
+	import { page } from '$app/stores';
 	import { resetMatterFlag } from '$lib/stores/store';
-
-	// START: Logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
 
 	export let data;
+	const userSnapshot = writable<any[]>([]);
 
-	let lessonId: string;
+	let lessonSlug: string;
 
-	// Subscribe to the lessonId from the page store
-	$: lessonId = $page.params.lessonId;
+	// Subscribe to the lesson slug from the page store
+	$: lessonSlug = $page.params.lessonId;
 
-	// Load snapshot data for the current lesson when the component mounts or lessonId changes
+	// Load snapshot data for the current lesson when the component mounts or lessonSlug changes
 	$: {
-		if (lessonId) {
-			loadSnapshot(lessonId, data.snapshot);
+		if (lessonSlug) {
+			loadSnapshot(lessonSlug, data.snapshot);
+			fetchUserSnapshot();
 		}
 	}
 
 	// Save the current snapshot before navigating to another route
 	beforeNavigate(() => {
-		if (lessonId) {
-			saveSnapshot(lessonId, $snapshot);
+		if (lessonSlug) {
+			saveSnapshot(lessonSlug, $snapshot);
 		}
 	});
-	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables
 	let activeStringId: number | null = null;
@@ -94,6 +96,33 @@
 			resetMatterFlag.update((flag) => (flag = true));
 		}
 	};
+
+	const userSnapshotAvailable = writable(false); // Store to track if a snapshot exists
+
+	const fetchUserSnapshot = async () => {
+		if ($user) {
+			const { data: userSnapshotData, error } = await supabase
+				.from('snapshots')
+				.select('snapshot_data')
+				.eq('user_id', $user.id)
+				.eq('lesson_slug', lessonSlug);
+
+			if (error) {
+				console.error('Error fetching snapshot:', error);
+			} else if (userSnapshotData && userSnapshotData.length > 0) {
+				userSnapshot.set(userSnapshotData[0].snapshot_data); // Load the snapshot data
+				userSnapshotAvailable.set(true); // Set flag to indicate snapshot availability
+			} else {
+				userSnapshotAvailable.set(false); // No snapshot available
+			}
+		}
+	};
+
+	async function loadUserSnapshot() {
+		if ($user && $userSnapshotAvailable) {
+			$snapshot = $userSnapshot; // Set current editor state to the snapshot data
+		}
+	}
 </script>
 
 <div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
@@ -263,10 +292,31 @@
 				<FontAwesomeIcon icon={faPlus} /> Action
 			</button>
 		</div>
-		{#if $snapshot.length > 0}
-			<div class="w-full flex justify-end">
-				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
+
+		<div class="w-full flex justify-between">
+			<div class="flex">
+				{#if $user}
+					<!-- Conditionally show "Take Snapshot" button if there is any code in the editor -->
+					{#if $snapshot.length > 0}
+						<button type="button" class="btn-icon text-2xl">
+							<FontAwesomeIcon icon={faCameraRetro} />
+							<span class="sr-only">Take Snapshot</span>
+						</button>
+					{/if}
+
+					<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
+					{#if $userSnapshotAvailable}
+						<button type="button" class="btn-icon text-2xl" on:click={() => loadUserSnapshot()}>
+							<FontAwesomeIcon icon={faImage} />
+							<span class="sr-only">Load Snapshot</span>
+						</button>
+					{/if}
+				{/if}
 			</div>
-		{/if}
+
+			{#if $snapshot.length > 0}
+				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
+			{/if}
+		</div>
 	</section>
 </div>

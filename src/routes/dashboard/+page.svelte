@@ -8,18 +8,17 @@
 
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import {
-		faCamera,
 		faFloppyDisk,
 		faExclamationTriangle,
+		faImage,
 		faTrashCan,
 	} from '@fortawesome/free-solid-svg-icons';
 
 	interface Snapshot {
 		id: string;
-		lesson_id: string;
+		lesson_slug: string;
 		snapshot_data: any;
 		lesson_title?: string;
-		lesson_slug?: string;
 	}
 
 	const snapshots = writable<Snapshot[]>([]);
@@ -62,11 +61,10 @@
 			else if (snapshotsData) {
 				const snapshotsWithTitles = await Promise.all(
 					snapshotsData.map(async (snapshot) => {
-						const lesson = await fetchLesson(snapshot.lesson_id);
+						const lesson = await fetchLesson(snapshot.lesson_slug);
 						return {
 							...snapshot,
 							lesson_title: lesson?.title,
-							lesson_slug: lesson?.slug || 'Unknown Lesson',
 						};
 					}),
 				);
@@ -174,7 +172,7 @@
 				{#each $snapshots as snapshot}
 					<div>
 						<p class="flex gap-2 items-center">
-							<FontAwesomeIcon icon={faCamera} />
+							<FontAwesomeIcon icon={faImage} />
 
 							<a class="anchor" href={`/tutorial/${snapshot.lesson_slug}`}>
 								<span>{snapshot.lesson_title}</span>
