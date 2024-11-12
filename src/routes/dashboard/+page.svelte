@@ -73,7 +73,7 @@
 		try {
 			const { data, error } = await supabase.auth.getUser();
 			if (error) throw error;
-			const displayName = data.user.user_metadata.display_name || data.user.email;
+			const displayName = data.user.user_metadata.display_name || '';
 			return displayName;
 		} catch (error: any) {
 			console.error('Error fetching display name:', error.message);
@@ -163,9 +163,9 @@
 								bind:value={displayName}
 								placeholder="Choose a username"
 							/>
-							<button type="submit" class="btn bg-initial">
-								<span><FontAwesomeIcon icon={faCheck} /></span>
-								<span>Update</span>
+							<button type="submit" class="btn-icon bg-initial">
+								<FontAwesomeIcon icon={faCheck} />
+								<span class="sr-only">Save Username</span>
 							</button>
 						</div>
 					</label>
