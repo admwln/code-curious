@@ -123,6 +123,23 @@
 			$snapshot = $userSnapshot; // Set current editor state to the snapshot data
 		}
 	}
+
+	async function saveUserSnapshot() {
+		if ($user && $snapshot) {
+			const { error } = await supabase.from('snapshots').upsert(
+				{
+					user_id: $user.id,
+					lesson_slug: lessonSlug,
+					snapshot_data: $snapshot,
+				},
+				{ onConflict: 'user_id,lesson_slug' },
+			);
+			if (error) console.error('Error saving snapshot:', error);
+			else console.log('Snapshot saved successfully');
+			// Fetch the user snapshot data again
+			fetchUserSnapshot();
+		}
+	}
 </script>
 
 <div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
@@ -298,7 +315,7 @@
 				{#if $user}
 					<!-- Conditionally show "Take Snapshot" button if there is any code in the editor -->
 					{#if $snapshot.length > 0}
-						<button type="button" class="btn-icon text-2xl">
+						<button type="button" class="btn-icon text-2xl" on:click={() => saveUserSnapshot()}>
 							<FontAwesomeIcon icon={faCameraRetro} />
 							<span class="sr-only">Take Snapshot</span>
 						</button>
