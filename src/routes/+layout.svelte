@@ -3,12 +3,36 @@
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faUser } from '@fortawesome/free-solid-svg-icons';
 	import { user } from '$lib/auth';
+	import { supabase } from '$lib/supabaseClient';
 
 	// Reactive variable bound to the `user` store
 	let loggedIn = false;
 
 	// Update `loggedIn` based on `user` store's state
 	$: loggedIn = Boolean($user); // Reactively update when `user` changes
+
+	let displayName: string = ''; // Variable to store the display name
+	// Update `displayName` based on `user` store's state
+	$: {
+		if ($user) {
+			getDisplayName().then((name) => {
+				displayName = name || '';
+			});
+		}
+	}
+
+	const getDisplayName = async () => {
+		// Get display name from user
+		try {
+			const { data, error } = await supabase.auth.getUser();
+			if (error) throw error;
+			const displayName = data.user.user_metadata.display_name || data.user.email;
+			return displayName;
+		} catch (error: any) {
+			console.error('Error fetching display name:', error.message);
+			return null;
+		}
+	};
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -24,7 +48,7 @@
 					>
 				{:else}
 					<a href="/dashboard" class="hover:text-gray-200 flex gap-2 items-center"
-						><FontAwesomeIcon icon={faUser} />Dashboard</a
+						><FontAwesomeIcon icon={faUser} />{displayName !== '' ? displayName : ''}</a
 					>
 				{/if}
 			</nav>

@@ -12,7 +12,8 @@
 
 	const snapshots = writable<Snapshot[]>([]);
 
-	let displayName = ''; // Variable to store the display name
+	let displayName = ''; // Variable to store the reactive display name
+	let displayNameStatic = ''; // Variable to store the static display name on mount
 	let displayNameError = ''; // Variable to store any error messages for the display name update
 
 	let loading = true;
@@ -25,6 +26,7 @@
 				loadSnapshots();
 				getDisplayName().then((displayName) => {
 					displayName = displayName || '';
+					displayNameStatic = displayName;
 				});
 			} else {
 				user.set(null);
@@ -137,8 +139,8 @@
 	<div class="flex flex-col gap-4">
 		<h1>User Dashboard</h1>
 		{#if $user}
-			{#if displayName}
-				<p>Welcome, {displayName}!</p>
+			{#if displayNameStatic !== ''}
+				<p>Welcome, {displayNameStatic}!</p>
 			{:else}
 				<p>Welcome, {$user.email}!</p>
 			{/if}
