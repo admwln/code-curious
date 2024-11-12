@@ -67,18 +67,20 @@
 				<div class="flex items-start">
 					<button type="submit" class="btn bg-primary-700">Register</button>
 				</div>
-				{#if errorMsg}
-					<hr class="opacity-50" />
-					<aside class="alert variant-ghost-error">
-						<!-- Icon -->
-						<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
-						<!-- Message -->
-						<div class="alert-message">
-							<p>{errorMsg}</p>
-						</div>
-					</aside>
-				{/if}
 			</form>
 		</section>
+		{#if errorMsg}
+			<hr class="opacity-50 mb-4" />
+			<footer class="card-footer">
+				<aside class="alert variant-ghost-error">
+					<!-- Icon -->
+					<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+					<!-- Message -->
+					<div class="alert-message">
+						<p>{errorMsg}</p>
+					</div>
+				</aside>
+			</footer>
+		{/if}
 	</div>
 </div>

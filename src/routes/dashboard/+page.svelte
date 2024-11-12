@@ -7,42 +7,34 @@
 	import { fetchLesson } from '$lib/utils/fetchLesson';
 
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faCamera, faCheck, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faCamera,
+		faFloppyDisk,
+		faExclamationTriangle,
+		faTrashCan,
+	} from '@fortawesome/free-solid-svg-icons';
 
 	interface Snapshot {
 		id: string;
 		lesson_id: string;
 		snapshot_data: any;
-		lesson_title?: string; // Add optional title field
-		lesson_slug?: string; // Add optional slug field
+		lesson_title?: string;
+		lesson_slug?: string;
 	}
 
 	const snapshots = writable<Snapshot[]>([]);
+	const msg = writable<string | null>(null); // Initialize msg as writable
+	let msgTimeout: ReturnType<typeof setTimeout> | undefined; // Declare a timeout for clearing msg
 
-	let displayName = ''; // Variable to store the reactive display name
-	let displayNameStatic = ''; // Variable to store the static display name on mount
-	let displayNameError = ''; // Variable to store any error messages for the display name update
+	let displayName = '';
+	let displayNameError = '';
 
 	let loading = true;
 	let authLoading = true;
 
 	onMount(async () => {
-		const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-			if (session?.user) {
-				user.set(session.user);
-				loadSnapshots();
-				getDisplayName().then((displayName) => {
-					displayName = displayName || '';
-					displayNameStatic = displayName;
-				});
-			} else {
-				user.set(null);
-				goto('/sign-in');
-			}
-		});
-
+		// Existing authentication and load setup
 		await checkUserAuthentication();
-
 		authLoading = false;
 	});
 
@@ -57,7 +49,6 @@
 			user.set(null);
 			goto('/sign-in');
 		}
-
 		loading = false;
 	}
 
@@ -69,7 +60,6 @@
 				.eq('user_id', $user.id);
 			if (error) console.error(error);
 			else if (snapshotsData) {
-				// Fetch the lesson title for each snapshot
 				const snapshotsWithTitles = await Promise.all(
 					snapshotsData.map(async (snapshot) => {
 						const lesson = await fetchLesson(snapshot.lesson_id);
@@ -86,19 +76,23 @@
 	};
 
 	const getDisplayName = async () => {
-		// Get display name from user
 		try {
 			const { data, error } = await supabase.auth.getUser();
 			if (error) throw error;
-			const displayName = data.user.user_metadata.display_name || '';
-			return displayName;
+			return data.user.user_metadata.display_name || '';
 		} catch (error: any) {
 			console.error('Error fetching display name:', error.message);
 			return null;
 		}
 	};
 
-	// Update display name in Supabase
+	// Display message utility function
+	function displayMessage(message: string, duration: number = 5000) {
+		msg.set(message); // Set the message
+		clearTimeout(msgTimeout); // Clear any existing timeout
+		msgTimeout = setTimeout(() => msg.set(null), duration); // Clear message after duration
+	}
+
 	async function updateDisplayName() {
 		try {
 			const { data, error } = await supabase.auth.updateUser({
@@ -106,51 +100,29 @@
 					display_name: displayName,
 				},
 			});
-
 			if (error) throw error;
 
-			// Refresh the user session to reflect changes immediately
 			const { data: updatedUser, error: refreshError } = await supabase.auth.getUser();
-
 			if (refreshError) throw refreshError;
 
-			console.log(
-				'Display name updated successfully:',
-				updatedUser.user.user_metadata.display_name,
-			);
-
-			// You can also update any UI components here to show the new display name
+			displayMessage('Username updated successfully!');
 		} catch (error: any) {
 			console.error('Error updating display name:', error.message);
-			// Handle the error appropriately (e.g., show an error message to the user)
+			displayMessage('Error updating display name.');
 		}
-	}
-
-	// Define saveSnapshot, updateSnapshot, and deleteSnapshot functions
-	async function saveSnapshot(lessonId: number, snapshotData: Record<string, any>) {
-		if ($user) {
-			const { data, error } = await supabase
-				.from('snapshots')
-				.insert([{ user_id: $user.id, lesson_id: lessonId, snapshot_data: snapshotData }]);
-			if (error) console.error(error);
-		}
-	}
-
-	async function updateSnapshot(snapshotId: number, newSnapshotData: Record<string, any>) {
-		const { error } = await supabase
-			.from('snapshots')
-			.update({ snapshot_data: newSnapshotData })
-			.eq('id', snapshotId);
-		if (error) console.error(error);
 	}
 
 	async function deleteSnapshot(snapshotId: string) {
 		console.log('Deleting snapshot:', snapshotId);
 		const { error } = await supabase.from('snapshots').delete().eq('id', snapshotId);
-		if (error) console.error(error);
-		// Update the snapshots store after deleting the snapshot
-		const updatedSnapshots = $snapshots.filter((snapshot) => snapshot.id !== snapshotId);
-		snapshots.set(updatedSnapshots);
+		if (error) {
+			console.error(error);
+			displayMessage('Error deleting snapshot.');
+		} else {
+			const updatedSnapshots = $snapshots.filter((snapshot) => snapshot.id !== snapshotId);
+			snapshots.set(updatedSnapshots);
+			displayMessage('Snapshot deleted successfully!');
+		}
 	}
 
 	$: if (!$user && !authLoading) {
@@ -158,7 +130,7 @@
 	}
 </script>
 
-<div class="h-full w-full flex justify-center">
+<div class="h-full w-full flex flex-col items-center">
 	<div class="card mt-4 md:mt-12 md:w-1/2">
 		{#if authLoading || loading}
 			<header class="card-header">
@@ -167,7 +139,6 @@
 			<section class="p-4">
 				<p>Please wait while we load your dashboard.</p>
 			</section>
-			<footer class="card-footer"></footer>
 		{:else if $user}
 			<header class="card-header">
 				<h2 class="h2">Dashboard</h2>
@@ -186,7 +157,7 @@
 								placeholder="Choose a username"
 							/>
 							<button type="submit" class="btn-icon bg-initial">
-								<FontAwesomeIcon icon={faCheck} />
+								<FontAwesomeIcon icon={faFloppyDisk} />
 								<span class="sr-only">Save Username</span>
 							</button>
 						</div>
@@ -197,19 +168,19 @@
 					{/if}
 				</form>
 			</section>
+			<hr class="opacity-50" />
 			<section class="p-4 flex flex-col items-start">
-				<h2>Your Snapshots</h2>
+				<h3 class="text-xl">Your Snapshots</h3>
 				{#each $snapshots as snapshot}
 					<div>
 						<p class="flex gap-2 items-center">
 							<FontAwesomeIcon icon={faCamera} />
-							{snapshot.lesson_title}
+
 							<a class="anchor" href={`/tutorial/${snapshot.lesson_slug}`}>
-								<span>View Lesson</span>
+								<span>{snapshot.lesson_title}</span>
 							</a>
-							<!-- Add a button to delete snapshot -->
 							<button
-								class="btn-icon btn-sm variant-filled-warning"
+								class="btn-icon btn-sm bg-initial"
 								on:click={() => deleteSnapshot(snapshot.id)}
 							>
 								<FontAwesomeIcon icon={faTrashCan} />
@@ -219,12 +190,21 @@
 					</div>
 				{/each}
 			</section>
-			<hr class="opacity-50 my-4" />
+			<hr class="opacity-50 mb-4" />
 			<footer class="card-footer">
 				<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
 			</footer>
 		{:else}
-			<p>Please log in to view your dashboard.</p>
+			<section class="p-4">Please log in to view your dashboard.</section>
 		{/if}
 	</div>
+	<!-- Display the message if it exists -->
+	{#if $msg}
+		<aside class="alert variant-ghost-success mt-4">
+			<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+			<div class="alert-message">
+				<p>{$msg}</p>
+			</div>
+		</aside>
+	{/if}
 </div>
