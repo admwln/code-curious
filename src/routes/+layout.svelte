@@ -5,12 +5,6 @@
 	import { user } from '$lib/auth';
 	import { supabase } from '$lib/supabaseClient';
 
-	// Reactive variable bound to the `user` store
-	let loggedIn = false;
-
-	// Update `loggedIn` based on `user` store's state
-	$: loggedIn = Boolean($user); // Reactively update when `user` changes
-
 	let displayName: string = ''; // Variable to store the display name
 	// Update `displayName` based on `user` store's state
 	$: {
@@ -42,13 +36,13 @@
 			<a href="/" class="hover:text-gray-200"><h1>Funnel</h1></a>
 			<nav class="flex gap-6">
 				<a href="/tutorial/welcome" class="hover:text-gray-200">Tutorial</a>
-				{#if !loggedIn}
+				{#if !$user}
 					<a href="/sign-in" class="hover:text-gray-200 flex gap-2 items-center"
 						><FontAwesomeIcon icon={faUser} />Sign In</a
 					>
 				{:else}
 					<a href="/dashboard" class="hover:text-gray-200 flex gap-2 items-center"
-						><FontAwesomeIcon icon={faUser} />{displayName !== '' ? displayName : ''}</a
+						><FontAwesomeIcon icon={faUser} />{displayName !== '' ? displayName : $user.email}</a
 					>
 				{/if}
 			</nav>

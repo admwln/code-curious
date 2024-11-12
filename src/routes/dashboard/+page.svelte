@@ -136,42 +136,43 @@
 {#if authLoading || loading}
 	<p>Loading...</p>
 {:else}
-	<div class="flex flex-col gap-4 items-start">
-		<h1>User Dashboard</h1>
-		{#if $user}
-			{#if displayNameStatic !== ''}
-				<p>Welcome, {displayNameStatic}!</p>
+	<div class="h-full w-full flex justify-center">
+		<div class="card mt-4 md:mt-12 max-w-96 md:w-1/2">
+			{#if $user}
+				<header class="card-header">
+					<h2 class="h2">Dashboard</h2>
+				</header>
+				<hr class="opacity-50 mt-4" />
+				<section class="p-4">
+					<form on:submit|preventDefault={updateDisplayName}>
+						<label class="label">
+							<span>Username</span>
+							<input
+								id="displayName"
+								class="input"
+								type="text"
+								bind:value={displayName}
+								placeholder="Choose a username"
+							/>
+						</label>
+						<button class="btn" type="submit">Update</button>
+						{#if displayNameError}
+							<p class="error">{displayNameError}</p>
+						{/if}
+					</form>
+
+					<h2>Your Snapshots</h2>
+					{#each $snapshots as snapshot}
+						<div>
+							<p>Lesson: {snapshot.lesson_id}</p>
+							<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
+						</div>
+					{/each}
+					<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
+				</section>
 			{:else}
-				<p>Welcome, {$user.email}!</p>
+				<p>Please log in to view your dashboard.</p>
 			{/if}
-
-			<form on:submit|preventDefault={updateDisplayName}>
-				<label class="label">
-					<span>Display Name</span>
-					<input
-						id="displayName"
-						class="input"
-						type="text"
-						bind:value={displayName}
-						placeholder="Enter your display name"
-					/>
-				</label>
-				<button class="btn" type="submit">Update</button>
-				{#if displayNameError}
-					<p class="error">{displayNameError}</p>
-				{/if}
-			</form>
-
-			<h2>Your Snapshots</h2>
-			{#each $snapshots as snapshot}
-				<div>
-					<p>Lesson: {snapshot.lesson_id}</p>
-					<pre>{JSON.stringify(snapshot.snapshot_data, null, 2)}</pre>
-				</div>
-			{/each}
-			<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
-		{:else}
-			<p>Please log in to view your dashboard.</p>
-		{/if}
+		</div>
 	</div>
 {/if}
