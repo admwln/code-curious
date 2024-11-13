@@ -38,7 +38,7 @@
 		{#if data.prevLesson && data.nextLesson}
 			<span class="mx-2 text-zinc-700">|</span>
 		{/if}
-		{#if data.nextLesson}
+		{#if data.nextLesson && data.nextLesson !== 'lesson-1'}
 			<a class="anchor" href={`/tutorial/${data.nextLesson}`}>{nextTitle} &gt;&gt;</a>
 		{/if}
 	</div>
