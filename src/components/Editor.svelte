@@ -120,7 +120,8 @@
 
 	async function loadUserSnapshot() {
 		if ($user && $userSnapshotAvailable) {
-			$snapshot = $userSnapshot; // Set current editor state to the snapshot data
+			//$snapshot = $userSnapshot; // Set current editor state to the snapshot data
+			snapshot.set($userSnapshot); // Set current editor state to the snapshot data
 		}
 	}
 
@@ -311,7 +312,7 @@
 		</div>
 
 		<div class="w-full flex justify-between">
-			<div class="flex">
+			<div class="flex items-center">
 				{#if $user}
 					<!-- Conditionally show "Take Snapshot" button if there is any code in the editor -->
 					{#if $snapshot.length > 0}
@@ -323,7 +324,7 @@
 
 					<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
 					{#if $userSnapshotAvailable}
-						<button type="button" class="btn-icon text-2xl" on:click={() => loadUserSnapshot()}>
+						<button type="button" class="btn-icon text-lg" on:click={() => loadUserSnapshot()}>
 							<FontAwesomeIcon icon={faImage} />
 							<span class="sr-only">Load Snapshot</span>
 						</button>

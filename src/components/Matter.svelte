@@ -10,18 +10,19 @@
 	} from '$lib/matter';
 	import Matter from 'matter-js';
 	import type { MatterInstance, Action } from '../lib/types';
-	import { snapshot } from '$lib/stores/snapshots';
+	import { actionSnapshot } from '$lib/utils/actions';
 	import { isRunning, matterInstanceStore, resetMatterFlag } from '$lib/stores/store';
 
 	// Matter.js instance, needs to be exported to be used by actions.ts
 	export let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
-	// Handle updates from matterActionOutput store
+	// Only subscribe to matterActionOutput when isRunning is true
+
 	matterActionOutput.subscribe((instructions: Action[]) => {
-		if (matterInstance && instructions.length > 0) {
+		if ($isRunning && matterInstance && instructions.length > 0) {
 			const latestInstruction = instructions[instructions.length - 1];
-			handleInstruction(matterInstance, latestInstruction, $snapshot); // Pass the latest instruction to matter.ts
+			handleInstruction(matterInstance, latestInstruction, $actionSnapshot); // Pass the latest instruction to matter.ts
 		}
 	});
 
