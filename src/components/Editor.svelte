@@ -20,11 +20,18 @@
 	import { resetMatterFlag } from '$lib/stores/store';
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
+	import { fade } from 'svelte/transition';
 
 	export let data;
 	const userSnapshot = writable<any[]>([]);
 
 	let lessonSlug: string;
+	let btnMsg: string = 'Snapshot available';
+
+	// Track if the animation for the Load Snapshot button should play
+	// Will be set to true when the 'Save Snapshot' button is clicked,
+	// or if a user snapshot is found for the current lesson and user
+	let animateLoadButton = false;
 
 	// Subscribe to the lesson slug from the page store
 	$: lessonSlug = $page.params.lessonId;
@@ -112,6 +119,7 @@
 			} else if (userSnapshotData && userSnapshotData.length > 0) {
 				userSnapshot.set(userSnapshotData[0].snapshot_data); // Load the snapshot data
 				userSnapshotAvailable.set(true); // Set flag to indicate snapshot availability
+				animateLoadButton = true; // Trigger the animation
 			} else {
 				userSnapshotAvailable.set(false); // No snapshot available
 			}
@@ -122,6 +130,8 @@
 		if ($user && $userSnapshotAvailable) {
 			//$snapshot = $userSnapshot; // Set current editor state to the snapshot data
 			snapshot.set($userSnapshot); // Set current editor state to the snapshot data
+			btnMsg = 'Snapshot loaded';
+			animateLoadButton = true; // Trigger the animation
 		}
 	}
 
@@ -139,7 +149,16 @@
 			else console.log('Snapshot saved successfully');
 			// Fetch the user snapshot data again
 			fetchUserSnapshot();
+			btnMsg = 'Snapshot saved';
+			animateLoadButton = true; // Trigger the animation
 		}
+	}
+
+	// Toggle the animation class when userSnapshotAvailable changes
+	$: if (animateLoadButton) {
+		setTimeout(() => {
+			animateLoadButton = false; // Reset the animation after it plays
+		}, 2000); // Match the duration of the CSS animation
 	}
 </script>
 
@@ -324,10 +343,26 @@
 
 					<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
 					{#if $userSnapshotAvailable}
-						<button type="button" class="btn-icon text-lg" on:click={() => loadUserSnapshot()}>
-							<FontAwesomeIcon icon={faImage} />
-							<span class="sr-only">Load Snapshot</span>
-						</button>
+						<div class="w-10 flex justify-center items-center">
+							<button
+								type="button"
+								class="btn-icon text-lg"
+								class:snapshot-animate={animateLoadButton && btnMsg === 'Snapshot saved'}
+								on:click={() => loadUserSnapshot()}
+							>
+								<FontAwesomeIcon icon={faImage} />
+								<span class="sr-only">Load Snapshot</span>
+							</button>
+						</div>
+					{/if}
+					{#if animateLoadButton && btnMsg !== ''}
+						<p
+							in:fade={{ duration: 200 }}
+							out:fade={{ duration: 100 }}
+							class="text-md text-tertiary-500 ml-2"
+						>
+							{btnMsg}
+						</p>
 					{/if}
 				{/if}
 			</div>
@@ -338,3 +373,26 @@
 		</div>
 	</section>
 </div>
+
+<style>
+	/* Scaling animation */
+	.snapshot-animate {
+		animation: pop-in 500ms ease-out forwards;
+	}
+
+	@keyframes pop-in {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.5);
+		}
+		90% {
+			transform: scale(0.8);
+		}
+
+		100% {
+			transform: scale(1);
+		}
+	}
+</style>
