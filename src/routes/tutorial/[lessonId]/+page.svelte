@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
+	import { afterUpdate } from 'svelte';
 
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
@@ -139,6 +140,16 @@
 		await waitForStability();
 		isRunning.set(false); // Set to false when all blocks are processed and stable
 	}
+
+	// Scroll tutorial content to the top when the route changes
+	let scrollDiv: HTMLDivElement | null = null;
+
+	// Scroll `contentDiv` to the top when `data` changes
+	afterUpdate(() => {
+		if (scrollDiv) {
+			scrollDiv.scrollTo({ top: 0 });
+		}
+	});
 </script>
 
 <!-- Panel 1: Tutorial -->
@@ -148,7 +159,7 @@
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
 >
-	<div class="flex-1 overflow-y-scroll max-h-screen">
+	<div bind:this={scrollDiv} class="flex-1 overflow-y-scroll max-h-screen">
 		<!-- Panel header -->
 		<div
 			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
