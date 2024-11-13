@@ -2,6 +2,7 @@
 	import { currentPanel } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
 	import { afterUpdate } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
@@ -46,6 +47,8 @@
 		playfiled: {},
 	};
 
+	let showTutorial = false; // Flag to show tutorial after scrolling
+
 	// Use Supabase client to fetch data from countries table
 	const fetchLesson = async () => {
 		const { data, error } = await supabase
@@ -81,6 +84,7 @@
 		//lessonData = data.lessonData; // Reassign the new lessonData when the route changes
 		clearConsole(); // Clear the console when the route changes
 		fetchLesson();
+		showTutorial = false; // Hide tutorial temporarily when the route changes
 	}
 
 	// Panel width logic
@@ -144,10 +148,16 @@
 	// Scroll tutorial content to the top when the route changes
 	let scrollDiv: HTMLDivElement | null = null;
 
-	// Scroll `contentDiv` to the top when `data` changes
+	// Run after component updates, then scroll and reveal tutorial
 	afterUpdate(() => {
 		if (scrollDiv) {
+			// Scroll to the top
 			scrollDiv.scrollTo({ top: 0 });
+
+			// Delay showing the tutorial slightly for smooth transition
+			setTimeout(() => {
+				showTutorial = true; // Show tutorial after scrolling completes
+			}, 500); // Adjust timing if needed for smoother UX
 		}
 	});
 </script>
@@ -182,10 +192,10 @@
 		</div>
 		<!-- Dynamic content start -->
 
-		{#if lessonData}
-			<Tutorial data={lessonData.tutorial} />
-		{:else}
-			<p>Loading...</p>
+		{#if lessonData && showTutorial}
+			<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
+				<Tutorial data={lessonData.tutorial} />
+			</div>
 		{/if}
 	</div>
 </section>
