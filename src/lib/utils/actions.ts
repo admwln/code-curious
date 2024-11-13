@@ -12,9 +12,7 @@ export const matterActionOutput = writable<Action[]>([]);
 // actions.ts
 export const executeAction = async (action: Action) => {
 	return new Promise((resolve) => {
-		// Handle the action as before
 		if (action.action === 'create circle') {
-			console.log('Create circle action has been called');
 			matterActionOutput.update((output) => [...output, action]);
 		} else if (action.action === 'increase' && action.variableId) {
 			// Update variable

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { user } from '$lib/auth';
+	import { supabase } from '$lib/supabaseClient';
+	import { writable } from 'svelte/store';
 	import StringModal from './StringModal.svelte';
 	import NumberModal from './NumberModal.svelte';
 	import BooleanModal from './BooleanModal.svelte';
@@ -9,38 +12,42 @@
 	import NewLog from './NewLog.svelte';
 	import VariableBlock from './VariableBlock.svelte';
 	import ActionModal from './ActionModal.svelte';
+	import ConfirmButton from './ConfirmButton.svelte';
 
-	import { faEye, faBolt, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import { faBolt, faCameraRetro, faEye, faImage, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
+	import { page } from '$app/stores';
 	import { resetMatterFlag } from '$lib/stores/store';
-
-	// START: Logic for loading and saving snapshots--------------------------------
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { fade } from 'svelte/transition';
 
 	export let data;
+	const userSnapshot = writable<any[]>([]);
 
-	let lessonId: string;
+	let lessonSlug: string;
 
-	// Subscribe to the lessonId from the page store
-	$: lessonId = $page.params.lessonId;
+	let animateSnapIcon = false;
+	let animateLoadIcon = false;
 
-	// Load snapshot data for the current lesson when the component mounts or lessonId changes
+	// Subscribe to the lesson slug from the page store
+	$: lessonSlug = $page.params.lessonId;
+
+	// Load snapshot data for the current lesson when the component mounts or lessonSlug changes
 	$: {
-		if (lessonId) {
-			loadSnapshot(lessonId, data.snapshot);
+		if (lessonSlug) {
+			loadSnapshot(lessonSlug, data.snapshot);
+			fetchUserSnapshot();
 		}
 	}
 
 	// Save the current snapshot before navigating to another route
 	beforeNavigate(() => {
-		if (lessonId) {
-			saveSnapshot(lessonId, $snapshot);
+		if (lessonSlug) {
+			saveSnapshot(lessonSlug, $snapshot);
 		}
 	});
-	// END -------------------------------------------------------------------------
 
 	// IDs of currently edited variables
 	let activeStringId: number | null = null;
@@ -78,26 +85,111 @@
 		else if (block.type === 'array') activeArrayId = block.id;
 	}
 
+	// Reset Editor, either clear or load the default lesson snapshot--never the user's snapshot
 	const resetEditor = () => {
-		// Ask the user to confirm, then clear the snapshot
-		// TODO: The default confirm modal could be replaced by a modal component
-		// from Skeleton, or a Confirm button could appear in the editor, next
-		// to the Reset button
-		if (confirm('Are you sure you want to reset the editor?')) {
-			// Check in the fetched lesson data if there is a
-			// snapshot for the current lesson, and load it if it exists:
-			console.log('check lesson data for snapshot', data);
-			if (data.snapshot) {
-				$snapshot = data.snapshot;
-			} else $snapshot = [];
-			// Toggle the flag to reset the Matter.js simulation
-			resetMatterFlag.update((flag) => (flag = true));
+		// Check in the fetched lesson data if there is a snapshot for the current lesson
+		console.log('check lesson data for snapshot', data);
+		if (data.snapshot) {
+			$snapshot = data.snapshot;
+		} else $snapshot = [];
+		// Toggle the flag to reset the Matter.js simulation
+		resetMatterFlag.update((flag) => (flag = true));
+	};
+
+	const userSnapshotAvailable = writable(false); // Store to track if a snapshot exists
+
+	const fetchUserSnapshot = async () => {
+		if ($user) {
+			const { data: userSnapshotData, error } = await supabase
+				.from('snapshots')
+				.select('snapshot_data')
+				.eq('user_id', $user.id)
+				.eq('lesson_slug', lessonSlug);
+
+			if (error) {
+				console.error('Error fetching snapshot:', error);
+			} else if (userSnapshotData && userSnapshotData.length > 0) {
+				userSnapshot.set(userSnapshotData[0].snapshot_data); // Load the snapshot data
+				userSnapshotAvailable.set(true); // Set flag to indicate snapshot availability
+			} else {
+				userSnapshotAvailable.set(false); // No snapshot available
+			}
 		}
 	};
+
+	async function loadUserSnapshot() {
+		if ($user && $userSnapshotAvailable) {
+			//$snapshot = $userSnapshot; // Set current editor state to the snapshot data
+			snapshot.set($userSnapshot); // Set current editor state to the snapshot data
+			animateLoadIcon = true; // Trigger the animation
+		}
+	}
+
+	async function saveUserSnapshot() {
+		if ($user && $snapshot) {
+			const { error } = await supabase.from('snapshots').upsert(
+				{
+					user_id: $user.id,
+					lesson_slug: lessonSlug,
+					snapshot_data: $snapshot,
+				},
+				{ onConflict: 'user_id,lesson_slug' },
+			);
+			if (error) console.error('Error saving snapshot:', error);
+			else console.log('Snapshot saved successfully');
+			// Fetch the user snapshot data again
+			fetchUserSnapshot();
+			animateSnapIcon = true; // Trigger the animation
+		}
+	}
+
+	// Toggle the animation class when animateSnapIcon changes
+	$: if (animateSnapIcon) {
+		setTimeout(() => {
+			animateSnapIcon = false; // Reset the animation after it plays
+		}, 500); // Match the duration of the CSS animation
+	}
+
+	// Toggle the animation class when animateLoadIcon changes
+	$: if (animateLoadIcon) {
+		setTimeout(() => {
+			animateLoadIcon = false; // Reset the animation after it plays
+		}, 500); // Match the duration of the CSS animation
+	}
 </script>
 
-<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
-	<div class="flex flex-col items-start gap-2">
+<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-2">
+	<section class="w-full flex justify-between items-center h-8">
+		<div class="flex items-center gap-4">
+			{#if $user}
+				<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
+				{#if $userSnapshotAvailable}
+					<div class="flex items-center">
+						<div class="w-6 flex justify-center items-center" class:animate-icon={animateLoadIcon}>
+							<FontAwesomeIcon icon={faImage} class="text-2xl" />
+						</div>
+						<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
+					</div>
+				{/if}
+				<!-- Conditionally show "Save Snapshot" button if there is any code in the editor -->
+				{#if $snapshot.length > 0}
+					<div class="flex items-center">
+						<div class="w-6 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
+							<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
+						</div>
+						<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
+					</div>
+				{/if}
+			{/if}
+		</div>
+
+		<div class="flex items-center">
+			<ConfirmButton initiateText="Reset Editor" confirmText="Reset" onConfirm={resetEditor} />
+		</div>
+	</section>
+	<hr class="opacity-50" />
+
+	<section class="flex flex-col items-start gap-2 py-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
@@ -166,7 +258,8 @@
 				{/if}
 			{/each}
 		{/if}
-	</div>
+	</section>
+	<hr class="opacity-50" />
 
 	<!-- Modals for Editing Variables -->
 	{#if activeStringId !== null}
@@ -245,7 +338,7 @@
 
 	<!-- In the following section, the user can choose to create a new variable,
 	 a new console log, etc -->
-	<section class="flex flex-col gap-2 items-start">
+	<section class="flex flex-col gap-2 items-start pt-2">
 		<div>
 			<NewVariable />
 		</div>
@@ -263,10 +356,28 @@
 				<FontAwesomeIcon icon={faPlus} /> Action
 			</button>
 		</div>
-		{#if $snapshot.length > 0}
-			<div class="w-full flex justify-end">
-				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
-			</div>
-		{/if}
 	</section>
 </div>
+
+<style>
+	/* Scaling animation */
+	.animate-icon {
+		animation: pop-in 500ms ease-out forwards;
+	}
+
+	@keyframes pop-in {
+		0% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.5);
+		}
+		90% {
+			transform: scale(0.8);
+		}
+
+		100% {
+			transform: scale(1);
+		}
+	}
+</style>

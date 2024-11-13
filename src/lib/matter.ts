@@ -137,6 +137,7 @@ export function handleInstruction(
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
 	switch (instruction.action) {
 		case 'create circle':
+			console.log('matter.ts: Create circle action has been called');
 			// NB presupposes that the variable is a color string
 			// e.g. so that 'light coral' is converted to 'lightcoral'
 			let fill = variable.value as string;

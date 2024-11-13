@@ -1,5 +1,32 @@
 <script lang="ts">
 	import '../app.postcss';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faUser } from '@fortawesome/free-solid-svg-icons';
+	import { user } from '$lib/auth';
+	import { supabase } from '$lib/supabaseClient';
+
+	let displayName: string = ''; // Variable to store the display name
+	// Update `displayName` based on `user` store's state
+	$: {
+		if ($user) {
+			getDisplayName().then((name) => {
+				displayName = name || '';
+			});
+		}
+	}
+
+	const getDisplayName = async () => {
+		// Get display name from user
+		try {
+			const { data, error } = await supabase.auth.getUser();
+			if (error) throw error;
+			const displayName = data.user.user_metadata.display_name || data.user.email;
+			return displayName;
+		} catch (error: any) {
+			console.error('Error fetching display name:', error.message);
+			return null;
+		}
+	};
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -7,10 +34,17 @@
 	<header class="bg-secondary-800 text-white p-4">
 		<div class="container mx-auto flex justify-between items-center">
 			<a href="/" class="hover:text-gray-200"><h1>Funnel</h1></a>
-			<nav class="flex space-x-4">
+			<nav class="flex gap-6">
 				<a href="/tutorial/welcome" class="hover:text-gray-200">Tutorial</a>
-				<a href="/about" class="hover:text-gray-200">About</a>
-				<a href="/login" class="hover:text-gray-200">Log in</a>
+				{#if !$user}
+					<a href="/sign-in" class="hover:text-gray-200 flex gap-2 items-center"
+						><FontAwesomeIcon icon={faUser} />Sign In</a
+					>
+				{:else}
+					<a href="/dashboard" class="hover:text-gray-200 flex gap-2 items-center"
+						><FontAwesomeIcon icon={faUser} />{displayName !== '' ? displayName : $user.email}</a
+					>
+				{/if}
 			</nav>
 		</div>
 	</header>
