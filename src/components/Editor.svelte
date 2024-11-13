@@ -87,22 +87,31 @@
 		else if (block.type === 'array') activeArrayId = block.id;
 	}
 
-	const resetEditor = () => {
-		// Ask the user to confirm, then clear the snapshot
-		// TODO: The default confirm modal could be replaced by a modal component
-		// from Skeleton, or a Confirm button could appear in the editor, next
-		// to the Reset button
-		if (confirm('Are you sure you want to reset the editor?')) {
-			// Check in the fetched lesson data if there is a
-			// snapshot for the current lesson, and load it if it exists:
-			console.log('check lesson data for snapshot', data);
-			if (data.snapshot) {
-				$snapshot = data.snapshot;
-			} else $snapshot = [];
-			// Toggle the flag to reset the Matter.js simulation
-			resetMatterFlag.update((flag) => (flag = true));
-		}
+	// Logic for Reset Editor ------------------------------------------------
+	let showConfirmation = false; // Track if confirmation buttons should be shown
+
+	// Function to initiate reset confirmation
+	const initiateReset = () => {
+		showConfirmation = true; // Show Confirm and Cancel buttons
 	};
+
+	// Reset function only proceeds if confirmed
+	const resetEditor = () => {
+		// Check in the fetched lesson data if there is a snapshot for the current lesson
+		console.log('check lesson data for snapshot', data);
+		if (data.snapshot) {
+			$snapshot = data.snapshot;
+		} else $snapshot = [];
+		// Toggle the flag to reset the Matter.js simulation
+		resetMatterFlag.update((flag) => (flag = true));
+		showConfirmation = false; // Hide confirmation buttons after reset
+	};
+
+	// Cancel function to reset the UI without changing editor content
+	const cancelReset = () => {
+		showConfirmation = false; // Hide the confirmation buttons
+	};
+	//------------------------------------------------------------
 
 	const userSnapshotAvailable = writable(false); // Store to track if a snapshot exists
 
@@ -359,7 +368,7 @@
 						<p
 							in:fade={{ duration: 200 }}
 							out:fade={{ duration: 100 }}
-							class="text-md text-tertiary-500 ml-2"
+							class="text-sm md:text-md lg:text-lg text-tertiary-500 ml-2"
 						>
 							{btnMsg}
 						</p>
@@ -368,7 +377,19 @@
 			</div>
 
 			{#if $snapshot.length > 0}
-				<button on:click={resetEditor} type="button" class="btn">Reset Editor</button>
+				<!-- <button on:click={resetEditor} type="button" class="btn">Reset Editor</button> -->
+				<div class="flex items-center">
+					{#if showConfirmation}
+						<!-- Show Confirm and Cancel Buttons -->
+						<button type="button" class="btn btn-sm" on:click={cancelReset}>Cancel</button>
+						<button type="button" class="btn btn-sm variant-outline-warning" on:click={resetEditor}
+							>Reset</button
+						>
+					{:else}
+						<!-- Show Reset Editor Button -->
+						<button on:click={initiateReset} type="button" class="btn">Reset Editor</button>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</section>
