@@ -158,8 +158,38 @@
 	}
 </script>
 
-<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-4">
-	<div class="flex flex-col items-start gap-2">
+<div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-2">
+	<section class="w-full flex justify-between items-center h-8">
+		<div class="flex items-center gap-4">
+			{#if $user}
+				<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
+				{#if $userSnapshotAvailable}
+					<div class="flex items-center">
+						<div class="w-6 flex justify-center items-center" class:animate-icon={animateLoadIcon}>
+							<FontAwesomeIcon icon={faImage} class="text-2xl" />
+						</div>
+						<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
+					</div>
+				{/if}
+				<!-- Conditionally show "Save Snapshot" button if there is any code in the editor -->
+				{#if $snapshot.length > 0}
+					<div class="flex items-center">
+						<div class="w-6 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
+							<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
+						</div>
+						<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
+					</div>
+				{/if}
+			{/if}
+		</div>
+
+		<div class="flex items-center">
+			<ConfirmButton initiateText="Reset Editor" confirmText="Reset" onConfirm={resetEditor} />
+		</div>
+	</section>
+	<hr class="opacity-50" />
+
+	<section class="flex flex-col items-start gap-2 py-2">
 		<!--- Loop through each object in snapshot -->
 		{#if $snapshot.length > 0}
 			{#each $snapshot as block (block.id)}
@@ -228,7 +258,8 @@
 				{/if}
 			{/each}
 		{/if}
-	</div>
+	</section>
+	<hr class="opacity-50" />
 
 	<!-- Modals for Editing Variables -->
 	{#if activeStringId !== null}
@@ -307,7 +338,7 @@
 
 	<!-- In the following section, the user can choose to create a new variable,
 	 a new console log, etc -->
-	<section class="flex flex-col gap-2 items-start">
+	<section class="flex flex-col gap-2 items-start pt-2">
 		<div>
 			<NewVariable />
 		</div>
@@ -324,45 +355,6 @@
 			>
 				<FontAwesomeIcon icon={faPlus} /> Action
 			</button>
-		</div>
-
-		<div class="w-full flex justify-between items-center h-10">
-			<div class="flex items-center gap-4">
-				{#if $user}
-					<!-- Conditionally show "Take Snapshot" button if there is any code in the editor -->
-					{#if $snapshot.length > 0}
-						<div class="flex items-center gap-2">
-							<div
-								class="w-6 flex justify-center items-center"
-								class:animate-icon={animateSnapIcon}
-							>
-								<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
-							</div>
-							<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
-						</div>
-					{/if}
-
-					<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
-					{#if $userSnapshotAvailable}
-						<div class="flex items-center gap-2">
-							<div
-								class="w-6 flex justify-center items-center"
-								class:animate-icon={animateLoadIcon}
-							>
-								<FontAwesomeIcon icon={faImage} class="text-2xl" />
-							</div>
-							<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
-						</div>
-					{/if}
-				{/if}
-			</div>
-
-			{#if $snapshot.length > 0}
-				<!-- <button on:click={resetEditor} type="button" class="btn">Reset Editor</button> -->
-				<div class="flex items-center">
-					<ConfirmButton initiateText="Reset Editor" confirmText="Reset" onConfirm={resetEditor} />
-				</div>
-			{/if}
 		</div>
 	</section>
 </div>

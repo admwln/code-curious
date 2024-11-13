@@ -6,9 +6,9 @@
 	export let confirmText: string = 'Confirm';
 	export let cancelText: string = 'Cancel';
 	export let onConfirm: () => void;
-	export let initiateClass: string = 'btn btn-sm variant-outline-primary';
+	export let initiateClass: string = 'btn btn-sm';
 	export let confirmClass: string = 'btn btn-sm variant-outline-warning';
-	export let cancelClass: string = 'btn btn-sm variant-outline-secondary';
+	export let cancelClass: string = 'btn btn-sm';
 
 	// State
 	let showConfirmButtons = false;
@@ -36,7 +36,7 @@
 
 <!-- Render the initiate button or confirm/cancel buttons based on state -->
 {#if showConfirmButtons}
-	<div class="flex gap-2">
+	<div class="flex">
 		<button type="button" class={cancelClass} on:click={cancel}>{cancelText}</button>
 		<button type="button" class={confirmClass} on:click={confirm}>{confirmText}</button>
 	</div>
