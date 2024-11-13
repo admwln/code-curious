@@ -40,7 +40,12 @@
 {#if showConfirmButtons}
 	<div class="flex">
 		<button type="button" class={cancelClass} on:click={cancel}>{cancelText}</button>
-		<button type="button" class={confirmClass} on:click={confirm}>{confirmText}</button>
+		<button type="button" class={confirmClass} on:click={confirm}>
+			{#if initiateText === 'Snapshot'}
+				<FontAwesomeIcon icon={faFileCode} />
+			{/if}
+			{confirmText}</button
+		>
 	</div>
 {:else}
 	<button type="button" class={initiateClass} on:click={initiate}>

@@ -203,6 +203,7 @@
 										initiateText="Snapshot"
 										initiateClass="btn btn-sm flex items-center gap-2"
 										confirmText="Delete"
+										confirmClass="btn btn-sm variant-outline-warning flex items-center gap-2"
 										onConfirm={() => deleteSnapshot(lesson.slug)}
 									></ConfirmButton>
 								{/if}
