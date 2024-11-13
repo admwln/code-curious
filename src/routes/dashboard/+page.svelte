@@ -45,7 +45,9 @@
 	onMount(async () => {
 		// Existing authentication and load setup
 		await checkUserAuthentication();
-		const fetchedLessons = await fetchLessons();
+		let fetchedLessons = await fetchLessons();
+		// Sort lessons by ID, ascending
+		fetchedLessons = fetchedLessons ? fetchedLessons.sort((a, b) => a.id - b.id) : [];
 		lessons.set(fetchedLessons ?? []);
 		authLoading = false;
 	});
