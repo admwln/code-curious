@@ -14,14 +14,19 @@
 	import ActionModal from './ActionModal.svelte';
 	import ConfirmButton from './ConfirmButton.svelte';
 
-	import { faBolt, faCameraRetro, faEye, faImage, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faBolt,
+		faEye,
+		faFileCode,
+		faFloppyDisk,
+		faPlus,
+	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	import { page } from '$app/stores';
 	import { resetMatterFlag } from '$lib/stores/store';
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
-	import { fade } from 'svelte/transition';
 
 	export let data;
 	const userSnapshot = writable<any[]>([]);
@@ -166,7 +171,7 @@
 				{#if $userSnapshotAvailable}
 					<div class="flex items-center">
 						<div class="w-6 flex justify-center items-center" class:animate-icon={animateLoadIcon}>
-							<FontAwesomeIcon icon={faImage} class="text-2xl" />
+							<FontAwesomeIcon icon={faFileCode} class="text-2xl" />
 						</div>
 						<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
 					</div>
@@ -175,7 +180,7 @@
 				{#if $snapshot.length > 0}
 					<div class="flex items-center">
 						<div class="w-6 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
-							<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
+							<FontAwesomeIcon icon={faFloppyDisk} class="text-2xl" />
 						</div>
 						<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
 					</div>

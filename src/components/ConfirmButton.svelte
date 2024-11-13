@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faFileCode } from '@fortawesome/free-solid-svg-icons';
 
 	// Props
 	export let initiateText: string;
@@ -41,5 +43,10 @@
 		<button type="button" class={confirmClass} on:click={confirm}>{confirmText}</button>
 	</div>
 {:else}
-	<button type="button" class={initiateClass} on:click={initiate}>{initiateText}</button>
+	<button type="button" class={initiateClass} on:click={initiate}>
+		{#if initiateText === 'Snapshot'}
+			<FontAwesomeIcon icon={faFileCode} />
+		{/if}
+		{initiateText}
+	</button>
 {/if}

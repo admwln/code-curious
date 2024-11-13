@@ -30,10 +30,6 @@
 	import Accordion from '../../../components/Accordion.svelte';
 	import type { LessonData, Log } from '$lib/types';
 
-	// Import the `load` function result from +page.server.ts:
-	// NB not used in this file, as lesson data is loaded in the script block
-	//export let data;
-
 	//let lessonId = data.lessonId; // Use the lessonId passed from the load function
 	let lessonId = $page.params.lessonId; // Use the lessonId from the route params
 	let lessonData: LessonData = {
@@ -100,12 +96,7 @@
 		panel2Width = isPanel1Collapsed ? 'lg:w-1/2' : 'lg:w-1/3'; // Expand panel 2 accordingly
 	}
 
-	// // Reactive statement to update actionSnapshot any time $snapshot changes
-	// $: {
-	// 	$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot each time it updates
-	// }
-
-	// Function to run the user's code
+	// RUNNER function to run the user's code
 	async function runner() {
 		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
