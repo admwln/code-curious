@@ -12,6 +12,7 @@
 	import NewLog from './NewLog.svelte';
 	import VariableBlock from './VariableBlock.svelte';
 	import ActionModal from './ActionModal.svelte';
+	import ConfirmButton from './ConfirmButton.svelte';
 
 	import { faBolt, faCameraRetro, faEye, faImage, faPlus } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
@@ -26,12 +27,9 @@
 	const userSnapshot = writable<any[]>([]);
 
 	let lessonSlug: string;
-	let btnMsg: string = 'Snapshot available';
 
-	// Track if the animation for the Load Snapshot button should play
-	// Will be set to true when the 'Save Snapshot' button is clicked,
-	// or if a user snapshot is found for the current lesson and user
-	let animateLoadButton = false;
+	let animateSnapIcon = false;
+	let animateLoadIcon = false;
 
 	// Subscribe to the lesson slug from the page store
 	$: lessonSlug = $page.params.lessonId;
@@ -87,15 +85,7 @@
 		else if (block.type === 'array') activeArrayId = block.id;
 	}
 
-	// Logic for Reset Editor ------------------------------------------------
-	let showConfirmation = false; // Track if confirmation buttons should be shown
-
-	// Function to initiate reset confirmation
-	const initiateReset = () => {
-		showConfirmation = true; // Show Confirm and Cancel buttons
-	};
-
-	// Reset function only proceeds if confirmed
+	// Reset Editor, either clear or load the default lesson snapshot--never the user's snapshot
 	const resetEditor = () => {
 		// Check in the fetched lesson data if there is a snapshot for the current lesson
 		console.log('check lesson data for snapshot', data);
@@ -104,14 +94,7 @@
 		} else $snapshot = [];
 		// Toggle the flag to reset the Matter.js simulation
 		resetMatterFlag.update((flag) => (flag = true));
-		showConfirmation = false; // Hide confirmation buttons after reset
 	};
-
-	// Cancel function to reset the UI without changing editor content
-	const cancelReset = () => {
-		showConfirmation = false; // Hide the confirmation buttons
-	};
-	//------------------------------------------------------------
 
 	const userSnapshotAvailable = writable(false); // Store to track if a snapshot exists
 
@@ -128,7 +111,6 @@
 			} else if (userSnapshotData && userSnapshotData.length > 0) {
 				userSnapshot.set(userSnapshotData[0].snapshot_data); // Load the snapshot data
 				userSnapshotAvailable.set(true); // Set flag to indicate snapshot availability
-				animateLoadButton = true; // Trigger the animation
 			} else {
 				userSnapshotAvailable.set(false); // No snapshot available
 			}
@@ -139,8 +121,7 @@
 		if ($user && $userSnapshotAvailable) {
 			//$snapshot = $userSnapshot; // Set current editor state to the snapshot data
 			snapshot.set($userSnapshot); // Set current editor state to the snapshot data
-			btnMsg = 'Snapshot loaded';
-			animateLoadButton = true; // Trigger the animation
+			animateLoadIcon = true; // Trigger the animation
 		}
 	}
 
@@ -158,16 +139,22 @@
 			else console.log('Snapshot saved successfully');
 			// Fetch the user snapshot data again
 			fetchUserSnapshot();
-			btnMsg = 'Snapshot saved';
-			animateLoadButton = true; // Trigger the animation
+			animateSnapIcon = true; // Trigger the animation
 		}
 	}
 
-	// Toggle the animation class when userSnapshotAvailable changes
-	$: if (animateLoadButton) {
+	// Toggle the animation class when animateSnapIcon changes
+	$: if (animateSnapIcon) {
 		setTimeout(() => {
-			animateLoadButton = false; // Reset the animation after it plays
-		}, 2000); // Match the duration of the CSS animation
+			animateSnapIcon = false; // Reset the animation after it plays
+		}, 500); // Match the duration of the CSS animation
+	}
+
+	// Toggle the animation class when animateLoadIcon changes
+	$: if (animateLoadIcon) {
+		setTimeout(() => {
+			animateLoadIcon = false; // Reset the animation after it plays
+		}, 500); // Match the duration of the CSS animation
 	}
 </script>
 
@@ -339,39 +326,33 @@
 			</button>
 		</div>
 
-		<div class="w-full flex justify-between">
-			<div class="flex items-center">
+		<div class="w-full flex justify-between items-center h-10">
+			<div class="flex items-center gap-4">
 				{#if $user}
 					<!-- Conditionally show "Take Snapshot" button if there is any code in the editor -->
 					{#if $snapshot.length > 0}
-						<button type="button" class="btn-icon text-2xl" on:click={() => saveUserSnapshot()}>
-							<FontAwesomeIcon icon={faCameraRetro} />
-							<span class="sr-only">Take Snapshot</span>
-						</button>
+						<div class="flex items-center gap-2">
+							<div
+								class="w-6 flex justify-center items-center"
+								class:animate-icon={animateSnapIcon}
+							>
+								<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
+							</div>
+							<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
+						</div>
 					{/if}
 
 					<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
 					{#if $userSnapshotAvailable}
-						<div class="w-10 flex justify-center items-center">
-							<button
-								type="button"
-								class="btn-icon text-lg"
-								class:snapshot-animate={animateLoadButton && btnMsg === 'Snapshot saved'}
-								on:click={() => loadUserSnapshot()}
+						<div class="flex items-center gap-2">
+							<div
+								class="w-6 flex justify-center items-center"
+								class:animate-icon={animateLoadIcon}
 							>
-								<FontAwesomeIcon icon={faImage} />
-								<span class="sr-only">Load Snapshot</span>
-							</button>
+								<FontAwesomeIcon icon={faImage} class="text-2xl" />
+							</div>
+							<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
 						</div>
-					{/if}
-					{#if animateLoadButton && btnMsg !== ''}
-						<p
-							in:fade={{ duration: 200 }}
-							out:fade={{ duration: 100 }}
-							class="text-sm md:text-md lg:text-lg text-tertiary-500 ml-2"
-						>
-							{btnMsg}
-						</p>
 					{/if}
 				{/if}
 			</div>
@@ -379,16 +360,7 @@
 			{#if $snapshot.length > 0}
 				<!-- <button on:click={resetEditor} type="button" class="btn">Reset Editor</button> -->
 				<div class="flex items-center">
-					{#if showConfirmation}
-						<!-- Show Confirm and Cancel Buttons -->
-						<button type="button" class="btn btn-sm" on:click={cancelReset}>Cancel</button>
-						<button type="button" class="btn btn-sm variant-outline-warning" on:click={resetEditor}
-							>Reset</button
-						>
-					{:else}
-						<!-- Show Reset Editor Button -->
-						<button on:click={initiateReset} type="button" class="btn">Reset Editor</button>
-					{/if}
+					<ConfirmButton initiateText="Reset Editor" confirmText="Reset" onConfirm={resetEditor} />
 				</div>
 			{/if}
 		</div>
@@ -397,7 +369,7 @@
 
 <style>
 	/* Scaling animation */
-	.snapshot-animate {
+	.animate-icon {
 		animation: pop-in 500ms ease-out forwards;
 	}
 
