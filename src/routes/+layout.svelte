@@ -29,12 +29,16 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Code Curious</title>
+</svelte:head>
+
 <div class="flex flex-col min-h-screen">
 	<!-- Header (shared across all pages) -->
 	<header class="bg-secondary-800 text-white p-4">
 		<div class="mx-0 flex justify-between items-center">
 			<div class="w-40">
-				<a href="/" class="hover:text-gray-200 text-xl inline-block lg:hidden"
+				<a href="/" class="hover:text-gray-200 inline-block lg:hidden"
 					><h1>
 						<h1 class="flex gap-2 items-center">
 							<FontAwesomeIcon icon={faFaceSurprise} />CC
@@ -43,9 +47,9 @@
 				>
 			</div>
 			<div>
-				<a href="/" class="hover:text-gray-200 text-xl hidden lg:inline-block"
+				<a href="/" class="hover:text-gray-200 hidden lg:inline-block"
 					><h1 class="flex gap-2 items-center">
-						<FontAwesomeIcon icon={faFaceSurprise} />CODE-CURIOUS
+						<FontAwesomeIcon icon={faFaceSurprise} />CODE CURIOUS
 					</h1></a
 				>
 			</div>

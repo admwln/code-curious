@@ -8,7 +8,7 @@
 		<header class="card-header"><h2 class="text-4xl md:text-6xl">Curious about Code?</h2></header>
 		<hr class="opacity-50 my-2" />
 		<section class="p-4 text-sm lg:text-lg">
-			You've come to the right place! <strong>Code-Curious</strong> is your interactive resource for
+			You've come to the right place! <strong>Code Curious</strong> is your interactive resource for
 			learning the basics of programming—in a fun and friendly environment.
 		</section>
 		<hr class="opacity-50 my-2" />
