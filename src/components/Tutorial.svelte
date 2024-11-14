@@ -1,9 +1,30 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import Parser from './Parser.svelte';
+	import { fetchLessonTitle } from '$lib/utils/fetchLessonTitle';
+	import { fade } from 'svelte/transition';
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;
+	let nextTitle = '';
+	let previousTitle = '';
+	let titlesLoaded: boolean = false;
+
+	// When data changes, update the next and previous lesson titles using the fetchLessonTitle function
+	$: {
+		(async () => {
+			titlesLoaded = false; // Set loading flag
+			if (data.nextLesson) {
+				const result = await fetchLessonTitle(data.nextLesson);
+				nextTitle = result ? result.title : '';
+			}
+			if (data.prevLesson) {
+				const result = await fetchLessonTitle(data.prevLesson);
+				previousTitle = result ? result.title : '';
+			}
+			titlesLoaded = true; // Titles are now loaded
+		})();
+	}
 
 	// Helper function to split placeholder at , into an array
 	const parsePlaceholder = (placeholder: string) => {
@@ -14,11 +35,23 @@
 </script>
 
 <div class="p-4 mb-[48px] md:mb-[58px] lg:mb-0 md:overflow-x-scroll">
-	{#if data.prevLesson}
-		<p class="mb-4">
-			<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; Previous</a>
-		</p>
-	{/if}
+	<div class="h-6 mb-4">
+		{#if titlesLoaded}
+			<div in:fade={{ duration: 250 }}>
+				{#if data.prevLesson}
+					<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; {previousTitle}</a>
+				{/if}
+				{#if data.prevLesson && data.nextLesson}
+					<span class="hidden lg:inline mx-2 text-zinc-700">|</span>
+				{/if}
+				{#if data.nextLesson && data.nextLesson !== 'lesson-1'}
+					<a class="anchor hidden lg:inline" href={`/tutorial/${data.nextLesson}`}
+						>{nextTitle} &gt;&gt;</a
+					>
+				{/if}
+			</div>
+		{/if}
+	</div>
 	<h3 class="mb-2 text-3xl">{data.title}</h3>
 	<div>
 		{#each data.content as content}
@@ -31,14 +64,26 @@
 			{/if}
 		{/each}
 	</div>
-	{#if data.nextLesson}
-		<p>
-			<!-- The 'next lesson' link text content defaults to 'Next >>' -->
-			{#if data.nextLesson === 'lesson-1'}
-				<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Start the first lesson &gt;&gt;</a>
-			{:else}
-				<a class="anchor" href={`/tutorial/${data.nextLesson}`}>Next &gt;&gt;</a>
-			{/if}
-		</p>
-	{/if}
+	<div>
+		{#if titlesLoaded}
+			<div in:fade={{ duration: 250 }} class="my-8">
+				{#if data.nextLesson === 'lesson-1'}
+					<p>
+						<a class="anchor" href={`/tutorial/${data.nextLesson}`}
+							>Start the first lesson &gt;&gt;</a
+						>
+					</p>
+				{:else if data.nextLesson}
+					<p>
+						<a class="anchor" href={`/tutorial/${data.nextLesson}`}>{nextTitle} &gt;&gt;</a>
+					</p>
+				{/if}
+				<!-- {#if data.prevLesson}
+			<p>
+				<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; {previousTitle}</a>
+			</p>
+		{/if} -->
+			</div>
+		{/if}
+	</div>
 </div>

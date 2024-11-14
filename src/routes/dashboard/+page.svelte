@@ -5,9 +5,13 @@
 	import { goto } from '$app/navigation';
 	import { writable } from 'svelte/store';
 	import { fetchLesson } from '$lib/utils/fetchLesson';
+	import { fetchLessons } from '$lib/utils/fetchLessons';
+	import ConfirmButton from '../../components/ConfirmButton.svelte';
 
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import {
+		faArrowRight,
+		faFileCode,
 		faFloppyDisk,
 		faExclamationTriangle,
 		faImage,
@@ -21,7 +25,14 @@
 		lesson_title?: string;
 	}
 
+	interface Lesson {
+		id: string;
+		slug: string;
+		title: string;
+	}
+
 	const snapshots = writable<Snapshot[]>([]);
+	const lessons = writable<Lesson[]>([]);
 	const msg = writable<string | null>(null); // Initialize msg as writable
 	let msgTimeout: ReturnType<typeof setTimeout> | undefined; // Declare a timeout for clearing msg
 
@@ -34,6 +45,10 @@
 	onMount(async () => {
 		// Existing authentication and load setup
 		await checkUserAuthentication();
+		let fetchedLessons = await fetchLessons();
+		// Sort lessons by ID, ascending
+		fetchedLessons = fetchedLessons ? fetchedLessons.sort((a, b) => a.id - b.id) : [];
+		lessons.set(fetchedLessons ?? []);
 		authLoading = false;
 	});
 
@@ -110,14 +125,14 @@
 		}
 	}
 
-	async function deleteSnapshot(snapshotId: string) {
-		console.log('Deleting snapshot:', snapshotId);
-		const { error } = await supabase.from('snapshots').delete().eq('id', snapshotId);
+	async function deleteSnapshot(lessonSlug: string) {
+		console.log('Deleting snapshot:', lessonSlug);
+		const { error } = await supabase.from('snapshots').delete().eq('lesson_slug', lessonSlug);
 		if (error) {
 			console.error(error);
 			displayMessage('Error deleting snapshot.');
 		} else {
-			const updatedSnapshots = $snapshots.filter((snapshot) => snapshot.id !== snapshotId);
+			const updatedSnapshots = $snapshots.filter((snapshot) => snapshot.lesson_slug !== lessonSlug);
 			snapshots.set(updatedSnapshots);
 			displayMessage('Snapshot deleted successfully!');
 		}
@@ -142,7 +157,9 @@
 				<h2 class="h2">Dashboard</h2>
 			</header>
 			<hr class="opacity-50 mt-4" />
-			<section class="p-4 flex flex-col items-start">
+			<!-- USER -->
+			<section class="p-4 flex flex-col items-start gap-4">
+				<h3 class="text-xl">User</h3>
 				<form on:submit|preventDefault={updateDisplayName}>
 					<label class="label">
 						<span>Username</span>
@@ -167,31 +184,37 @@
 				</form>
 			</section>
 			<hr class="opacity-50" />
-			<section class="p-4 flex flex-col items-start">
-				<h3 class="text-xl">Your Snapshots</h3>
-				{#if $snapshots.length > 0}
-					<p class="py-2">The following lessons have a code snapshot saved:</p>
-				{:else}
-					<p>No snapshots available.</p>
-				{/if}
-				{#each $snapshots as snapshot}
-					<div>
-						<p class="flex gap-2 items-center">
-							<FontAwesomeIcon icon={faImage} />
+			<!-- LESSONS -->
+			<section class="p-4 flex flex-col items-start gap-4">
+				<h3 class="text-xl">Lessons</h3>
+				<!-- Loop through lessons and display each in a list -->
 
-							<a class="anchor" href={`/tutorial/${snapshot.lesson_slug}`}>
-								<span>{snapshot.lesson_title}</span>
-							</a>
-							<button
-								class="btn-icon btn-sm bg-initial"
-								on:click={() => deleteSnapshot(snapshot.id)}
-							>
-								<FontAwesomeIcon icon={faTrashCan} />
-								<span class="sr-only">Delete Snapshot</span>
-							</button>
-						</p>
-					</div>
-				{/each}
+				<nav class="list-nav">
+					<ul>
+						{#each $lessons as lesson}
+							<li class="flex items-center">
+								<a href={`/tutorial/${lesson.slug}`}>
+									<span class="badge"><FontAwesomeIcon icon={faArrowRight} /></span>
+									<span class="flex items-center gap-4">{lesson.title} </span>
+								</a>
+								<!-- Checkk if there is a user snapshot saved for the current lesson -->
+								{#if $snapshots.find((snapshot) => snapshot.lesson_slug === lesson.slug)}
+									<ConfirmButton
+										initiateText="Snapshot"
+										initiateClass="btn btn-sm flex items-center gap-2"
+										confirmText="Delete"
+										confirmClass="btn btn-sm variant-outline-warning flex items-center gap-2"
+										onConfirm={() => deleteSnapshot(lesson.slug)}
+									></ConfirmButton>
+								{/if}
+							</li>
+							<!-- If it's not the last iteration, ad an HR -->
+							{#if lesson !== $lessons[$lessons.length - 1]}
+								<hr class="opacity-50" />
+							{/if}
+						{/each}
+					</ul>
+				</nav>
 			</section>
 			<hr class="opacity-50 mb-4" />
 			<footer class="card-footer">

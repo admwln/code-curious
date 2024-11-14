@@ -14,14 +14,19 @@
 	import ActionModal from './ActionModal.svelte';
 	import ConfirmButton from './ConfirmButton.svelte';
 
-	import { faBolt, faCameraRetro, faEye, faImage, faPlus } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faBolt,
+		faEye,
+		faFileCode,
+		faFloppyDisk,
+		faPlus,
+	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
 	import { page } from '$app/stores';
 	import { resetMatterFlag } from '$lib/stores/store';
 	import { snapshot, saveSnapshot, loadSnapshot } from '$lib/stores/snapshots';
 	import { beforeNavigate } from '$app/navigation';
-	import { fade } from 'svelte/transition';
 
 	export let data;
 	const userSnapshot = writable<any[]>([]);
@@ -160,13 +165,13 @@
 
 <div class="min-h-[320px] md:min-h-[360px] lg:min-h-[400px] flex flex-col justify-start gap-2">
 	<section class="w-full flex justify-between items-center h-8">
-		<div class="flex items-center gap-4">
+		<div class="ml-2 flex items-center gap-4">
 			{#if $user}
 				<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
 				{#if $userSnapshotAvailable}
 					<div class="flex items-center">
-						<div class="w-6 flex justify-center items-center" class:animate-icon={animateLoadIcon}>
-							<FontAwesomeIcon icon={faImage} class="text-2xl" />
+						<div class="w-2 flex justify-center items-center" class:animate-icon={animateLoadIcon}>
+							<FontAwesomeIcon icon={faFileCode} class="text-xl" />
 						</div>
 						<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
 					</div>
@@ -174,8 +179,8 @@
 				<!-- Conditionally show "Save Snapshot" button if there is any code in the editor -->
 				{#if $snapshot.length > 0}
 					<div class="flex items-center">
-						<div class="w-6 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
-							<FontAwesomeIcon icon={faCameraRetro} class="text-2xl" />
+						<div class="w-2 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
+							<FontAwesomeIcon icon={faFloppyDisk} class="text-xl" />
 						</div>
 						<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
 					</div>
