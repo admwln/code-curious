@@ -15,6 +15,7 @@
 		faFloppyDisk,
 		faExclamationTriangle,
 		faImage,
+		faRightFromBracket,
 		faTrashCan,
 	} from '@fortawesome/free-solid-svg-icons';
 
@@ -218,7 +219,9 @@
 			</section>
 			<hr class="opacity-50 mb-4" />
 			<footer class="card-footer">
-				<button class="btn bg-primary-700" type="button" on:click={signOut}>Sign Out</button>
+				<button class="btn bg-primary-700 flex gap-2" type="button" on:click={signOut}
+					><FontAwesomeIcon icon={faRightFromBracket} />Sign Out</button
+				>
 			</footer>
 		{:else}
 			<section class="p-4">Please log in to view your dashboard.</section>

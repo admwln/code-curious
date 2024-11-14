@@ -29,7 +29,7 @@
 <div class="h-full w-full flex justify-center">
 	<div class="card mt-4 md:mt-12 max-w-96 md:w-96">
 		<header class="card-header">
-			<h2 class="h2">Register</h2>
+			<h2 class="h2">Sign Up</h2>
 		</header>
 		<hr class="opacity-50 mt-2" />
 		<section class="p-4">
@@ -65,7 +65,7 @@
 					/></label
 				>
 				<div class="flex items-start">
-					<button type="submit" class="btn bg-primary-700">Register</button>
+					<button type="submit" class="btn bg-primary-700">Sign Up</button>
 				</div>
 			</form>
 		</section>
