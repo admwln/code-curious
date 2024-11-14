@@ -164,7 +164,7 @@
 
 <!-- Panel 1: Tutorial -->
 <section
-	class="bg-neutral-900 h-screen md:border-r border-zinc-700 lg:border-0 md:w-1/2 transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
+	class="bg-neutral-900 h-screen transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
 	1
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
@@ -202,7 +202,7 @@
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="bg-neutral-900 md:border-r lg:border-x border-zinc-700 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
@@ -247,9 +247,9 @@
 
 <!-- Panel 3: Playfield -->
 <section
-	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:block transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-neutral-900 w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
 	3
-		? 'hidden md:block lg:block'
+		? 'hidden lg:block'
 		: ''} {panel3Width} overflow-y-scroll"
 >
 	<div class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#3a1d2a]">
