@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	// Props
 	export let isOpen: boolean = false; // Modal visibility control
+	const dispatch = createEventDispatcher();
 
 	// Close modal on escape key press
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
-			isOpen = false;
+			dispatch('close');
+			//isOpen = false;
 		}
 	}
 

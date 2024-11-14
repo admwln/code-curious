@@ -61,7 +61,7 @@
 	};
 </script>
 
-<Modal {isOpen}>
+<Modal {isOpen} on:close={closeModal}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
 			<!-- Display item type if in edit mode -->
