@@ -77,10 +77,10 @@
 	<form
 		slot="content"
 		on:submit|preventDefault={onSave}
-		class="px-4 flex flex-col gap-4 items-start"
+		class="px-2 lg:px-2 flex flex-col gap-4 items-start"
 	>
 		<!-- Variable Name Input -->
-		<label class="label">
+		<label class="label px-2">
 			<span>Label</span>
 			<input
 				class="input"
