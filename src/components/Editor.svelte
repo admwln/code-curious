@@ -340,7 +340,7 @@
 
 	<!-- In the following section, the user can choose to create a new variable,
 	 a new console log, etc -->
-	<section class="flex flex-col gap-2 items-start pt-2">
+	<section class="flex flex-wrap gap-2 lg:gap-4 items-start pt-2">
 		<div>
 			<NewVariable />
 		</div>

@@ -19,6 +19,7 @@
 	const actions: string[][] = [
 		['create circle', 'string'],
 		['create square', 'string'],
+		['create triangle', 'string'],
 		['increase', 'number'],
 		['decrease', 'number'],
 	];

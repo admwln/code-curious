@@ -12,9 +12,11 @@ export const matterActionOutput = writable<Action[]>([]);
 // actions.ts
 export const executeAction = async (action: Action) => {
 	return new Promise((resolve) => {
-		if (action.action === 'create circle') {
-			matterActionOutput.update((output) => [...output, action]);
-		} else if (action.action === 'create square') {
+		if (
+			action.action === 'create circle' ||
+			action.action === 'create square' ||
+			action.action === 'create triangle'
+		) {
 			matterActionOutput.update((output) => [...output, action]);
 		} else if (action.action === 'increase' && action.variableId) {
 			// Update variable
@@ -42,7 +44,7 @@ export const executeAction = async (action: Action) => {
 		// Resolve after a set delay
 		setTimeout(() => {
 			resolve(true);
-		}, 1000);
+		}, 500);
 	});
 };
 

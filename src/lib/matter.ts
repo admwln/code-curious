@@ -43,7 +43,7 @@ export function initMatterJS(
 
 	// Create static walls
 	World.add(engine.world, [
-		Bodies.rectangle(s(225), s(0), s(450), s(50), {
+		Bodies.rectangle(s(225), s(-5), s(450), s(5), {
 			isStatic: true,
 			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
@@ -163,15 +163,36 @@ export function handleInstruction(
 ) {
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
 	switch (instruction.action) {
+		case 'create circle':
+			console.log('matter.ts: create circle action has been called');
+			let circleFill = variable.value as string;
+			circleFill = checkColor(circleFill);
+			if (typeof circleFill === 'string') {
+				const circle = Bodies.circle(s(225), s(20), s(20), {
+					isStatic: false,
+					restitution: 1,
+					friction: 0,
+					render: { fillStyle: circleFill },
+				});
+				World.add(matterInstance.engine.world, circle);
+				userBodies = [
+					...userBodies,
+					{
+						body: circle,
+						initialPosition: { x: circle.position.x, y: circle.position.y },
+					},
+				];
+			}
+			break;
 		case 'create square':
 			console.log('matter.ts: create square action has been called');
 			let squareFill = variable.value as string;
 			squareFill = checkColor(squareFill);
 			if (typeof squareFill === 'string') {
-				const square = Bodies.rectangle(s(225), s(55), s(40), s(40), {
+				const square = Bodies.rectangle(s(225), s(40), s(40), s(40), {
 					isStatic: false,
 					restitution: 0.75,
-					friction: 0,
+					friction: 0.5,
 					render: { fillStyle: squareFill },
 				});
 				World.add(matterInstance.engine.world, square);
@@ -184,23 +205,23 @@ export function handleInstruction(
 				];
 			}
 			break;
-		case 'create circle':
-			console.log('matter.ts: create circle action has been called');
-			let circleFill = variable.value as string;
-			circleFill = checkColor(circleFill);
-			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(225), s(55), s(20), {
+		case 'create triangle':
+			console.log('matter.ts: create triangle action has been called');
+			let triangleFill = variable.value as string;
+			triangleFill = checkColor(triangleFill);
+			if (typeof triangleFill === 'string') {
+				const triangle = Bodies.polygon(s(225), s(20), 3, s(20), {
 					isStatic: false,
-					restitution: 1,
-					friction: 0,
-					render: { fillStyle: circleFill },
+					restitution: 0.75,
+					friction: 0.5,
+					render: { fillStyle: triangleFill },
 				});
-				World.add(matterInstance.engine.world, circle);
+				World.add(matterInstance.engine.world, triangle);
 				userBodies = [
 					...userBodies,
 					{
-						body: circle,
-						initialPosition: { x: circle.position.x, y: circle.position.y },
+						body: triangle,
+						initialPosition: { x: triangle.position.x, y: triangle.position.y },
 					},
 				];
 			}
