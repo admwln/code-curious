@@ -14,6 +14,7 @@ export const executeAction = async (action: Action) => {
 	return new Promise((resolve) => {
 		if (
 			action.action === 'create circle' ||
+			action.action === 'create circles' ||
 			action.action === 'create square' ||
 			action.action === 'create triangle'
 		) {

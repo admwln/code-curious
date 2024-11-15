@@ -62,26 +62,26 @@ export function initMatterJS(
 	]);
 
 	// Create four static narrow rectangles positioned in a funnel shape
-	World.add(engine.world, [
-		Bodies.rectangle(s(30), s(120), s(450), s(10), {
-			isStatic: true,
-			render: { fillStyle: 'rgb(23 23 23)' },
-			angle: Math.PI * 0.25,
-		}),
-		Bodies.rectangle(s(420), s(120), s(450), s(10), {
-			isStatic: true,
-			render: { fillStyle: 'rgb(23 23 23)' },
-			angle: Math.PI * -0.25,
-		}),
-		Bodies.rectangle(s(190), s(400), s(10), s(250), {
-			isStatic: true,
-			render: { fillStyle: 'rgb(23 23 23)' },
-		}),
-		Bodies.rectangle(s(260), s(400), s(10), s(250), {
-			isStatic: true,
-			render: { fillStyle: 'rgb(23 23 23)' },
-		}),
-	]);
+	// World.add(engine.world, [
+	// 	Bodies.rectangle(s(30), s(120), s(450), s(10), {
+	// 		isStatic: true,
+	// 		render: { fillStyle: 'rgb(23 23 23)' },
+	// 		angle: Math.PI * 0.25,
+	// 	}),
+	// 	Bodies.rectangle(s(420), s(120), s(450), s(10), {
+	// 		isStatic: true,
+	// 		render: { fillStyle: 'rgb(23 23 23)' },
+	// 		angle: Math.PI * -0.25,
+	// 	}),
+	// 	Bodies.rectangle(s(190), s(400), s(10), s(250), {
+	// 		isStatic: true,
+	// 		render: { fillStyle: 'rgb(23 23 23)' },
+	// 	}),
+	// 	Bodies.rectangle(s(260), s(400), s(10), s(250), {
+	// 		isStatic: true,
+	// 		render: { fillStyle: 'rgb(23 23 23)' },
+	// 	}),
+	// ]);
 
 	// Create a runner
 	const runner = Runner.create();
@@ -168,7 +168,7 @@ export function handleInstruction(
 			let circleFill = variable.value as string;
 			circleFill = checkColor(circleFill);
 			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(225), s(20), s(20), {
+				const circle = Bodies.circle(s(225), s(40), s(40), {
 					isStatic: false,
 					restitution: 1,
 					friction: 0,
@@ -189,10 +189,10 @@ export function handleInstruction(
 			let squareFill = variable.value as string;
 			squareFill = checkColor(squareFill);
 			if (typeof squareFill === 'string') {
-				const square = Bodies.rectangle(s(225), s(40), s(40), s(40), {
+				const square = Bodies.rectangle(s(225), s(40), s(80), s(80), {
 					isStatic: false,
-					restitution: 0.75,
-					friction: 0.5,
+					restitution: 0.95,
+					friction: 0.25,
 					render: { fillStyle: squareFill },
 				});
 				World.add(matterInstance.engine.world, square);
@@ -210,10 +210,10 @@ export function handleInstruction(
 			let triangleFill = variable.value as string;
 			triangleFill = checkColor(triangleFill);
 			if (typeof triangleFill === 'string') {
-				const triangle = Bodies.polygon(s(225), s(20), 3, s(20), {
+				const triangle = Bodies.polygon(s(225), s(40), 3, s(50), {
 					isStatic: false,
-					restitution: 0.75,
-					friction: 0.5,
+					restitution: 0.5,
+					friction: 0.25,
 					render: { fillStyle: triangleFill },
 				});
 				World.add(matterInstance.engine.world, triangle);
@@ -225,6 +225,31 @@ export function handleInstruction(
 					},
 				];
 			}
+			break;
+		case 'create circles':
+			console.log('matter.ts: create circles action has been called');
+			let circleFills = variable.value as string[];
+
+			circleFills.forEach((fill, i) => {
+				let circleFill = checkColor(fill);
+				if (typeof fill === 'string') {
+					const xPosition = s(50 + i * 85);
+					const circle = Bodies.circle(xPosition, s(40), s(40), {
+						isStatic: false,
+						restitution: 1,
+						friction: 0,
+						render: { fillStyle: circleFill },
+					});
+					World.add(matterInstance.engine.world, circle);
+					userBodies = [
+						...userBodies,
+						{
+							body: circle,
+							initialPosition: { x: circle.position.x, y: circle.position.y },
+						},
+					];
+				}
+			});
 			break;
 		default:
 			console.warn(`Unknown instruction type: ${instruction.action}`);
