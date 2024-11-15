@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+	import { faExclamationTriangle, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 
 	let email = '';
 	let password = '';
@@ -48,7 +48,9 @@
 					/></label
 				>
 				<div class="flex items-start">
-					<button type="submit" class="btn bg-primary-700">Sign In</button>
+					<button type="submit" class="btn bg-primary-700 flex gap-2"
+						><FontAwesomeIcon icon={faRightToBracket} />Sign In</button
+					>
 				</div>
 				{#if errorMsg}
 					<hr class="opacity-50" />
@@ -64,7 +66,7 @@
 			</form>
 			<hr class="opacity-50 my-4" />
 			<footer>
-				Don't have an account? <a href="/register" class="anchor">Register</a>
+				Don't have an account? <a href="/sign-up" class="anchor">Sign up</a>
 			</footer>
 		</section>
 	</div>

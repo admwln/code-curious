@@ -10,6 +10,7 @@
 	//console.log('editMode from ObjectEdit component', editMode);
 	const dispatch = createEventDispatcher();
 	let _object: Record<string, any> = {}; // Temporary object to store key-value pairs
+	let _pairCount: number = 1; // How many key-value pairs there are in the temporary object
 
 	let objectTypes: string[] = [];
 	let objectValues: any[] = [];
@@ -35,6 +36,7 @@
 		objectTypes = ['string'];
 		//console.log('Object types', objectTypes);
 		_object = { ...objectVariable.value };
+		_pairCount = 1;
 	} else {
 		_object = { ...objectVariable.value };
 		objectTypes = getObjectTypes();
@@ -46,14 +48,17 @@
 				objectValues[index] = String(objectValues[index]);
 			}
 		});
-		console.log('Object types', objectTypes);
+		// Update pair count
+		_pairCount = Object.keys(_object).length;
+		console.log('Pair count', _pairCount);
 	}
 
 	let objectKeys: string[] = Object.keys(_object);
-	//console.log(objectKeys, objectTypes, objectValues);
 
 	// Function to add an empty key-value pair
 	const addKeyValuePair = () => {
+		// First check if _pairCount is already at the maximum (5)
+		if (_pairCount >= 5) return;
 		const newKeyName = `key${Object.keys(_object).length + 1}`;
 		_object[newKeyName] = '';
 		// Push the new key to the arrays
@@ -62,7 +67,7 @@
 		objectValues.push('');
 		respawnObject();
 		_object = { ..._object }; // Trigger reactivity
-		//console.log('Added key-value pair', _object);
+		_pairCount++;
 	};
 
 	// Function to remove a key-value pair
@@ -77,6 +82,7 @@
 			objectValues.pop();
 			respawnObject();
 			_object = { ..._object }; // Trigger reactivity
+			_pairCount--;
 		}
 	};
 
@@ -148,7 +154,28 @@
 	};
 </script>
 
-<div class="flex flex-col gap-3 items-start">
+<div class="px-2 lg:p-2 flex flex-col gap-3 items-start">
+	<div class="w-full flex justify-between lg:flex-col lg:gap-2">
+		<!-- Count and display how many key-value pairs there curretly are -->
+
+		<span>Key-Value Pairs: {_pairCount}</span>
+		<div class="flex gap-1 items-center">
+			<button
+				type="button"
+				on:click={addKeyValuePair}
+				class="btn btn-sm variant-outline-secondary flex gap-1"
+				><FontAwesomeIcon icon={faPlus} /><span class="sr-only">Add Key-Value Pair</span></button
+			>
+			<button
+				type="button"
+				on:click={removeKeyValuePair}
+				class="btn btn-sm variant-outline-primary flex gap-1"
+				><FontAwesomeIcon icon={faMinus} /><span class="sr-only">Remove Key-Value Pair</span
+				></button
+			>
+		</div>
+	</div>
+
 	<table class="w-full text-sm text-left p-0 m-0">
 		<thead class="text-x uppercase">
 			<tr>
@@ -165,7 +192,7 @@
 						<label class="label">
 							<span class="sr-only">Key</span>
 							<input
-								class="input px-2 py-0 text-sm"
+								class="input px-2 py-1 text-sm"
 								type="text"
 								name="key"
 								bind:value={objectKeys[i]}
@@ -179,10 +206,10 @@
 					</td>
 
 					<!-- Type Selector -->
-					<td class="p-0.5">
+					<td class="w-20 lg:w-24 p-0.5">
 						<select
 							name="type"
-							class="select px-2 py-0 mt-1 text-sm"
+							class="select px-2 py-1 mt-1 text-sm"
 							value={objectTypes[i]}
 							on:change={(e) => {
 								const newType = handleTypeChange(e, i);
@@ -192,8 +219,8 @@
 							}}
 						>
 							<option value="string">String</option>
-							<option value="number">Number</option>
-							<option value="boolean">Boolean</option>
+							<option value="number">Num</option>
+							<option value="boolean">Bool</option>
 						</select>
 					</td>
 
@@ -205,7 +232,7 @@
 								<span class="sr-only">Value</span>
 								<input
 									name="value"
-									class="input px-2 py-0 text-sm"
+									class="input px-2 py-1 text-sm"
 									type="text"
 									bind:value={objectValues[i]}
 									on:blur={(e) => {
@@ -221,7 +248,7 @@
 								<span class="sr-only">Value</span>
 								<input
 									name="value"
-									class="input px-2 py-0 text-sm"
+									class="input px-2 py-1 text-sm"
 									type="number"
 									bind:value={objectValues[i]}
 									on:blur={(e) => {
@@ -233,45 +260,34 @@
 							</label>
 						{/if}
 						{#if objectTypes[i] === 'boolean'}
-							<RadioGroup padding="px-1 py-0">
-								<RadioItem
-									bind:group={objectValues[i]}
-									on:change={(e) => {
-										updateValue(e, i, key);
-									}}
-									name="justify"
-									value="true"
-									class="text-sm">True</RadioItem
-								>
-								<RadioItem
-									bind:group={objectValues[i]}
-									on:change={(e) => {
-										updateValue(e, i, key);
-									}}
-									name="justify"
-									value="false"
-									class="text-sm">False</RadioItem
-								>
-							</RadioGroup>
+							<div class="p-2 flex gap-2">
+								<label class="flex items-center space-x-2">
+									<input
+										class="radio"
+										type="radio"
+										name="radio-direct-{i}"
+										bind:group={objectValues[i]}
+										value="true"
+										on:change={(e) => updateValue(e, i, key)}
+									/>
+									<p>True</p>
+								</label>
+								<label class="flex items-center space-x-2">
+									<input
+										class="radio"
+										type="radio"
+										name="radio-direct-{i}"
+										bind:group={objectValues[i]}
+										value="false"
+										on:change={(e) => updateValue(e, i, key)}
+									/>
+									<p>False</p>
+								</label>
+							</div>
 						{/if}
 					</td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
-
-	<div class="flex gap-1 items-center">
-		<button
-			type="button"
-			on:click={addKeyValuePair}
-			class="btn btn-sm variant-ghost-secondary flex gap-1"
-			><FontAwesomeIcon icon={faPlus} /><span class="sr-only">Add</span>Key-value</button
-		>
-		<button
-			type="button"
-			on:click={removeKeyValuePair}
-			class="btn btn-sm variant-ghost-primary flex gap-1"
-			><FontAwesomeIcon icon={faMinus} /><span class="sr-only">Remove</span>Key-value</button
-		>
-	</div>
 </div>

@@ -1,22 +1,36 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 
 	// Props
 	export let isOpen: boolean = false; // Modal visibility control
+	const dispatch = createEventDispatcher();
 
 	// Close modal on escape key press
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
-			isOpen = false;
+			dispatch('close');
+			//isOpen = false;
+		}
+	}
+
+	let modalContainer: HTMLDivElement | null = null;
+
+	// Close modal on outside click
+	function handleClickOutside(event: MouseEvent) {
+		if (isOpen && event.target === modalContainer) {
+			dispatch('close');
 		}
 	}
 
 	onMount(() => {
 		// Add event listener to handle "Escape" key close
 		window.addEventListener('keydown', handleKeydown);
+		// Add event listener to handle outside click close
+		window.addEventListener('click', handleClickOutside);
 
 		return () => {
 			window.removeEventListener('keydown', handleKeydown);
+			window.removeEventListener('click', handleClickOutside);
 		};
 	});
 </script>
@@ -24,10 +38,13 @@
 {#if isOpen}
 	<!-- Background overlay -->
 	<div
+		bind:this={modalContainer}
 		class="fixed inset-0 bg-neutral-900 bg-opacity-75 z-50 flex items-start justify-center pt-0 md:pt-8"
+		role="dialog"
 	>
 		<!-- Modal container -->
-		<div
+		<dialog
+			open
 			class="m-2 card w-full text-token space-y-4 rounded-lg shadow-lg overflow-hidden max-w-md z-50 relative"
 		>
 			<header>
@@ -39,6 +56,6 @@
 			<footer>
 				<slot name="footer"></slot>
 			</footer>
-		</div>
+		</dialog>
 	</div>
 {/if}
