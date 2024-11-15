@@ -128,6 +128,33 @@ export function resetBodies(engine: Matter.Engine) {
 	});
 }
 
+const checkColor = (value: string) => {
+	// Remove all spaces, if any, from variable.value
+	let color: string = value.replace(/\s/g, '');
+	// Check if the variable value is a valid color
+	try {
+		if (!colors[color]) {
+			throw new Error(`Huh? Unrecognized color value: ${color}`);
+		}
+	} catch (error: any) {
+		// Capture and log error to the Console component
+		// Create a new log block with the error message
+		const errorBlock: Log = {
+			id: Date.now(),
+			blockType: 'log',
+			message: `Error: ${error.message}`,
+			selectedId: null,
+			selectedIndex: 0,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+			selectedType: 'string',
+		};
+		consoleOutput.update((output) => [...output, errorBlock]);
+	}
+	return (color = color.replace(/\s/g, ''));
+};
+
 // Define the handler function for various instructions
 export function handleInstruction(
 	matterInstance: MatterInstance,
@@ -136,35 +163,13 @@ export function handleInstruction(
 ) {
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
 	switch (instruction.action) {
+		case 'create square':
+			console.log('matter.ts: create square action has been called');
 		case 'create circle':
-			console.log('matter.ts: Create circle action has been called');
-			// NB presupposes that the variable is a color string
-			// e.g. so that 'light coral' is converted to 'lightcoral'
+			console.log('matter.ts: create circle action has been called');
+
 			let fill = variable.value as string;
-			// Remove all spaces, if any, from variable.value
-			fill = fill.replace(/\s/g, '');
-			// Check if the variable value is a valid color
-			try {
-				if (!colors[fill]) {
-					throw new Error(`Huh? Unrecognized color value: ${fill}`);
-				}
-			} catch (error: any) {
-				// Capture and log error to the Console component
-				// Create a new log block with the error message
-				const errorBlock: Log = {
-					id: Date.now(),
-					blockType: 'log',
-					message: `Error: ${error.message}`,
-					selectedId: null,
-					selectedIndex: 0,
-					selectedKey: null,
-					useIndex: false,
-					useKey: false,
-					selectedType: 'string',
-				};
-				consoleOutput.update((output) => [...output, errorBlock]);
-			}
-			fill = fill.replace(/\s/g, '');
+			fill = checkColor(fill);
 
 			if (typeof fill === 'string') {
 				const circle = Bodies.circle(s(55), s(55), s(20), {

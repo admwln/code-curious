@@ -167,6 +167,12 @@
 	<section class="w-full flex justify-between items-center h-8">
 		<div class="ml-2 flex items-center gap-4">
 			{#if $user}
+				<div class="flex items-center">
+					<div class="w-2 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
+						<FontAwesomeIcon icon={faFloppyDisk} class="text-xl" />
+					</div>
+					<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
+				</div>
 				<!-- Conditionally show "Load Snapshot" button if a user snapshot exists -->
 				{#if $userSnapshotAvailable}
 					<div class="flex items-center">
@@ -174,15 +180,6 @@
 							<FontAwesomeIcon icon={faFileCode} class="text-xl" />
 						</div>
 						<ConfirmButton initiateText="Load" confirmText="Load" onConfirm={loadUserSnapshot} />
-					</div>
-				{/if}
-				<!-- Conditionally show "Save Snapshot" button if there is any code in the editor -->
-				{#if $snapshot.length > 0}
-					<div class="flex items-center">
-						<div class="w-2 flex justify-center items-center" class:animate-icon={animateSnapIcon}>
-							<FontAwesomeIcon icon={faFloppyDisk} class="text-xl" />
-						</div>
-						<ConfirmButton initiateText="Save" confirmText="Save" onConfirm={saveUserSnapshot} />
 					</div>
 				{/if}
 			{/if}

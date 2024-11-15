@@ -14,6 +14,8 @@ export const executeAction = async (action: Action) => {
 	return new Promise((resolve) => {
 		if (action.action === 'create circle') {
 			matterActionOutput.update((output) => [...output, action]);
+		} else if (action.action === 'create square') {
+			matterActionOutput.update((output) => [...output, action]);
 		} else if (action.action === 'increase' && action.variableId) {
 			// Update variable
 			actionSnapshot.update((snapshot) => {
