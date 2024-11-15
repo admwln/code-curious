@@ -5,7 +5,7 @@
 <slot></slot>
 
 <!-- Mobile Buttons for Panel Toggle (shared) -->
-<div class="bg-tertiary-800 fixed flex justify-center bottom-0 inset-x-0 lg:hidden">
+<div class="bg-tertiary-800 fixed flex justify-center bottom-0 inset-x-0 lg:hidden z-50">
 	<class class="flex justify-center m-2">
 		<!-- The $ prefix is shorthand for subscribing to a store in Svelte. -->
 		<button
