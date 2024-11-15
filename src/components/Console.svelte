@@ -34,10 +34,7 @@
 </script>
 
 <div bind:this={consoleScrollContainer} class="max-h-[240px] overflow-scroll">
-	<div
-		bind:this={consoleContainer}
-		class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-[64px]"
-	>
+	<div bind:this={consoleContainer} class="rounded-md p-4 flex flex-col gap-2 mb-[64px]">
 		{#each $consoleOutput as log}
 			<p>
 				<code>

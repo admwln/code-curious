@@ -207,11 +207,13 @@
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#3a1d2a]'}>
-		<div slot="summary">
+	<!-- Editor -->
+	<div>
+		<div
+			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
+		>
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
-		</div>
-		<div slot="summary-button">
+
 			<!-- Run button, only show if currentPanel is 2, that is, not on desktop -->
 			<button
 				on:click={runner}
@@ -227,19 +229,20 @@
 				{/if}
 			</button>
 		</div>
-		<div slot="content" class="p-2">
+		<!-- Editor content -->
+		<div class="p-2">
 			{#if lessonData}
 				<Editor data={lessonData.editor} />
 			{:else}
 				<p>Loading...</p>
 			{/if}
 		</div>
-	</Accordion>
+	</div>
 	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#3a1d2a]'}>
 		<div slot="summary">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
 		</div>
-		<div slot="content" class="p-2">
+		<div slot="content" class="bg-zinc-800">
 			<Console />
 		</div>
 	</Accordion>
