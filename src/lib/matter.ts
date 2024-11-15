@@ -165,17 +165,35 @@ export function handleInstruction(
 	switch (instruction.action) {
 		case 'create square':
 			console.log('matter.ts: create square action has been called');
+			let squareFill = variable.value as string;
+			squareFill = checkColor(squareFill);
+			if (typeof squareFill === 'string') {
+				const square = Bodies.rectangle(s(225), s(55), s(40), s(40), {
+					isStatic: false,
+					restitution: 0.75,
+					friction: 0,
+					render: { fillStyle: squareFill },
+				});
+				World.add(matterInstance.engine.world, square);
+				userBodies = [
+					...userBodies,
+					{
+						body: square,
+						initialPosition: { x: square.position.x, y: square.position.y },
+					},
+				];
+			}
+			break;
 		case 'create circle':
 			console.log('matter.ts: create circle action has been called');
-
-			let fill = variable.value as string;
-			fill = checkColor(fill);
-
-			if (typeof fill === 'string') {
-				const circle = Bodies.circle(s(55), s(55), s(20), {
+			let circleFill = variable.value as string;
+			circleFill = checkColor(circleFill);
+			if (typeof circleFill === 'string') {
+				const circle = Bodies.circle(s(225), s(55), s(20), {
 					isStatic: false,
 					restitution: 1,
-					render: { fillStyle: fill },
+					friction: 0,
+					render: { fillStyle: circleFill },
 				});
 				World.add(matterInstance.engine.world, circle);
 				userBodies = [
@@ -187,8 +205,6 @@ export function handleInstruction(
 				];
 			}
 			break;
-
-		// Add more case blocks for additional instructions as needed
 		default:
 			console.warn(`Unknown instruction type: ${instruction.action}`);
 			break;

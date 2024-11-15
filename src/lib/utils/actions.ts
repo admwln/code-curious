@@ -48,10 +48,12 @@ export const executeAction = async (action: Action) => {
 
 export function waitForStability(): Promise<void> {
 	const matterInstance = get(matterInstanceStore) as MatterInstance;
-	const velocityThreshold = 0.05; // Lower value means more leeway before deemed stable
-	const angularVelocityThreshold = 0.005;
+	const velocityThreshold = 1.0; // Lower value means more leeway before deemed stable
+	const angularVelocityThreshold = 0.1;
 
 	return new Promise((resolve) => {
+		const interval = 2500; // Check every x milliseconds
+
 		const checkStability = () => {
 			const allBodies = Matter.Composite.allBodies(matterInstance.engine.world);
 			const isStable = allBodies.every((body) => {
@@ -64,12 +66,17 @@ export function waitForStability(): Promise<void> {
 			});
 
 			if (isStable) {
-				Matter.Events.off(matterInstance.engine, 'afterUpdate', checkStability);
+				clearInterval(stabilityCheckInterval); // Stop the interval once stable
 				resolve(); // Resolve the promise once stability is confirmed
 			}
 		};
 
-		// Attach `checkStability` to the `afterUpdate` event
-		Matter.Events.on(matterInstance.engine, 'afterUpdate', checkStability);
+		// Run the stability check at the specified interval
+		const stabilityCheckInterval = setInterval(checkStability, interval);
+
+		// Clean up interval if engine is destroyed before stability is reached
+		Matter.Events.on(matterInstance.engine, 'beforeRemove', () => {
+			clearInterval(stabilityCheckInterval);
+		});
 	});
 }
