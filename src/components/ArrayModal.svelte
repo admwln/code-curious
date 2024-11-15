@@ -181,7 +181,7 @@
 		{/if}
 		<!-- Add/Remove items -->
 
-		<label class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2">
 			<span>Items: {itemCount}</span>
 			<div class="flex gap-1 items-center">
 				<button
@@ -200,15 +200,17 @@
 					><FontAwesomeIcon icon={faMinus} /> Remove item</button
 				>
 			</div>
-		</label>
+		</div>
 
 		<!-- Array Items -->
 		<!-- Div to ensure y scrolling -->
-		<div class="w-full flex flex-col items-start overflow-y-auto max-h-52 lg:max-h-72">
+		<div
+			class="w-full flex flex-col items-start overflow-y-auto max-h-52 lg:max-h-72 gap-1 lg:gap-2"
+		>
 			{#if variable.itemType === 'string'}
 				{#each { length: itemCount } as _, i}
 					<label class="label flex flex-row items-center gap-2">
-						<span>{i}</span>
+						<span class="w-3">{i}</span>
 						<input
 							bind:value={array[i]}
 							class="input"
@@ -223,7 +225,7 @@
 			{#if variable.itemType === 'number'}
 				{#each { length: itemCount } as _, i}
 					<label class="label flex flex-row items-center gap-2">
-						<span>{i}</span>
+						<span class="w-3">{i}</span>
 						<input
 							bind:value={array[i]}
 							class="input"
@@ -238,7 +240,7 @@
 			{#if variable.itemType === 'boolean'}
 				{#each { length: itemCount } as _, i}
 					<div class="label flex flex-row items-center gap-2">
-						<span>{i}</span>
+						<span class="w-3">{i}</span>
 						<RadioGroup>
 							<RadioItem bind:group={_boolStringArray[i]} name="justify" value="true"
 								>True</RadioItem

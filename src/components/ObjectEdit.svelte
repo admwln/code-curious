@@ -155,7 +155,7 @@
 </script>
 
 <div class="px-2 lg:p-2 flex flex-col gap-3 items-start">
-	<label class="flex flex-col gap-2">
+	<div class="w-full flex justify-between lg:flex-col lg:gap-2">
 		<!-- Count and display how many key-value pairs there curretly are -->
 
 		<span>Key-Value Pairs: {_pairCount}</span>
@@ -164,16 +164,17 @@
 				type="button"
 				on:click={addKeyValuePair}
 				class="btn btn-sm variant-outline-secondary flex gap-1"
-				><FontAwesomeIcon icon={faPlus} /><span class="sr-only">Add Key-Value</span></button
+				><FontAwesomeIcon icon={faPlus} /><span class="sr-only">Add Key-Value Pair</span></button
 			>
 			<button
 				type="button"
 				on:click={removeKeyValuePair}
 				class="btn btn-sm variant-outline-primary flex gap-1"
-				><FontAwesomeIcon icon={faMinus} /><span class="sr-only">Remove Key-Value</span></button
+				><FontAwesomeIcon icon={faMinus} /><span class="sr-only">Remove Key-Value Pair</span
+				></button
 			>
 		</div>
-	</label>
+	</div>
 
 	<table class="w-full text-sm text-left p-0 m-0">
 		<thead class="text-x uppercase">
