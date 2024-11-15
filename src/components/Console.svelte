@@ -10,6 +10,11 @@
 		formatValue,
 	} from '$lib/utils/logFormat';
 
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
+	export let expanded: boolean = false;
+
 	// Function to retrieve and return any selected variable from snapshot
 	const getVariableToLog = (log: Log): any => {
 		let variableToLog = log.value;
@@ -33,11 +38,11 @@
 	}
 </script>
 
-<div bind:this={consoleScrollContainer} class="max-h-[240px] overflow-scroll">
-	<div
-		bind:this={consoleContainer}
-		class="rounded-md bg-slate-800 p-4 flex flex-col gap-2 mb-[64px]"
-	>
+<div
+	bind:this={consoleScrollContainer}
+	class="{expanded ? 'h-[40vh]' : 'h-[100px] lg:h-[7vh]'} overflow-y-scroll"
+>
+	<div bind:this={consoleContainer} class="p-4 flex flex-col gap-2 mb-[90px] lg:mb-10">
 		{#each $consoleOutput as log}
 			<p>
 				<code>
@@ -94,10 +99,10 @@
 			{/if}
 			<hr class="opacity-50" />
 		{/each}
-		{#if $consoleOutput.length > 0}
+		{#if expanded && $consoleOutput.length > 0}
 			<div class="flex justify-end">
 				<button in:fade={{ duration: 300 }} class="btn" on:click={clearConsole}
-					>Clear Console</button
+					><FontAwesomeIcon icon={faTrashCan} /><span class="sr-only">Clear Console</span></button
 				>
 			</div>
 		{/if}

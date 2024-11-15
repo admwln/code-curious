@@ -35,7 +35,7 @@
 </script>
 
 <div class="p-4 mb-[48px] md:mb-[58px] lg:mb-0 md:overflow-x-scroll">
-	<div class="h-6 mb-4">
+	<div class="h-6 lg:h-8 mb-4">
 		{#if titlesLoaded}
 			<div in:fade={{ duration: 250 }}>
 				{#if data.prevLesson}
@@ -78,11 +78,6 @@
 						<a class="anchor" href={`/tutorial/${data.nextLesson}`}>{nextTitle} &gt;&gt;</a>
 					</p>
 				{/if}
-				<!-- {#if data.prevLesson}
-			<p>
-				<a class="anchor" href={`/tutorial/${data.prevLesson}`}>&lt;&lt; {previousTitle}</a>
-			</p>
-		{/if} -->
 			</div>
 		{/if}
 	</div>

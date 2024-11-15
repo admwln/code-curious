@@ -14,6 +14,8 @@
 	import { supabase } from '$lib/supabaseClient';
 
 	import {
+		faAngleUp,
+		faAngleDown,
 		faAngleLeft,
 		faAngleRight,
 		faChalkboardUser,
@@ -160,6 +162,13 @@
 			}, 500); // Adjust timing if needed for smoother UX
 		}
 	});
+
+	let consoleExpanded: boolean = false;
+
+	// Function to toggle the console panel
+	function toggleConsole() {
+		consoleExpanded = !consoleExpanded;
+	}
 </script>
 
 <!-- Panel 1: Tutorial -->
@@ -202,22 +211,22 @@
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="relative w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-hidden transition-all duration-250 ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#3a1d2a]'}>
-		<div slot="summary">
+	<!-- Editor -->
+	<div>
+		<div class="w-full flex items-center justify-between space-x-4 py-2 lg:py-3 px-4 bg-[#3a1d2a]">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
-		</div>
-		<div slot="summary-button">
+
 			<!-- Run button, only show if currentPanel is 2, that is, not on desktop -->
 			<button
 				on:click={runner}
 				type="button"
 				disabled={$isRunning}
-				class="btn btn-sm p-0 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
+				class="btn btn-sm bg-primary-900 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
 			>
 				{#if $isRunning}
 					<FontAwesomeIcon icon={faCircleExclamation} /> Running
@@ -227,22 +236,34 @@
 				{/if}
 			</button>
 		</div>
-		<div slot="content" class="p-2">
+		<!-- Editor content -->
+		<div class="p-2">
 			{#if lessonData}
 				<Editor data={lessonData.editor} />
 			{:else}
 				<p>Loading...</p>
 			{/if}
 		</div>
-	</Accordion>
-	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#3a1d2a]'}>
-		<div slot="summary">
+	</div>
+	<!-- Console -->
+	<div class="w-full absolute bottom-0 z-40">
+		<div
+			class="w-40 rounded-t-2xl flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a]"
+		>
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
+			<button type="button" on:click={toggleConsole} class="btn btn-sm p-0 flex gap-2">
+				{#if consoleExpanded}
+					<span><FontAwesomeIcon icon={faAngleDown} /></span>
+				{:else}
+					<span><FontAwesomeIcon icon={faAngleUp} /></span>
+				{/if}
+			</button>
 		</div>
-		<div slot="content" class="p-2">
-			<Console />
+
+		<div class="bg-zinc-800 border-t-8 border-[#3a1d2a]">
+			<Console expanded={consoleExpanded} />
 		</div>
-	</Accordion>
+	</div>
 </section>
 
 <!-- Panel 3: Playfield -->
