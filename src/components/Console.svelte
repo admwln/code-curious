@@ -43,7 +43,6 @@
 	class="{expanded ? 'h-[40vh]' : 'h-[100px] lg:h-[7vh]'} overflow-y-scroll"
 >
 	<div bind:this={consoleContainer} class="p-4 flex flex-col gap-2 mb-[90px] lg:mb-10">
-		<!--  -->
 		{#each $consoleOutput as log}
 			<p>
 				<code>

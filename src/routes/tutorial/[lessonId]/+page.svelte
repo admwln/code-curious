@@ -218,7 +218,7 @@
 >
 	<!-- Editor -->
 	<div>
-		<div class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a]">
+		<div class="w-full flex items-center justify-between space-x-4 py-2 lg:py-3 px-4 bg-[#3a1d2a]">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
 
 			<!-- Run button, only show if currentPanel is 2, that is, not on desktop -->
@@ -226,7 +226,7 @@
 				on:click={runner}
 				type="button"
 				disabled={$isRunning}
-				class="btn btn-sm p-0 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
+				class="btn btn-sm bg-primary-900 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
 			>
 				{#if $isRunning}
 					<FontAwesomeIcon icon={faCircleExclamation} /> Running
