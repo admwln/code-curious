@@ -17,6 +17,10 @@
 	export let matterInstance: MatterInstance | null = null;
 	let matterContainer: HTMLElement | null = null;
 
+	// Expose the data prop to receive the data from the parent +page.svelte
+	export let data;
+	//console.log(data);
+
 	// Only subscribe to matterActionOutput when isRunning is true
 
 	matterActionOutput.subscribe((instructions: Action[]) => {
@@ -26,8 +30,14 @@
 		}
 	});
 
-	// Expose the data prop to receive the data from the parent +page.svelte
-	export let data;
+	// Reactively control Matter.js based on the running state
+	$: if ($isRunning && matterInstance) {
+		resetBodies(matterInstance);
+		//resetBodies(matterInstance, (data.scene = data.scene ? data.scene : null));
+		startMatter(matterInstance.runner, matterInstance.engine);
+	} else if (!$isRunning && matterInstance) {
+		stopMatter(matterInstance.runner);
+	}
 
 	// Scale factor!
 	let scale: number = 0.8;
@@ -53,7 +63,12 @@
 		// Toggle running state to false, NB must be run after cleanup
 		$isRunning = false;
 		if (matterContainer) {
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 680 }, scale);
+			matterInstance = initMatterJS(
+				matterContainer,
+				{ width: 450, height: 680 },
+				scale,
+				(data.scene = data.scene ? data.scene : null),
+			);
 			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	};
@@ -101,7 +116,12 @@
 		});
 
 		if (matterContainer) {
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 680 }, scale);
+			matterInstance = initMatterJS(
+				matterContainer,
+				{ width: 450, height: 680 },
+				scale,
+				(data.scene = data.scene ? data.scene : null),
+			);
 			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	});
@@ -110,14 +130,6 @@
 	onDestroy(() => {
 		cleanupMatterInstance();
 	});
-
-	// Reactively control Matter.js based on the running state
-	$: if ($isRunning && matterInstance) {
-		resetBodies(matterInstance.engine);
-		startMatter(matterInstance.runner, matterInstance.engine);
-	} else if (matterInstance) {
-		stopMatter(matterInstance.runner);
-	}
 </script>
 
 <section class="w-full flex justify-center">

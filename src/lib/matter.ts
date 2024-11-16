@@ -3,6 +3,7 @@ import type { Action, InitialBody, MatterInstance, MatterOptions, VariableType }
 import { colors } from './utils/colors';
 import { consoleOutput } from './utils/consoleActions';
 import type { Log } from './types';
+import { writable } from 'svelte/store';
 // Create aliases to avoid "Matter." prefixes
 const { Engine, Render, World, Bodies, Runner } = Matter;
 
@@ -10,6 +11,10 @@ let engine: Matter.Engine | null = null;
 
 let initialBodies: InitialBody[] = [];
 let userBodies: InitialBody[] = [];
+// Make a writable store to keep track of the scene composite
+export const sceneCompositeStore = writable<any>(null);
+// Make a writable store to keep track of the scene string
+export const sceneStringStore = writable<string>('');
 
 let _scale: number = 1;
 // Helper function to apply scale to a pixel value
@@ -19,6 +24,7 @@ export function initMatterJS(
 	container: HTMLElement,
 	options: MatterOptions,
 	scale: number,
+	scene?: string,
 ): MatterInstance | null {
 	// Remove unnecessary decimal points by rounding
 	_scale = scale;
@@ -61,37 +67,63 @@ export function initMatterJS(
 		}),
 	]);
 
-	// Create four static narrow rectangles positioned in a funnel shape
-	// World.add(engine.world, [
-	// 	Bodies.rectangle(s(30), s(120), s(450), s(10), {
-	// 		isStatic: true,
-	// 		render: { fillStyle: 'rgb(23 23 23)' },
-	// 		angle: Math.PI * 0.25,
-	// 	}),
-	// 	Bodies.rectangle(s(420), s(120), s(450), s(10), {
-	// 		isStatic: true,
-	// 		render: { fillStyle: 'rgb(23 23 23)' },
-	// 		angle: Math.PI * -0.25,
-	// 	}),
-	// 	Bodies.rectangle(s(190), s(400), s(10), s(250), {
-	// 		isStatic: true,
-	// 		render: { fillStyle: 'rgb(23 23 23)' },
-	// 	}),
-	// 	Bodies.rectangle(s(260), s(400), s(10), s(250), {
-	// 		isStatic: true,
-	// 		render: { fillStyle: 'rgb(23 23 23)' },
-	// 	}),
-	// ]);
-
 	// Create a runner
 	const runner = Runner.create();
 
 	// Run the renderer
 	Render.run(render);
 
+	// If there is no scene data empty both stores
+	if (!scene) {
+		// Reset both stores: sceneCompositeStore and sceneStringStore
+		sceneCompositeStore.set(null);
+		sceneStringStore.set('');
+	}
+
+	// If there is scene data...
+	if (scene) {
+		sceneStringStore.set(scene);
+		handleScene(scene, { engine, runner });
+	}
+
 	// Return the engine and runner so we can control them externally
 	return { engine, runner };
 }
+
+// Create specific scene
+const pyramidScene = (matterInstance: MatterInstance) => {
+	const { engine } = matterInstance;
+	// Create a pyramid of bodies
+	const stack = Matter.Composites.pyramid(s(75), s(515), 15, 15, 0, 0, (x: number, y: number) => {
+		return Bodies.rectangle(x, y, s(20), s(20), {
+			isStatic: false,
+			restitution: 0.95,
+			friction: 0.01,
+			density: 0.001,
+			render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+		});
+	});
+	World.add(engine.world, stack);
+	sceneCompositeStore.set(stack);
+};
+
+const handleScene = (scene: string, matterInstance: MatterInstance) => {
+	switch (scene) {
+		case 'pyramid':
+			let sceneComposite;
+			sceneCompositeStore.subscribe((value) => (sceneComposite = value));
+			// If there already is a scene composite, remove it
+			if (sceneComposite) {
+				World.remove(matterInstance.engine.world, sceneComposite);
+			}
+			//..then create a new scene
+			pyramidScene(matterInstance);
+			break;
+		default:
+			console.warn(`Unknown scene: ${scene}`);
+			break;
+	}
+};
 
 export function startMatter(runner: Matter.Runner, engine: Matter.Engine) {
 	Runner.run(runner, engine);
@@ -104,11 +136,13 @@ export function stopMatter(runner: Matter.Runner) {
 }
 
 // Reset all dynamic bodies to their initial positions
-export function resetBodies(engine: Matter.Engine) {
+export function resetBodies(matter: MatterInstance) {
 	// Remove all dynamic bodies from the world
-	const dynamicBodies = Matter.Composite.allBodies(engine.world).filter((body) => !body.isStatic);
+	const dynamicBodies = Matter.Composite.allBodies(matter.engine.world).filter(
+		(body) => !body.isStatic,
+	);
 	dynamicBodies.forEach((body) => {
-		World.remove(engine.world, body);
+		World.remove(matter.engine.world, body);
 	});
 
 	// // Re-add the bodies at their initial positions
@@ -116,7 +150,7 @@ export function resetBodies(engine: Matter.Engine) {
 	// 	const { body, initialPosition } = initialBody;
 	// 	Matter.Body.setPosition(body, initialPosition); // Reset to initial position
 	// 	Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
-	// 	World.add(engine.world, body); // Add back to the world
+	// 	World.add(matter..world, body); // Add back to the world
 	// });
 
 	// Add user-created bodies to the world
@@ -124,7 +158,18 @@ export function resetBodies(engine: Matter.Engine) {
 		const { body, initialPosition } = userBody;
 		Matter.Body.setPosition(body, initialPosition); // Reset to initial position
 		Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
-		World.add(engine.world, body); // Add back to the world
+		World.add(matter.engine.world, body); // Add back to the world
+	});
+
+	// save sceneStringStore value to const scene
+	let scene: string;
+	sceneStringStore.subscribe((value) => {
+		scene = value;
+		// If there is scene data...
+		if (scene) {
+			console.log('scene', scene);
+			handleScene(scene, matter);
+		}
 	});
 }
 
