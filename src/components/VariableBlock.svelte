@@ -35,7 +35,7 @@
 								{JSON.stringify(item).substring(0, 30)} ...
 							{:else if typeof item !== 'object'}
 								{#if i < block.value.length - 1}
-									{item},{' '}
+									{item}<span class="inline mx-0.25 text-zinc-700">|</span>
 								{:else}
 									{item}
 								{/if}

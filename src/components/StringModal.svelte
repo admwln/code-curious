@@ -51,7 +51,6 @@
 		} else {
 			// Add variable to snapshot store
 			$snapshot = [..._snapshot, variable];
-			console.log('New variable added', $snapshot);
 		}
 		dispatch('close');
 	};
@@ -67,9 +66,8 @@
 	// Get color from colors.json
 	const getColor = (value: string) => {
 		const key: string | undefined = value.replace(/\s/g, '');
-		const color = key ? colors[key][0] : '#000000'; // Default to black if no match
-		console.log('Color:', color);
-		return color;
+		// Check if key exists in colors, if not return null
+		return colors[key] ? colors[key][0] : null;
 	};
 </script>
 
@@ -102,6 +100,7 @@
 				name="name"
 				autocomplete="off"
 				required
+				maxlength="25"
 			/>
 		</label>
 		<div class="flex gap-4 items-end">
@@ -115,12 +114,13 @@
 					on:input={handleValueChange}
 					name="text"
 					required
+					maxlength="50"
 				/>
 			</label>
-			{#if showColorPicker}
+			{#if showColorPicker && getColor(variable.value)}
 				<div
 					class="w-[45px] h-[45px] rounded-full border-2 border-white"
-					style="background-color: {getColor(variable.value)};"
+					style={'background-color: ' + getColor(variable.value)}
 				></div>
 			{/if}
 		</div>

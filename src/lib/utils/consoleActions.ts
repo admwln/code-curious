@@ -20,7 +20,7 @@ export async function logToConsole(block: Log, logVar: Record<string, any> | nul
 		// Resolve after a slight delay to simulate async processing
 		setTimeout(() => {
 			resolve(true); // Resolves after log completes
-		}, 1000); // Delay can be adjusted as needed
+		}, 500); // Delay can be adjusted as needed
 	});
 }
 

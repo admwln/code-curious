@@ -13,7 +13,7 @@ export interface LessonData {
 		defaultCode?: string[];
 	};
 	playfiled?: {
-		color?: string;
+		scene?: string;
 	};
 }
 

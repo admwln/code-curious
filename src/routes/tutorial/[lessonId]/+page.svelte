@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
-	import { afterUpdate } from 'svelte';
+	import { afterUpdate, onDestroy } from 'svelte';
+	import { beforeNavigate } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 
 	import { isRunning } from '$lib/stores/store';
@@ -31,7 +32,6 @@
 	import Editor from '../../../components/Editor.svelte';
 	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
-	import Accordion from '../../../components/Accordion.svelte';
 	import type { LessonData, Log } from '$lib/types';
 
 	//let lessonId = data.lessonId; // Use the lessonId passed from the load function
@@ -46,7 +46,9 @@
 		editor: {
 			snapshot: [],
 		},
-		playfiled: {},
+		playfiled: {
+			scene: '',
+		},
 	};
 
 	let showTutorial = false; // Flag to show tutorial after scrolling
@@ -76,6 +78,13 @@
 			lessonData.editor = {
 				snapshot: [],
 			};
+		}
+		if (data.scene) {
+			lessonData.playfiled = {
+				scene: data.scene,
+			};
+		} else {
+			lessonData.playfiled = {};
 		}
 	};
 	fetchLesson();
@@ -169,6 +178,17 @@
 	function toggleConsole() {
 		consoleExpanded = !consoleExpanded;
 	}
+
+	// Make sure isRunning is set to false when the component is destroyed
+	// and before navigating to another route
+	onDestroy(() => {
+		// Set $isRunning to false before leaving the route
+		isRunning.set(false);
+	});
+	beforeNavigate(() => {
+		// Set $isRunning to false before leaving the route
+		isRunning.set(false);
+	});
 </script>
 
 <!-- Panel 1: Tutorial -->
@@ -268,7 +288,7 @@
 
 <!-- Panel 3: Playfield -->
 <section
-	class="bg-neutral-900 w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-[#12131a] w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
 	3
 		? 'hidden lg:block'
 		: ''} {panel3Width} overflow-y-scroll"

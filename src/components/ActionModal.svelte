@@ -18,6 +18,9 @@
 	// Actions multidimensional array. Each sub-array contains the action name and the type of value it requires.
 	const actions: string[][] = [
 		['create circle', 'string'],
+		['create circles', 'array'],
+		['create square', 'string'],
+		['create triangle', 'string'],
 		['increase', 'number'],
 		['decrease', 'number'],
 	];
