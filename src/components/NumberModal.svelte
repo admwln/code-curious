@@ -88,6 +88,7 @@
 				name="name"
 				autocomplete="off"
 				required
+				maxlength="25"
 			/>
 		</label>
 		<!-- Value Input -->

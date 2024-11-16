@@ -50,7 +50,6 @@
 		});
 		// Update pair count
 		_pairCount = Object.keys(_object).length;
-		console.log('Pair count', _pairCount);
 	}
 
 	let objectKeys: string[] = Object.keys(_object);
@@ -201,6 +200,7 @@
 								}}
 								autocomplete="off"
 								required
+								maxlength="25"
 							/>
 						</label>
 					</td>

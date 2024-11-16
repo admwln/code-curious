@@ -140,6 +140,7 @@
 				name="name"
 				autocomplete="off"
 				required
+				maxlength="25"
 			/>
 		</label>
 
@@ -218,6 +219,7 @@
 							name="name"
 							autocomplete="off"
 							required
+							maxlength="25"
 						/>
 					</label>
 				{/each}
