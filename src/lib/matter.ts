@@ -43,7 +43,7 @@ export function initMatterJS(
 
 	// Create static walls
 	World.add(engine.world, [
-		Bodies.rectangle(s(225), s(-5), s(450), s(5), {
+		Bodies.rectangle(s(225), s(-50), s(450), s(5), {
 			isStatic: true,
 			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
@@ -168,7 +168,7 @@ export function handleInstruction(
 			let circleFill = variable.value as string;
 			circleFill = checkColor(circleFill);
 			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(225), s(40), s(40), {
+				const circle = Bodies.circle(s(225), s(0), s(40), {
 					isStatic: false,
 					restitution: 1,
 					friction: 0,
@@ -189,7 +189,7 @@ export function handleInstruction(
 			let squareFill = variable.value as string;
 			squareFill = checkColor(squareFill);
 			if (typeof squareFill === 'string') {
-				const square = Bodies.rectangle(s(225), s(40), s(80), s(80), {
+				const square = Bodies.rectangle(s(225), s(0), s(80), s(80), {
 					isStatic: false,
 					restitution: 0.95,
 					friction: 0.25,
@@ -210,12 +210,16 @@ export function handleInstruction(
 			let triangleFill = variable.value as string;
 			triangleFill = checkColor(triangleFill);
 			if (typeof triangleFill === 'string') {
-				const triangle = Bodies.polygon(s(225), s(40), 3, s(50), {
+				const triangle = Bodies.polygon(s(225), s(0), 3, s(50), {
 					isStatic: false,
 					restitution: 0.5,
-					friction: 0.25,
+					friction: 0.5,
 					render: { fillStyle: triangleFill },
 				});
+
+				// Rotate the triangle by 90 degrees (π/2 radians) to align its flat side with the floor
+				Matter.Body.setAngle(triangle, Math.PI / 2);
+
 				World.add(matterInstance.engine.world, triangle);
 				userBodies = [
 					...userBodies,
@@ -232,15 +236,26 @@ export function handleInstruction(
 
 			circleFills.forEach((fill, i) => {
 				let circleFill = checkColor(fill);
+
 				if (typeof fill === 'string') {
 					const xPosition = s(50 + i * 85);
-					const circle = Bodies.circle(xPosition, s(40), s(40), {
+
+					// Adjusted random values for density and air resistance
+					const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
+					const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
+
+					// Create the circle with adjusted properties
+					const circle = Bodies.circle(xPosition, s(0), s(40), {
 						isStatic: false,
 						restitution: 1,
 						friction: 0,
+						density: randomDensity, // Adjusted density range
+						frictionAir: randomFrictionAir, // Adjusted air resistance range
 						render: { fillStyle: circleFill },
 					});
+
 					World.add(matterInstance.engine.world, circle);
+
 					userBodies = [
 						...userBodies,
 						{
@@ -251,6 +266,7 @@ export function handleInstruction(
 				}
 			});
 			break;
+
 		default:
 			console.warn(`Unknown instruction type: ${instruction.action}`);
 			break;
