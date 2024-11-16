@@ -53,7 +53,7 @@
 		// Toggle running state to false, NB must be run after cleanup
 		$isRunning = false;
 		if (matterContainer) {
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 680 }, scale);
 			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	};
@@ -69,18 +69,22 @@
 		resetMatterFlag.update((flag) => (flag = false)); // Reset the flag
 	}
 
+	// Reinitialize Matter.js whenever the scale changes
+	$: if (scale) {
+		reinitMatterJs();
+	}
+
 	function updateScale(innerWidth: number) {
-		if (innerWidth > 1440) {
-			scale = 1.2;
-		}
-		if (innerWidth >= 1024) {
-			scale = 1;
-		}
-		if (innerWidth <= 640) {
-			scale = 0.9;
-		}
 		if (innerWidth <= 400) {
 			scale = 0.8;
+		} else if (innerWidth <= 640) {
+			scale = 1;
+		} else if (innerWidth <= 1024) {
+			scale = 1;
+		} else if (innerWidth <= 1440) {
+			scale = 1;
+		} else {
+			scale = 1.2;
 		}
 	}
 
@@ -97,7 +101,7 @@
 		});
 
 		if (matterContainer) {
-			matterInstance = initMatterJS(matterContainer, { width: 450, height: 700 }, scale);
+			matterInstance = initMatterJS(matterContainer, { width: 450, height: 680 }, scale);
 			matterInstanceStore.set(matterInstance); // Set the store with the Matter instance
 		}
 	});

@@ -37,27 +37,27 @@ export function initMatterJS(
 			width: s(options.width),
 			height: s(options.height),
 			wireframes: false,
-			background: 'rgb(30 30 30)', // Adjust background color
+			background: 'rgb(18 19 26)', // Adjust background color
 		},
 	});
 
 	// Create static walls
 	World.add(engine.world, [
+		// ceiling
 		Bodies.rectangle(s(225), s(-50), s(450), s(5), {
 			isStatic: true,
-			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
+		// floor
 		Bodies.rectangle(s(225), s(700), s(450), s(50), {
 			isStatic: true,
-			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
-		Bodies.rectangle(s(450), s(350), s(50), s(700), {
+		// left wall
+		Bodies.rectangle(s(-20), s(350), s(50), s(700), {
 			isStatic: true,
-			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
-		Bodies.rectangle(s(0), s(350), s(50), s(700), {
+		// right wall
+		Bodies.rectangle(s(470), s(350), s(50), s(700), {
 			isStatic: true,
-			render: { fillStyle: 'rgb(30, 30, 30' },
 		}),
 	]);
 

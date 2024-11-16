@@ -268,7 +268,7 @@
 
 <!-- Panel 3: Playfield -->
 <section
-	class="bg-neutral-900 w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-[#12131a] w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
 	3
 		? 'hidden lg:block'
 		: ''} {panel3Width} overflow-y-scroll"
