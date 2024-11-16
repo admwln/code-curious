@@ -1,34 +1,42 @@
 <script lang="ts">
-	import { faFilter } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { supabase } from '$lib/supabaseClient';
-
-	// Define the shape of a country object based on your table schema
-	type Country = {
-		id: number;
-		name: string;
-	};
-
-	let countries: Country[] = [];
-
-	// use supabase client to fetch data from countries table
-	const fetchCountries = async () => {
-		const { data, error } = await supabase.from('countries').select('*');
-		if (error) {
-			console.error('Error fetching countries', error);
-		}
-		countries = data ?? [];
-	};
-	fetchCountries();
+	import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 </script>
 
-<div class="container h-full my-4 mx-auto flex justify-center items-center">
-	<ol class="list">
-		{#each countries as country}
-			<li>
-				<span class="badge-icon p-4 variant-soft-primary">{country.id}</span>
-				<span class="flex-auto">{country.name}</span>
-			</li>
-		{/each}
-	</ol>
+<div class="container my-4 lg:my-8 mx-auto flex flex-col items-center">
+	<div class="card md:w-1/2 lg:p-8">
+		<header class="card-header"><h2 class="text-4xl md:text-6xl">Curious about Code?</h2></header>
+		<hr class="opacity-50 my-2" />
+		<section class="p-4 text-sm lg:text-lg">
+			You've come to the right place! <strong>Code Curious</strong> is your interactive resource for
+			learning the basics of programming—in a fun and friendly environment.
+		</section>
+		<hr class="opacity-50 my-2" />
+		<section class="p-4 text-sm lg:text-lg flex flex-col items-start">
+			<h3 class="text-xl">Keeping It Casual?</h3>
+			<p class="mt-2 mb-4">No problem! You can access all beginner lessons without an account.</p>
+			<a href="/tutorial/welcome" class="btn bg-primary-700 flex gap-2"
+				><FontAwesomeIcon icon={faArrowRight} />Start Learning</a
+			>
+		</section>
+		<hr class="opacity-50 my-2" />
+		<section class="p-4 text-sm lg:text-lg flex flex-col items-start">
+			<h3 class="text-xl">Benefits of Signing Up</h3>
+			<ul class="list-disc list-inside mt-2 mb-4">
+				<li>Unlock more lessons</li>
+				<li>Save your work</li>
+			</ul>
+			<a href="/sign-up" class="btn bg-primary-700 flex gap-2"
+				><FontAwesomeIcon icon={faArrowRight} />Sign Up</a
+			>
+		</section>
+		<hr class="opacity-50 my-2" />
+		<section class="p-4 text-sm lg:text-lg flex flex-col items-start">
+			<h3 class="text-xl">Already Have an Account?</h3>
+			<p class="mt-2 mb-4">What are you waiting for?</p>
+			<a href="/sign-in" class="btn bg-primary-700 flex gap-2"
+				><FontAwesomeIcon icon={faArrowRight} />Sign In</a
+			>
+		</section>
+	</div>
 </div>

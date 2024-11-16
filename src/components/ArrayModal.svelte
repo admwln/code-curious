@@ -95,6 +95,8 @@
 	};
 
 	const handleRemoveItem = () => {
+		// Don't allow removing if itemCount is 1
+		if (itemCount === 1) return;
 		itemCount -= 1;
 		if (variable.itemType !== 'boolean') {
 			array.pop();
@@ -109,7 +111,7 @@
 	};
 </script>
 
-<Modal {isOpen}>
+<Modal {isOpen} on:close={closeModal}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
 			<!-- Display item type if in edit mode -->
@@ -125,11 +127,11 @@
 	<form
 		slot="content"
 		on:submit|preventDefault={onSave}
-		class="px-4 flex flex-col gap-4 items-start"
+		class="px-2 lg:px-4 flex flex-col gap-4 items-start"
 	>
 		<!-- Variable Name Input -->
 		<label class="label">
-			<span>Name</span>
+			<span>Label</span>
 			<input
 				class="input"
 				type="text"
@@ -138,6 +140,7 @@
 				name="name"
 				autocomplete="off"
 				required
+				maxlength="25"
 			/>
 		</label>
 
@@ -178,104 +181,121 @@
 			</div>
 		{/if}
 		<!-- Add/Remove items -->
-		<div class="flex gap-2">
-			<button
-				type="button"
-				on:click={() => {
-					itemCount += 1;
-				}}
-				class="btn btn-sm bg-secondary-700 flex gap-2"
-				><FontAwesomeIcon icon={faPlus} /> Add item</button
-			>
-			<button type="button" on:click={handleRemoveItem} class="btn btn-sm bg-primary-700 flex gap-2"
-				><FontAwesomeIcon icon={faMinus} /> Remove item</button
-			>
+
+		<div class="flex flex-col gap-2">
+			<span>Items: {itemCount}</span>
+			<div class="flex gap-1 items-center">
+				<button
+					type="button"
+					on:click={() => {
+						// Limit to 5 items
+						if (itemCount < 5) itemCount += 1;
+					}}
+					class="btn btn-sm bg-secondary-700 flex gap-2"
+					><FontAwesomeIcon icon={faPlus} /> Add item</button
+				>
+				<button
+					type="button"
+					on:click={handleRemoveItem}
+					class="btn btn-sm bg-primary-700 flex gap-2"
+					><FontAwesomeIcon icon={faMinus} /> Remove item</button
+				>
+			</div>
 		</div>
 
-		{#if variable.itemType === 'string'}
-			{#each { length: itemCount } as _, i}
-				<label class="label flex flex-row items-center gap-2">
-					<span>{i}</span>
-					<input
-						bind:value={array[i]}
-						class="input"
-						type="text"
-						name="name"
-						autocomplete="off"
-						required
-					/>
-				</label>
-			{/each}
-		{/if}
-		{#if variable.itemType === 'number'}
-			{#each { length: itemCount } as _, i}
-				<label class="label flex flex-row items-center gap-2">
-					<span>{i}</span>
-					<input
-						bind:value={array[i]}
-						class="input"
-						type="number"
-						name="number"
-						autocomplete="off"
-						required
-					/>
-				</label>
-			{/each}
-		{/if}
-		{#if variable.itemType === 'boolean'}
-			{#each { length: itemCount } as _, i}
-				<div class="label flex flex-row items-center gap-2">
-					<span>{i}</span>
-					<RadioGroup>
-						<RadioItem bind:group={_boolStringArray[i]} name="justify" value="true">True</RadioItem>
-						<RadioItem bind:group={_boolStringArray[i]} name="justify" value="false"
-							>False</RadioItem
-						>
-					</RadioGroup>
-				</div>
-			{/each}
-		{/if}
-		{#if variable.itemType === 'object'}
-			<div class="w-full flex flex-col gap-4">
+		<!-- Array Items -->
+		<!-- Div to ensure y scrolling -->
+		<div
+			class="w-full flex flex-col items-start overflow-y-auto max-h-52 lg:max-h-72 gap-1 lg:gap-2"
+		>
+			{#if variable.itemType === 'string'}
 				{#each { length: itemCount } as _, i}
-					<!-- Accordion -->
-					<div class="bg-[#0000001a] rounded-t-xl rounded-b-xl">
-						<Accordion
-							open={false}
-							topBorder={false}
-							rounded={true}
-							color={'bg-surface-200-700-token'}
-						>
-							<div slot="summary">
-								<h4>Object {i}</h4>
-							</div>
-							<div slot="content" class="mt-1 mb-4">
-								{#if !editMode}
-									<ObjectEdit
-										objectVariable={null}
-										on:update={(e) => handleObjectUpdate(i, e.detail)}
-									/>
-								{/if}
-								{#if editMode}
-									<ObjectEdit
-										objectVariable={array[i]
-											? {
-													id: Date.now(),
-													blockType: 'variable',
-													name: '',
-													type: 'object',
-													value: { ...array[i] },
-												}
-											: null}
-										on:update={(e) => handleObjectUpdate(i, e.detail)}
-									/>
-								{/if}
-							</div>
-						</Accordion>
+					<label class="label flex flex-row items-center gap-2">
+						<span class="w-3">{i}</span>
+						<input
+							bind:value={array[i]}
+							class="input"
+							type="text"
+							name="name"
+							autocomplete="off"
+							required
+							maxlength="25"
+						/>
+					</label>
+				{/each}
+			{/if}
+			{#if variable.itemType === 'number'}
+				{#each { length: itemCount } as _, i}
+					<label class="label flex flex-row items-center gap-2">
+						<span class="w-3">{i}</span>
+						<input
+							bind:value={array[i]}
+							class="input"
+							type="number"
+							name="number"
+							autocomplete="off"
+							required
+						/>
+					</label>
+				{/each}
+			{/if}
+			{#if variable.itemType === 'boolean'}
+				{#each { length: itemCount } as _, i}
+					<div class="label flex flex-row items-center gap-2">
+						<span class="w-3">{i}</span>
+						<RadioGroup>
+							<RadioItem bind:group={_boolStringArray[i]} name="justify" value="true"
+								>True</RadioItem
+							>
+							<RadioItem bind:group={_boolStringArray[i]} name="justify" value="false"
+								>False</RadioItem
+							>
+						</RadioGroup>
 					</div>
 				{/each}
-			</div>
-		{/if}
+			{/if}
+			{#if variable.itemType === 'object'}
+				<div class="w-full flex flex-col gap-4">
+					{#each { length: itemCount } as _, i}
+						<!-- Accordion -->
+						<div class="bg-[#0000001a] rounded-t-xl rounded-b-xl">
+							<Accordion
+								open={false}
+								topBorder={false}
+								rounded={true}
+								color={'bg-surface-200-700-token'}
+							>
+								<div slot="summary">
+									<h4>{i}</h4>
+								</div>
+								<div slot="content" class="mt-1 mb-4">
+									{#if !editMode}
+										<ObjectEdit
+											objectVariable={null}
+											on:update={(e) => handleObjectUpdate(i, e.detail)}
+										/>
+									{/if}
+									{#if editMode}
+										<ObjectEdit
+											objectVariable={array[i]
+												? {
+														id: Date.now(),
+														blockType: 'variable',
+														name: '',
+														type: 'object',
+														value: { ...array[i] },
+													}
+												: null}
+											on:update={(e) => handleObjectUpdate(i, e.detail)}
+										/>
+									{/if}
+								</div>
+							</Accordion>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
 		<!-- Hidden Submit Button -->
 		<button type="submit" class="sr-only">Submit</button>
 	</form>

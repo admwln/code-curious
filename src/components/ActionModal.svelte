@@ -17,7 +17,10 @@
 
 	// Actions multidimensional array. Each sub-array contains the action name and the type of value it requires.
 	const actions: string[][] = [
-		['drop', 'string'],
+		['create circle', 'string'],
+		['create circles', 'array'],
+		['create square', 'string'],
+		['create triangle', 'string'],
 		['increase', 'number'],
 		['decrease', 'number'],
 	];
@@ -111,7 +114,7 @@
 	}
 </script>
 
-<Modal {isOpen}>
+<Modal {isOpen} on:close={closeModal}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
 			<h4 class="text-lg font-semibold">
@@ -129,7 +132,7 @@
 			<!-- Variable select -->
 			<div class="label">
 				<span>Variable</span>
-				<select name="variables" class="select" bind:value={action.variableId} size={3}>
+				<select name="variables" class="select p-1" bind:value={action.variableId} size={3}>
 					{#each availableVariables as availableVar}
 						<option value={availableVar.id}>{availableVar.name}</option>
 					{/each}
@@ -138,7 +141,7 @@
 			<!-- Action select -->
 			<div class="label">
 				<span>Action</span>
-				<select name="action" class="select" bind:value={action.action} size={3}>
+				<select name="action" class="select p-1" bind:value={action.action} size={3}>
 					{#each availableActions as action}
 						<option value={action[0]}>{action[0]}</option>
 					{/each}

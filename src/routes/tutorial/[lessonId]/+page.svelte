@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { currentPanel } from '$lib/stores/store';
 	import { page } from '$app/stores'; // Store for dynamic routing
+	import { afterUpdate, onDestroy } from 'svelte';
+	import { beforeNavigate } from '$app/navigation';
+	import { fade } from 'svelte/transition';
 
 	import { isRunning } from '$lib/stores/store';
 	import { snapshot } from '$lib/stores/snapshots';
 	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
+	import { waitForStability } from '$lib/utils/actions';
 
 	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
 
 	import {
+		faAngleUp,
+		faAngleDown,
 		faAngleLeft,
 		faAngleRight,
 		faChalkboardUser,
@@ -26,12 +32,7 @@
 	import Editor from '../../../components/Editor.svelte';
 	import Console from '../../../components/Console.svelte';
 	import Matter from '../../../components/Matter.svelte';
-	import Accordion from '../../../components/Accordion.svelte';
 	import type { LessonData, Log } from '$lib/types';
-
-	// Import the `load` function result from +page.server.ts:
-	// NB not used in this file, as lesson data is loaded in the script block
-	//export let data;
 
 	//let lessonId = data.lessonId; // Use the lessonId passed from the load function
 	let lessonId = $page.params.lessonId; // Use the lessonId from the route params
@@ -45,8 +46,12 @@
 		editor: {
 			snapshot: [],
 		},
-		playfiled: {},
+		playfiled: {
+			scene: '',
+		},
 	};
+
+	let showTutorial = false; // Flag to show tutorial after scrolling
 
 	// Use Supabase client to fetch data from countries table
 	const fetchLesson = async () => {
@@ -74,6 +79,13 @@
 				snapshot: [],
 			};
 		}
+		if (data.scene) {
+			lessonData.playfiled = {
+				scene: data.scene,
+			};
+		} else {
+			lessonData.playfiled = {};
+		}
 	};
 	fetchLesson();
 
@@ -83,6 +95,7 @@
 		//lessonData = data.lessonData; // Reassign the new lessonData when the route changes
 		clearConsole(); // Clear the console when the route changes
 		fetchLesson();
+		showTutorial = false; // Hide tutorial temporarily when the route changes
 	}
 
 	// Panel width logic
@@ -99,12 +112,7 @@
 		panel2Width = isPanel1Collapsed ? 'lg:w-1/2' : 'lg:w-1/3'; // Expand panel 2 accordingly
 	}
 
-	// // Reactive statement to update actionSnapshot any time $snapshot changes
-	// $: {
-	// 	$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot each time it updates
-	// }
-
-	// Function to run the user's code
+	// RUNNER function to run the user's code
 	async function runner() {
 		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
@@ -142,59 +150,103 @@
 				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
-		isRunning.set(false); // Set to false when all blocks are processed
+
+		// Wait for stability in matterInstance before ending run
+		await waitForStability();
+		isRunning.set(false); // Set to false when all blocks are processed and stable
 	}
+
+	// Scroll tutorial content to the top when the route changes
+	let scrollDiv: HTMLDivElement | null = null;
+
+	// Run after component updates, then scroll and reveal tutorial
+	afterUpdate(() => {
+		if (scrollDiv) {
+			// Scroll to the top
+			scrollDiv.scrollTo({ top: 0 });
+
+			// Delay showing the tutorial slightly for smooth transition
+			setTimeout(() => {
+				showTutorial = true; // Show tutorial after scrolling completes
+			}, 500); // Adjust timing if needed for smoother UX
+		}
+	});
+
+	let consoleExpanded: boolean = false;
+
+	// Function to toggle the console panel
+	function toggleConsole() {
+		consoleExpanded = !consoleExpanded;
+	}
+
+	// Make sure isRunning is set to false when the component is destroyed
+	// and before navigating to another route
+	onDestroy(() => {
+		// Set $isRunning to false before leaving the route
+		isRunning.set(false);
+	});
+	beforeNavigate(() => {
+		// Set $isRunning to false before leaving the route
+		isRunning.set(false);
+	});
 </script>
 
 <!-- Panel 1: Tutorial -->
 <section
-	class="bg-neutral-900 h-screen md:border-r border-zinc-700 lg:border-0 md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-neutral-900 h-screen transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
 	1
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
 >
-	<div class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#ec489a2A]">
-		<h2 class="flex items-center py-0 gap-4">
-			<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
-		</h2>
-		<!-- Toggle Panel 1 width -->
-		<button
-			type="button"
-			class="btn btn-sm py-0 hidden lg:inline-block"
-			on:click={togglePanel1Width}
+	<div bind:this={scrollDiv} class="flex-1 overflow-y-scroll max-h-screen">
+		<!-- Panel header -->
+		<div
+			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
 		>
-			{#if isPanel1Collapsed}
-				<span><FontAwesomeIcon icon={faAngleRight} /></span>
-			{:else}
-				<span><FontAwesomeIcon icon={faAngleLeft} /></span>
-			{/if}
-		</button>
+			<h2 class="flex items-center py-0 gap-4">
+				<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+			</h2>
+			<!-- Toggle Panel 1 width -->
+			<button
+				type="button"
+				class="btn btn-sm py-0 hidden lg:inline-block"
+				on:click={togglePanel1Width}
+			>
+				{#if isPanel1Collapsed}
+					<span><FontAwesomeIcon icon={faAngleRight} /></span>
+				{:else}
+					<span><FontAwesomeIcon icon={faAngleLeft} /></span>
+				{/if}
+			</button>
+		</div>
+		<!-- Dynamic content start -->
+
+		{#if lessonData && showTutorial}
+			<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
+				<Tutorial data={lessonData.tutorial} />
+			</div>
+		{/if}
 	</div>
-	{#if lessonData}
-		<Tutorial data={lessonData.tutorial} />
-	{:else}
-		<p>Loading...</p>
-	{/if}
 </section>
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="bg-neutral-900 md:border-r lg:border-x border-zinc-700 h-screen md:w-1/2 overflow-y-scroll transition-all duration-250 ease-in-out {$currentPanel !==
+	class="relative w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-hidden transition-all duration-250 ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
 >
-	<Accordion open={true} topBorder={false} rounded={false} color={'bg-[#ec489a2A]'}>
-		<div slot="summary">
+	<!-- Editor -->
+	<div>
+		<div class="w-full flex items-center justify-between space-x-4 py-2 lg:py-3 px-4 bg-[#3a1d2a]">
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faCode} /> Editor</h2>
-		</div>
-		<div slot="summary-button">
+
 			<!-- Run button, only show if currentPanel is 2, that is, not on desktop -->
 			<button
 				on:click={runner}
 				type="button"
 				disabled={$isRunning}
-				class="btn btn-sm p-0 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
+				class="btn btn-sm bg-primary-900 flex gap-2 {$currentPanel !== 2 ? 'hidden' : ''} lg:hidden"
 			>
 				{#if $isRunning}
 					<FontAwesomeIcon icon={faCircleExclamation} /> Running
@@ -204,34 +256,44 @@
 				{/if}
 			</button>
 		</div>
-		<div slot="content" class="p-2">
+		<!-- Editor content -->
+		<div class="p-2">
 			{#if lessonData}
 				<Editor data={lessonData.editor} />
 			{:else}
 				<p>Loading...</p>
 			{/if}
 		</div>
-	</Accordion>
-	<Accordion open={true} topBorder={true} rounded={false} color={'bg-[#ec489a2A]'}>
-		<div slot="summary">
+	</div>
+	<!-- Console -->
+	<div class="w-full absolute bottom-0 z-40">
+		<div
+			class="w-40 rounded-t-2xl flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a]"
+		>
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
+			<button type="button" on:click={toggleConsole} class="btn btn-sm p-0 flex gap-2">
+				{#if consoleExpanded}
+					<span><FontAwesomeIcon icon={faAngleDown} /></span>
+				{:else}
+					<span><FontAwesomeIcon icon={faAngleUp} /></span>
+				{/if}
+			</button>
 		</div>
-		<div slot="content" class="p-2">
-			<Console />
+
+		<div class="bg-zinc-800 border-t-8 border-[#3a1d2a]">
+			<Console expanded={consoleExpanded} />
 		</div>
-	</Accordion>
+	</div>
 </section>
 
 <!-- Panel 3: Playfield -->
 <section
-	class="bg-neutral-900 w-full h-screen md:w-1/2 lg:block transition-all duration-250 ease-in-out {$currentPanel !==
+	class="bg-[#12131a] w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
 	3
-		? 'hidden md:block lg:block'
+		? 'hidden lg:block'
 		: ''} {panel3Width} overflow-y-scroll"
 >
-	<div
-		class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#ec489a2a]"
-	>
+	<div class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#3a1d2a]">
 		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faShapes} /> Playfield</h2>
 		<button
 			type="button"

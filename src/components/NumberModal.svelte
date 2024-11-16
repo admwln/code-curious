@@ -60,7 +60,7 @@
 	};
 </script>
 
-<Modal {isOpen}>
+<Modal {isOpen} on:close={closeModal}>
 	<div slot="header" class="card-header flex justify-between items-start">
 		<div class="flex flex-col">
 			{#if editMode}
@@ -79,7 +79,7 @@
 	>
 		<!-- Variable Name Input -->
 		<label class="label">
-			<span>Name</span>
+			<span>Label</span>
 			<input
 				class="input"
 				type="text"
@@ -88,6 +88,7 @@
 				name="name"
 				autocomplete="off"
 				required
+				maxlength="25"
 			/>
 		</label>
 		<!-- Value Input -->
