@@ -1,38 +1,92 @@
-# create-svelte
+# Gamified Programming Tutorial Web App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is a web application designed to introduce users to basic programming concepts through a gamified experience. Users interact with visual code blocks to influence a physics-based simulation, making programming concepts more accessible and fun!
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Visual Code Blocks**: Users can drag and drop blocks to build simple code sequences.
+- **Interactive Physics Simulations**: See immediate feedback as the code manipulates shapes and colors in a real-time physics environment.
+- **Lessons**: Guided tutorials to introduce key programming concepts like variables, data types, and basic logic.
+- **Responsive Design**: Optimized for desktop, with support for tablet and mobile views.
+
+---
+
+## Installation
+
+Follow these steps to clone the repository and run the app locally:
+
+### 1. Prerequisites
+
+- **Node.js** (v16 or higher recommended)
+- **npm** (or `pnpm`/`yarn`, if preferred)
+- **Supabase account** (for backend database setup)
+
+### 2. Clone the Repository
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+git clone https://github.com/yourusername/repo-name.git
+cd repo-name
 ```
 
-## Developing
+### 3. Install Dependencies
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+npm install
+```
+
+### 4. Set Up Environment Variables
+
+Create a `.env` file in the root of your project and provide your Supabase configuration. You’ll need:
+
+- `VITE_SUPABASE_URL:` Your Supabase project URL.
+- `VITE_SUPABASE_ANON_KEY:` Your Supabase anonymous public key.
+
+Example `.env file:`
+
+```bash
+VITE_SUPABASE_URL=https://your-supabase-url.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 5. Database Configuration
+
+Set up the following tables in your Supabase project:
+
+#### `lessons` Table
+
+| Column Name | Type  | Notes                                                 |
+| ----------- | ----- | ----------------------------------------------------- |
+| id          | int8  | Primary key, auto-incrementing                        |
+| slug        | text  | Unique identifier for lessons                         |
+| content     | jsonb | Lesson content in Markdown, as array of strings       |
+| prev_lesson | text  | Used to display link                                  |
+| next_lesson | text  | Used to display link                                  |
+| snapshot    | jsonb | Holds any default code to be displayed in Editor      |
+| scene       | text  | Holds any default bodies to be displayed in Playfield |
+
+#### `snapshots` Table
+
+| Column Name   | Type  | Notes                                    |
+| ------------- | ----- | ---------------------------------------- |
+| id            | int8  | Primary key, auto-incrementing           |
+| user_id       | uuid  | User ID (foreign key)                    |
+| lesson_slug   | text  | Lesson slug (foreign key)                |
+| snapshot_data | jsonb | Saved user-created code, lesson-specific |
+
+### 6. Run the Development Server
+
+Once your database is ready, start the development server:
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Visit `http://localhost:5173` in your browser to use the app.
 
-To create a production version of your app:
+### 7. Contributing
 
-```bash
-npm run build
-```
+We are not open to contributions for the time being.
 
-You can preview the production build with `npm run preview`.
+### 8. License
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+MIT License
