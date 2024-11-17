@@ -10,6 +10,7 @@
 	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
 	import { waitForStability } from '$lib/utils/actions';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
 
 	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
@@ -22,6 +23,7 @@
 		faChalkboardUser,
 		faCircleExclamation,
 		faCode,
+		faExclamationTriangle,
 		faEye,
 		faRotateRight,
 		faShapes,
@@ -53,17 +55,21 @@
 
 	let showTutorial = false; // Flag to show tutorial after scrolling
 
-	// Use Supabase client to fetch data from countries table
+	let hasError = false;
+
 	const fetchLesson = async () => {
 		const { data, error } = await supabase
 			.from('lessons')
 			.select('*')
 			.eq('slug', lessonId)
 			.single();
-		if (error) {
-			console.error('Error fetching data', error);
+		if (error || !data) {
+			console.error('Error fetching lesson:', error || 'No data');
+			hasError = true; // Set error state
+			return;
 		}
-		//console.log(data);
+		hasError = false; // Clear error state if successful
+		// Is successful, assign lessonData
 		lessonData.tutorial = {
 			title: data.title,
 			content: data.content,
@@ -221,10 +227,26 @@
 		</div>
 		<!-- Dynamic content start -->
 
-		{#if lessonData && showTutorial}
-			<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
-				<Tutorial data={lessonData.tutorial} />
+		{#if hasError}
+			<div class="w-full p-4 flex justify-center items-start">
+				<aside class="alert variant-ghost-warning mt-4">
+					<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+					<div class="alert-message">
+						<p>Failed to load lesson. Please try again later.</p>
+					</div>
+				</aside>
 			</div>
+		{:else}
+			<!-- Show lesson content -->
+			{#if lessonData && showTutorial}
+				<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
+					<Tutorial data={lessonData.tutorial} />
+				</div>
+			{:else}
+				<div class="w-full p-4">
+					<ProgressBar />
+				</div>
+			{/if}
 		{/if}
 	</div>
 </section>

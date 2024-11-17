@@ -47,7 +47,7 @@
 	<!-- Header (shared across all pages) -->
 	<header class="bg-secondary-800 text-white p-4">
 		<div class="mx-0 flex justify-between items-center">
-			<div class="w-44">
+			<div class="lg:w-80 flex justify-start">
 				<a href="/" class="hover:text-gray-200 inline-block lg:hidden"
 					><h1>
 						<h1 class="flex gap-2 items-center">
@@ -73,7 +73,7 @@
 					</h1></a
 				>
 			</div>
-			<nav class="w-44 flex gap-6">
+			<nav class="lg:w-80 flex gap-6 justify-end">
 				<a href="/tutorial/welcome" class="hover:text-gray-200">Tutorial</a>
 				{#if !$user}
 					<a href="/sign-in" class="hover:text-gray-200 flex gap-2 items-center"
