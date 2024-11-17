@@ -56,7 +56,8 @@
 									<FontAwesomeIcon icon={faFaceSurprise} />
 								{/if}
 							</div>
-							CC
+							<span class="sm:hidden">CC</span>
+							<span class="hidden sm:inline-block">CODE CURIOUS</span>
 						</h1>
 					</h1></a
 				>

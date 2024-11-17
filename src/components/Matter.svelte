@@ -92,14 +92,18 @@
 	function updateScale(innerWidth: number) {
 		if (innerWidth <= 400) {
 			scale = 0.8;
-		} else if (innerWidth <= 640) {
+		} else if (innerWidth <= 540) {
 			scale = 1;
 		} else if (innerWidth <= 1024) {
-			scale = 1;
+			scale = 1.2;
 		} else if (innerWidth <= 1440) {
 			scale = 1;
+		} else if (innerWidth <= 1680) {
+			scale = 1.1;
+		} else if (innerWidth <= 1920) {
+			scale = 1.25;
 		} else {
-			scale = 1.2;
+			scale = 1.4;
 		}
 	}
 
