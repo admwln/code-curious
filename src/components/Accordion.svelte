@@ -18,28 +18,24 @@
 	}
 </script>
 
-<div
+<button
+	type="button"
 	class="w-full flex items-center justify-between space-x-4 py-3 px-4 {color} {topBorder
 		? 'border-t border-zinc-700'
 		: ''} {rounded ? 'rounded-t-xl' : ''} {rounded && !isOpen ? 'rounded-b-xl' : ''}"
+	on:click={toggleAccordion}
+	aria-expanded={isOpen}
+	aria-controls={`${uniqueId}-content`}
+	aria-label={isOpen ? 'Collapse details' : 'Expand details'}
 >
 	<slot name="summary" id={`${uniqueId}-summary`}></slot>
 	<slot name="summary-button"></slot>
-	<button
-		type="button"
-		class="btn btn-sm py-1"
-		on:click={toggleAccordion}
-		aria-expanded={isOpen}
-		aria-controls={`${uniqueId}-content`}
-		aria-label={isOpen ? 'Collapse details' : 'Expand details'}
-	>
-		{#if isOpen}
-			<FontAwesomeIcon icon={faAngleUp} />
-		{:else}
-			<FontAwesomeIcon icon={faAngleDown} />
-		{/if}
-	</button>
-</div>
+	{#if isOpen}
+		<FontAwesomeIcon icon={faAngleUp} />
+	{:else}
+		<FontAwesomeIcon icon={faAngleDown} />
+	{/if}
+</button>
 
 <!-- Conditionally apply hidden class and add role for screen readers -->
 <div
