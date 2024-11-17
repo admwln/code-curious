@@ -289,18 +289,20 @@
 	</div>
 	<!-- Console -->
 	<div class="w-full absolute bottom-0 z-40">
-		<div
+		<button
+			type="button"
+			on:click={toggleConsole}
 			class="w-40 rounded-t-2xl flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a]"
 		>
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
-			<button type="button" on:click={toggleConsole} class="btn btn-sm p-0 flex gap-2">
+			<div class="btn btn-sm p-0 flex gap-2">
 				{#if consoleExpanded}
 					<span><FontAwesomeIcon icon={faAngleDown} /></span>
 				{:else}
 					<span><FontAwesomeIcon icon={faAngleUp} /></span>
 				{/if}
-			</button>
-		</div>
+			</div>
+		</button>
 
 		<div class="bg-zinc-800 border-t-8 border-[#3a1d2a]">
 			<Console expanded={consoleExpanded} />
