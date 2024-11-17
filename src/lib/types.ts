@@ -96,6 +96,8 @@ export interface Log {
 	useIndex: boolean;
 	useKey: boolean;
 	value?: string | number | boolean | any[] | object;
+	indicateRunning?: boolean;
+	indicateStopped?: boolean;
 }
 
 export interface Action {

@@ -120,8 +120,10 @@
 
 	// RUNNER function to run the user's code
 	async function runner() {
+		clearConsole(); // Clear the console before running the code
 		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
+		indicateRunning(); // Indicate that the code is running in the console
 		for (const block of $actionSnapshot) {
 			// If the current block has a variableId associated with it, create a deep clone of the variable
 			let variable = null;
@@ -159,7 +161,39 @@
 
 		// Wait for stability in matterInstance before ending run
 		await waitForStability();
+		indicateStopped(); // Indicate that the code has stopped running in the console
 		isRunning.set(false); // Set to false when all blocks are processed and stable
+	}
+
+	// Indicate that the code is running in the console
+	function indicateRunning() {
+		const runningBlock: Log = {
+			id: Date.now(),
+			blockType: 'log',
+			message: 'Running...',
+			indicateRunning: true,
+			selectedId: null,
+			selectedIndex: null,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+		};
+		consoleOutput.update((output) => [...output, runningBlock]);
+	}
+	// Indicate that the code has stopped running in the console
+	function indicateStopped() {
+		const stoppedBlock: Log = {
+			id: Date.now(),
+			blockType: 'log',
+			message: 'Stopped',
+			indicateStopped: true,
+			selectedId: null,
+			selectedIndex: null,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+		};
+		consoleOutput.update((output) => [...output, stoppedBlock]);
 	}
 
 	// Scroll tutorial content to the top when the route changes
