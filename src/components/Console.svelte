@@ -47,6 +47,7 @@
 			<p>
 				<code>
 					{#if log.message && log.message !== ''}
+						<!-- <span class="text-[#FFFAFA]"></span> -->
 						{log.message}
 					{/if}
 					<!-- Selected variable is string, number, boolean: -->
