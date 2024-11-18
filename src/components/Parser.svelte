@@ -33,8 +33,12 @@
 			</label>
 		</div>
 	</div>
+{:else if placeholder[0] === 'LogButton'}
+	<button class="btn btn-sm cursor-default bg-primary-900 flex gap-2"
+		><FontAwesomeIcon icon={faPlus} /> Console Log</button
+	>
 {:else if placeholder[0] === 'VariableButton'}
-	<button class="btn btn-sm bg-primary-900 flex gap-2"
+	<button class="btn btn-sm cursor-default bg-primary-900 flex gap-2"
 		><FontAwesomeIcon icon={faPlus} /> Variable</button
 	>
 {:else if placeholder[0] === 'VariableBlock'}

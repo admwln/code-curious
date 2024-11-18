@@ -7,7 +7,6 @@
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
 	export let objectVariable: ObjectVariable | null;
-	//console.log('editMode from ObjectEdit component', editMode);
 	const dispatch = createEventDispatcher();
 	let _object: Record<string, any> = {}; // Temporary object to store key-value pairs
 	let _pairCount: number = 1; // How many key-value pairs there are in the temporary object
@@ -34,7 +33,6 @@
 			value: { key1: '' },
 		};
 		objectTypes = ['string'];
-		//console.log('Object types', objectTypes);
 		_object = { ...objectVariable.value };
 		_pairCount = 1;
 	} else {
@@ -115,10 +113,7 @@
 			objectKeys[index] = newKey;
 			_object = respawnObject();
 		}
-
 		_object = { ..._object }; // Trigger reactivity
-
-		//console.log('Updated key', _object);
 	};
 
 	// Function to handle type changes
@@ -126,7 +121,6 @@
 		const target = e.target as HTMLSelectElement;
 		const newType = target.value;
 		objectTypes[index] = newType;
-		//console.log('Updated value type', objectTypes);
 
 		//Change initial value of corresponding value
 		if (newType === 'number') objectValues[index] = 0;
@@ -148,7 +142,6 @@
 
 		_object = respawnObject();
 		_object = { ..._object }; // Trigger reactivity
-		//console.log('Updated value', _object);
 		return newValue;
 	};
 </script>

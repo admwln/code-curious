@@ -166,7 +166,6 @@
 	}
 
 	async function deleteSnapshot(lessonSlug: string) {
-		console.log('Deleting snapshot:', lessonSlug);
 		const { error } = await supabase.from('snapshots').delete().eq('lesson_slug', lessonSlug);
 		if (error) {
 			console.error(error);
@@ -222,6 +221,8 @@
 									type="text"
 									bind:value={displayName}
 									placeholder="Choose a username"
+									autocomplete="off"
+									maxlength="25"
 								/>
 								<button type="submit" class="btn-icon bg-initial">
 									<FontAwesomeIcon icon={faFloppyDisk} />

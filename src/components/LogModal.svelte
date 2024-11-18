@@ -90,7 +90,6 @@
 			// If the selected variable is an array of objects, set selectedObject to {}
 			if (selectedVariable.value[0] && typeof selectedVariable.value[0] === 'object') {
 				selectedObject = { ...selectedVariable.value[0] };
-				console.log('Array of objects, selectedObject', selectedObject);
 			}
 		}
 		//If the selected variable is an object, clone it to selectedObject
@@ -129,6 +128,7 @@
 				name="text"
 				placeholder="Hello, World!"
 				required
+				maxlength="50"
 			/>
 		</label>
 		<!-- Check if there is a variable to log -->
