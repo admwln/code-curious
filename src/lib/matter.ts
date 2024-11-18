@@ -113,7 +113,7 @@ const catapultScene = (matterInstance: MatterInstance) => {
 		render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
 	});
 
-	const projectile = Bodies.circle(s(325), s(582), s(20), {
+	const projectile = Bodies.circle(s(325), s(580), s(20), {
 		isStatic: false,
 		restitution: 0.75,
 		friction: 0.1,
@@ -122,10 +122,10 @@ const catapultScene = (matterInstance: MatterInstance) => {
 	});
 
 	World.add(engine.world, [
-		catapult,
 		pivot,
 		stand,
 		projectile,
+		catapult,
 		Constraint.create({
 			bodyA: catapult,
 			pointB: { x: s(225), y: s(610) },
@@ -135,10 +135,10 @@ const catapultScene = (matterInstance: MatterInstance) => {
 	]);
 
 	sceneBodiesStore.set([
-		{ body: catapult, initialPosition: { x: catapult.position.x, y: catapult.position.y } },
 		{ body: stand, initialPosition: { x: stand.position.x, y: stand.position.y } },
 		{ body: pivot, initialPosition: { x: pivot.position.x, y: pivot.position.y } },
 		{ body: projectile, initialPosition: { x: projectile.position.x, y: projectile.position.y } },
+		{ body: catapult, initialPosition: { x: catapult.position.x, y: catapult.position.y } },
 	]);
 };
 
