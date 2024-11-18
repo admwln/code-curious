@@ -9,10 +9,11 @@ const { Engine, Render, World, Bodies, Runner } = Matter;
 
 let engine: Matter.Engine | null = null;
 
-let initialBodies: InitialBody[] = [];
 let userBodies: InitialBody[] = [];
-// Make a writable store to keep track of the scene composite
-export const sceneCompositeStore = writable<any>(null);
+// Make a writable store to keep track of any bodies in a scene
+export const sceneBodiesStore = writable<InitialBody[]>([]);
+// Make a writable store to keep track of any composites in a scene
+export const sceneCompositesStore = writable<any[]>([]);
 // Make a writable store to keep track of the scene string
 export const sceneStringStore = writable<string>('');
 
@@ -75,8 +76,9 @@ export function initMatterJS(
 
 	// If there is no scene data empty both stores
 	if (!scene) {
-		// Reset both stores: sceneCompositeStore and sceneStringStore
-		sceneCompositeStore.set(null);
+		// Reset each store: sceneBodiesStore, sceneCompositesStore and sceneStringStore
+		sceneBodiesStore.set([]);
+		sceneCompositesStore.set([]);
 		sceneStringStore.set('');
 	}
 
@@ -104,19 +106,41 @@ const pyramidScene = (matterInstance: MatterInstance) => {
 		});
 	});
 	World.add(engine.world, stack);
-	sceneCompositeStore.set(stack);
+	sceneCompositesStore.set([stack]);
+
+	// create a white rectangle 50 x 5 pixels, add the body to the world, and store it in the sceneBodiesStore
+	const ground = Bodies.rectangle(s(225), s(200), s(50), s(5), {
+		isStatic: false,
+		render: { fillStyle: 'rgb(255, 255, 255)' },
+	});
+	World.add(engine.world, ground);
+	sceneBodiesStore.set([
+		{ body: ground, initialPosition: { x: ground.position.x, y: ground.position.y } },
+	]);
 };
 
 const handleScene = (scene: string, matterInstance: MatterInstance) => {
+	// Remove any scene bodies or composites
+	let sceneBodies: InitialBody[] = [];
+	sceneBodiesStore.subscribe((value) => (sceneBodies = value));
+	// If there already are any scene bodies, remove them
+	if (sceneBodies.length > 0) {
+		//Loop through scene bodies and remove them from the world
+		sceneBodies.forEach((body) => {
+			World.remove(matterInstance.engine.world, body.body, true);
+		});
+	}
+	let sceneComposites: any[] = [];
+	sceneCompositesStore.subscribe((value) => (sceneComposites = value));
+	if (sceneComposites.length > 0) {
+		sceneComposites.forEach((composite) => {
+			World.remove(matterInstance.engine.world, composite, true);
+		});
+	}
+
+	//Recreate the scene
 	switch (scene) {
 		case 'pyramid':
-			let sceneComposite;
-			sceneCompositeStore.subscribe((value) => (sceneComposite = value));
-			// If there already is a scene composite, remove it
-			if (sceneComposite) {
-				World.remove(matterInstance.engine.world, sceneComposite);
-			}
-			//..then create a new scene
 			pyramidScene(matterInstance);
 			break;
 		default:
