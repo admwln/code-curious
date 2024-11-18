@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { clearConsole, consoleOutput } from '$lib/utils/consoleActions';
+	import { isRunning } from '$lib/stores/store';
 	import { fade } from 'svelte/transition';
 	import type { Log } from '$lib/types';
 
@@ -26,13 +27,17 @@
 	let consoleContainer: HTMLDivElement | null = null;
 
 	function scrollToBottom() {
-		if (consoleScrollContainer) {
-			consoleScrollContainer.scrollTop = consoleScrollContainer.scrollHeight;
-		}
+		// Scroll to bottom of console container, after short delay
+		// to allow for rendering of new logs
+		setTimeout(() => {
+			if (consoleScrollContainer) {
+				consoleScrollContainer.scrollTop = consoleScrollContainer.scrollHeight;
+			}
+		}, 100);
 	}
 
 	$: {
-		if ($consoleOutput) {
+		if ($consoleOutput || !expanded) {
 			scrollToBottom();
 		}
 	}
@@ -40,14 +45,20 @@
 
 <div
 	bind:this={consoleScrollContainer}
-	class="{expanded ? 'h-[40vh]' : 'h-[100px] lg:h-[7vh]'} overflow-y-scroll"
+	class="{expanded ? 'h-[60vh] lg:h-[40vh]' : 'h-[100px] lg:h-[7vh]'} overflow-y-scroll"
 >
-	<div bind:this={consoleContainer} class="p-4 flex flex-col gap-2 mb-[90px] lg:mb-10">
+	<div bind:this={consoleContainer} class="p-4 flex flex-col gap-2 mb-[40px] lg:mb-0">
 		{#each $consoleOutput as log}
 			<p>
 				<code>
 					{#if log.message && log.message !== ''}
-						{log.message}
+						{#if log.indicateStopped}
+							<span class="opacity-50">{log.message}</span>
+						{:else if log.indicateRunning}
+							<span class="opacity-50">{log.message}</span>
+						{:else}
+							{log.message}
+						{/if}
 					{/if}
 					<!-- Selected variable is string, number, boolean: -->
 					{#if log.selectedId && log.selectedType !== 'array' && log.selectedType !== 'object'}

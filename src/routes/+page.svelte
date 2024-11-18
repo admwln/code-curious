@@ -1,6 +1,23 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import { user } from '$lib/auth';
+
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
+	onMount(() => {
+		// Subscribe to the user store to check if a user is logged in
+		let unsubscribe = user.subscribe((currentUser) => {
+			if (currentUser) {
+				// If user is logged in, redirect to dashboard
+				goto('/dashboard');
+			}
+		});
+
+		// Cleanup the subscription when the component is destroyed
+		return () => unsubscribe();
+	});
 </script>
 
 <div class="container my-4 lg:my-8 mx-auto flex flex-col items-center">

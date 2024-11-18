@@ -13,7 +13,7 @@
 			on:click={() => ($currentPanel = 1)}
 			class="btn btn-sm {$currentPanel === 1
 				? 'variant-filled-surface focus:variant-filled-surface'
-				: ''}">Tutorial</button
+				: ''}">Lesson</button
 		>
 
 		<button

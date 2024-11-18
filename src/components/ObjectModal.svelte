@@ -58,7 +58,6 @@
 	// Listen for object updates from ObjectEdit component
 	const handleObjectUpdate = (updatedObject: any) => {
 		variable.value = updatedObject.value;
-		console.log('Updated object', variable.value);
 	};
 </script>
 

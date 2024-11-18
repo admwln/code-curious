@@ -10,6 +10,7 @@
 	import { actionSnapshot } from '$lib/utils/actions';
 	import { clearConsole, consoleOutput, logToConsole } from '$lib/utils/consoleActions';
 	import { waitForStability } from '$lib/utils/actions';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
 
 	import { executeAction } from '$lib/utils/actions';
 	import { supabase } from '$lib/supabaseClient';
@@ -22,6 +23,7 @@
 		faChalkboardUser,
 		faCircleExclamation,
 		faCode,
+		faExclamationTriangle,
 		faEye,
 		faRotateRight,
 		faShapes,
@@ -51,19 +53,24 @@
 		},
 	};
 
+	// Flags
 	let showTutorial = false; // Flag to show tutorial after scrolling
+	let hasError = false;
+	let navigating = true;
 
-	// Use Supabase client to fetch data from countries table
 	const fetchLesson = async () => {
 		const { data, error } = await supabase
 			.from('lessons')
 			.select('*')
 			.eq('slug', lessonId)
 			.single();
-		if (error) {
-			console.error('Error fetching data', error);
+		if (error || !data) {
+			console.error('Error fetching lesson:', error || 'No data');
+			hasError = true; // Set error state
+			return;
 		}
-		//console.log(data);
+		hasError = false; // Clear error state if successful
+		// Is successful, assign lessonData
 		lessonData.tutorial = {
 			title: data.title,
 			content: data.content,
@@ -114,8 +121,10 @@
 
 	// RUNNER function to run the user's code
 	async function runner() {
+		clearConsole(); // Clear the console before running the code
 		$actionSnapshot = structuredClone($snapshot); // Deep clone $snapshot
 		isRunning.set(true); // Set the running state to true at the start
+		indicateRunning(); // Indicate that the code is running in the console
 		for (const block of $actionSnapshot) {
 			// If the current block has a variableId associated with it, create a deep clone of the variable
 			let variable = null;
@@ -153,7 +162,39 @@
 
 		// Wait for stability in matterInstance before ending run
 		await waitForStability();
+		indicateStopped(); // Indicate that the code has stopped running in the console
 		isRunning.set(false); // Set to false when all blocks are processed and stable
+	}
+
+	// Indicate that the code is running in the console
+	function indicateRunning() {
+		const runningBlock: Log = {
+			id: Date.now(),
+			blockType: 'log',
+			message: 'Running...',
+			indicateRunning: true,
+			selectedId: null,
+			selectedIndex: null,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+		};
+		consoleOutput.update((output) => [...output, runningBlock]);
+	}
+	// Indicate that the code has stopped running in the console
+	function indicateStopped() {
+		const stoppedBlock: Log = {
+			id: Date.now(),
+			blockType: 'log',
+			message: 'Stopped',
+			indicateStopped: true,
+			selectedId: null,
+			selectedIndex: null,
+			selectedKey: null,
+			useIndex: false,
+			useKey: false,
+		};
+		consoleOutput.update((output) => [...output, stoppedBlock]);
 	}
 
 	// Scroll tutorial content to the top when the route changes
@@ -161,9 +202,12 @@
 
 	// Run after component updates, then scroll and reveal tutorial
 	afterUpdate(() => {
-		if (scrollDiv) {
+		if (scrollDiv && navigating) {
 			// Scroll to the top
 			scrollDiv.scrollTo({ top: 0 });
+
+			//Reset navigating flag
+			navigating = false;
 
 			// Delay showing the tutorial slightly for smooth transition
 			setTimeout(() => {
@@ -188,10 +232,12 @@
 	beforeNavigate(() => {
 		// Set $isRunning to false before leaving the route
 		isRunning.set(false);
+		// Set navigating flag to true
+		navigating = true;
 	});
 </script>
 
-<!-- Panel 1: Tutorial -->
+<!-- Panel 1: Lesson -->
 <section
 	class="bg-neutral-900 h-screen transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
 	1
@@ -204,7 +250,7 @@
 			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
 		>
 			<h2 class="flex items-center py-0 gap-4">
-				<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+				<FontAwesomeIcon icon={faChalkboardUser} /> Lesson
 			</h2>
 			<!-- Toggle Panel 1 width -->
 			<button
@@ -221,10 +267,26 @@
 		</div>
 		<!-- Dynamic content start -->
 
-		{#if lessonData && showTutorial}
-			<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
-				<Tutorial data={lessonData.tutorial} />
+		{#if hasError}
+			<div class="w-full p-4 flex justify-center items-start">
+				<aside class="alert variant-ghost-warning mt-4">
+					<div><FontAwesomeIcon icon={faExclamationTriangle} /></div>
+					<div class="alert-message">
+						<p>Failed to load lesson. Please try again later.</p>
+					</div>
+				</aside>
 			</div>
+		{:else}
+			<!-- Show lesson content -->
+			{#if lessonData && showTutorial}
+				<div in:fade={{ duration: 250 }} out:fade={{ duration: 50 }}>
+					<Tutorial data={lessonData.tutorial} />
+				</div>
+			{:else}
+				<div class="w-full p-4">
+					<ProgressBar />
+				</div>
+			{/if}
 		{/if}
 	</div>
 </section>
@@ -267,18 +329,20 @@
 	</div>
 	<!-- Console -->
 	<div class="w-full absolute bottom-0 z-40">
-		<div
+		<button
+			type="button"
+			on:click={toggleConsole}
 			class="w-40 rounded-t-2xl flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a]"
 		>
 			<h2 class="flex gap-4 items-center"><FontAwesomeIcon icon={faEye} /> Console</h2>
-			<button type="button" on:click={toggleConsole} class="btn btn-sm p-0 flex gap-2">
+			<div class="btn btn-sm p-0 flex gap-2">
 				{#if consoleExpanded}
 					<span><FontAwesomeIcon icon={faAngleDown} /></span>
 				{:else}
 					<span><FontAwesomeIcon icon={faAngleUp} /></span>
 				{/if}
-			</button>
-		</div>
+			</div>
+		</button>
 
 		<div class="bg-zinc-800 border-t-8 border-[#3a1d2a]">
 			<Console expanded={consoleExpanded} />
