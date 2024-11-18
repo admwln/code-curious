@@ -53,9 +53,10 @@
 		},
 	};
 
+	// Flags
 	let showTutorial = false; // Flag to show tutorial after scrolling
-
 	let hasError = false;
+	let navigating = true;
 
 	const fetchLesson = async () => {
 		const { data, error } = await supabase
@@ -201,9 +202,12 @@
 
 	// Run after component updates, then scroll and reveal tutorial
 	afterUpdate(() => {
-		if (scrollDiv) {
+		if (scrollDiv && navigating) {
 			// Scroll to the top
 			scrollDiv.scrollTo({ top: 0 });
+
+			//Reset navigating flag
+			navigating = false;
 
 			// Delay showing the tutorial slightly for smooth transition
 			setTimeout(() => {
@@ -228,10 +232,12 @@
 	beforeNavigate(() => {
 		// Set $isRunning to false before leaving the route
 		isRunning.set(false);
+		// Set navigating flag to true
+		navigating = true;
 	});
 </script>
 
-<!-- Panel 1: Tutorial -->
+<!-- Panel 1: Lesson -->
 <section
 	class="bg-neutral-900 h-screen transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
 	1
@@ -244,7 +250,7 @@
 			class="w-full flex items-center justify-between space-x-4 py-3 px-4 bg-[#3a1d2a] sticky top-0 z-10"
 		>
 			<h2 class="flex items-center py-0 gap-4">
-				<FontAwesomeIcon icon={faChalkboardUser} /> Tutorial
+				<FontAwesomeIcon icon={faChalkboardUser} /> Lesson
 			</h2>
 			<!-- Toggle Panel 1 width -->
 			<button
