@@ -5,7 +5,7 @@ import { consoleOutput } from './utils/consoleActions';
 import type { Log } from './types';
 import { writable } from 'svelte/store';
 // Create aliases to avoid "Matter." prefixes
-const { Engine, Render, World, Bodies, Runner } = Matter;
+const { Body, Constraint, Engine, Render, World, Bodies, Runner } = Matter;
 
 let engine: Matter.Engine | null = null;
 
@@ -51,7 +51,7 @@ export function initMatterJS(
 	// Create static walls
 	World.add(engine.world, [
 		// ceiling
-		Bodies.rectangle(s(225), s(-50), s(450), s(5), {
+		Bodies.rectangle(s(225), s(-100), s(450), s(5), {
 			isStatic: true,
 		}),
 		// floor
@@ -59,11 +59,11 @@ export function initMatterJS(
 			isStatic: true,
 		}),
 		// left wall
-		Bodies.rectangle(s(-20), s(350), s(50), s(700), {
+		Bodies.rectangle(s(-20), s(350), s(50), s(900), {
 			isStatic: true,
 		}),
 		// right wall
-		Bodies.rectangle(s(470), s(350), s(50), s(700), {
+		Bodies.rectangle(s(470), s(350), s(50), s(900), {
 			isStatic: true,
 		}),
 	]);
@@ -93,6 +93,55 @@ export function initMatterJS(
 }
 
 // Create specific scene
+const catapultScene = (matterInstance: MatterInstance) => {
+	const { engine } = matterInstance;
+	const group = Body.nextGroup(true); // Negative group for no collision within the group, for catapult and pivot
+
+	const catapult = Bodies.rectangle(s(225), s(610), s(250), s(20), {
+		render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+		collisionFilter: { group: group },
+	});
+
+	const pivot = Bodies.rectangle(s(225), s(635), s(20), s(80), {
+		isStatic: true,
+		render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+		collisionFilter: { group: group },
+	});
+
+	const stand = Bodies.rectangle(s(325), s(648), s(10), s(54), {
+		isStatic: true,
+		render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+	});
+
+	const projectile = Bodies.circle(s(325), s(582), s(20), {
+		isStatic: false,
+		restitution: 0.75,
+		friction: 0.1,
+		density: 0.0001,
+		render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+	});
+
+	World.add(engine.world, [
+		catapult,
+		pivot,
+		stand,
+		projectile,
+		Constraint.create({
+			bodyA: catapult,
+			pointB: { x: s(225), y: s(610) },
+			stiffness: 1,
+			length: 0,
+		}),
+	]);
+
+	sceneBodiesStore.set([
+		{ body: catapult, initialPosition: { x: catapult.position.x, y: catapult.position.y } },
+		{ body: stand, initialPosition: { x: stand.position.x, y: stand.position.y } },
+		{ body: pivot, initialPosition: { x: pivot.position.x, y: pivot.position.y } },
+		{ body: projectile, initialPosition: { x: projectile.position.x, y: projectile.position.y } },
+	]);
+};
+
 const pyramidScene = (matterInstance: MatterInstance) => {
 	const { engine } = matterInstance;
 	// Create a pyramid of bodies
@@ -107,19 +156,15 @@ const pyramidScene = (matterInstance: MatterInstance) => {
 	});
 	World.add(engine.world, stack);
 	sceneCompositesStore.set([stack]);
-
-	// create a white rectangle 50 x 5 pixels, add the body to the world, and store it in the sceneBodiesStore
-	const ground = Bodies.rectangle(s(225), s(200), s(50), s(5), {
-		isStatic: false,
-		render: { fillStyle: 'rgb(255, 255, 255)' },
-	});
-	World.add(engine.world, ground);
-	sceneBodiesStore.set([
-		{ body: ground, initialPosition: { x: ground.position.x, y: ground.position.y } },
-	]);
 };
 
 const handleScene = (scene: string, matterInstance: MatterInstance) => {
+	// Remove all constraints from the world
+	const constraints = Matter.Composite.allConstraints(matterInstance.engine.world);
+	constraints.forEach((constraint) => {
+		World.remove(matterInstance.engine.world, constraint);
+	});
+
 	// Remove any scene bodies or composites
 	let sceneBodies: InitialBody[] = [];
 	sceneBodiesStore.subscribe((value) => (sceneBodies = value));
@@ -142,6 +187,9 @@ const handleScene = (scene: string, matterInstance: MatterInstance) => {
 	switch (scene) {
 		case 'pyramid':
 			pyramidScene(matterInstance);
+			break;
+		case 'catapult':
+			catapultScene(matterInstance);
 			break;
 		default:
 			console.warn(`Unknown scene: ${scene}`);
@@ -191,7 +239,6 @@ export function resetBodies(matter: MatterInstance) {
 		scene = value;
 		// If there is scene data...
 		if (scene) {
-			console.log('scene', scene);
 			handleScene(scene, matter);
 		}
 	});
@@ -233,14 +280,14 @@ export function handleInstruction(
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
 	switch (instruction.action) {
 		case 'create circle':
-			console.log('matter.ts: create circle action has been called');
 			let circleFill = variable.value as string;
 			circleFill = checkColor(circleFill);
 			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(225), s(0), s(40), {
+				const circle = Bodies.circle(s(100), s(0), s(30), {
 					isStatic: false,
 					restitution: 1,
 					friction: 0,
+					density: 0.01,
 					render: { fillStyle: circleFill },
 				});
 				World.add(matterInstance.engine.world, circle);
@@ -254,14 +301,14 @@ export function handleInstruction(
 			}
 			break;
 		case 'create square':
-			console.log('matter.ts: create square action has been called');
 			let squareFill = variable.value as string;
 			squareFill = checkColor(squareFill);
 			if (typeof squareFill === 'string') {
-				const square = Bodies.rectangle(s(225), s(0), s(80), s(80), {
+				const square = Bodies.rectangle(s(225), s(0), s(60), s(60), {
 					isStatic: false,
 					restitution: 0.95,
 					friction: 0.25,
+					density: 0.01,
 					render: { fillStyle: squareFill },
 				});
 				World.add(matterInstance.engine.world, square);
@@ -275,14 +322,18 @@ export function handleInstruction(
 			}
 			break;
 		case 'create triangle':
-			console.log('matter.ts: create triangle action has been called');
 			let triangleFill = variable.value as string;
 			triangleFill = checkColor(triangleFill);
+			let horizontalOffset = 0;
+			// Use random horizontal offset for each triangle between -5 and 5
+			horizontalOffset = Math.random() * 10 - 5;
+
 			if (typeof triangleFill === 'string') {
-				const triangle = Bodies.polygon(s(225), s(0), 3, s(50), {
+				const triangle = Bodies.polygon(s(350 + horizontalOffset), s(0), 3, s(40), {
 					isStatic: false,
 					restitution: 0.5,
 					friction: 0.5,
+					density: 0.01,
 					render: { fillStyle: triangleFill },
 				});
 
@@ -300,7 +351,6 @@ export function handleInstruction(
 			}
 			break;
 		case 'create circles':
-			console.log('matter.ts: create circles action has been called');
 			let circleFills = variable.value as string[];
 
 			circleFills.forEach((fill, i) => {
