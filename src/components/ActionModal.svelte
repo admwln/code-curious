@@ -57,7 +57,6 @@
 			variableId: variableId,
 			action: '',
 		};
-		console.log('New action created with a variable', action);
 		// Filter available actions based on the variable type
 		availableActions = actions.filter((a) => a[1] === variable.type);
 	}
@@ -68,7 +67,6 @@
 			blockType: 'action',
 			action: '',
 		};
-		console.log('New action created without a variable', action);
 	}
 
 	// When action.variableId changes, update the available actions
@@ -92,7 +90,6 @@
 
 	const deleteAction = () => {
 		$snapshot = _snapshot.filter((a) => a.id !== action.id);
-		console.log('Action deleted', $snapshot);
 		dispatch('close');
 	};
 
@@ -103,7 +100,6 @@
 			return;
 		} else {
 			$snapshot = [..._snapshot, action];
-			console.log('New action added', $snapshot);
 		}
 		dispatch('close');
 	};

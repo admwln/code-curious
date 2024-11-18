@@ -125,7 +125,7 @@
 			{/if}
 		</div>
 		<label class="flex items-center space-x-2">
-			<input class="checkbox" type="checkbox" bind:checked={showColorPicker} />
+			<input class="checkbox" type="checkbox" name="colorPicker" bind:checked={showColorPicker} />
 			<p>Show color picker</p>
 		</label>
 

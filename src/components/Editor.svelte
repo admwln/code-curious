@@ -93,7 +93,6 @@
 	// Reset Editor, either clear or load the default lesson snapshot--never the user's snapshot
 	const resetEditor = () => {
 		// Check in the fetched lesson data if there is a snapshot for the current lesson
-		console.log('check lesson data for snapshot', data);
 		if (data.snapshot) {
 			$snapshot = data.snapshot;
 		} else $snapshot = [];
@@ -141,7 +140,6 @@
 				{ onConflict: 'user_id,lesson_slug' },
 			);
 			if (error) console.error('Error saving snapshot:', error);
-			else console.log('Snapshot saved successfully');
 			// Fetch the user snapshot data again
 			fetchUserSnapshot();
 			animateSnapIcon = true; // Trigger the animation

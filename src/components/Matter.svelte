@@ -19,7 +19,6 @@
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;
-	//console.log(data);
 
 	// Only subscribe to matterActionOutput when isRunning is true
 
