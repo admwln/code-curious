@@ -5,7 +5,7 @@ import { consoleOutput } from './utils/consoleActions';
 import type { Log } from './types';
 import { writable } from 'svelte/store';
 // Create aliases to avoid "Matter." prefixes
-const { Body, Constraint, Engine, Render, World, Bodies, Runner } = Matter;
+const { Body, Constraint, Engine, Render, World, Bodies, Runner, Sleeping } = Matter;
 
 let engine: Matter.Engine | null = null;
 
@@ -37,6 +37,10 @@ export function initMatterJS(
 	}
 
 	engine = Engine.create();
+
+	engine.positionIterations = 25;
+	engine.velocityIterations = 25;
+
 	const render = Render.create({
 		element: container,
 		engine: engine,
@@ -158,6 +162,32 @@ const pyramidScene = (matterInstance: MatterInstance) => {
 	sceneCompositesStore.set([stack]);
 };
 
+const stackScene = (matterInstance: MatterInstance) => {
+	const { engine } = matterInstance;
+
+	const stack = Matter.Composites.stack(
+		s(375),
+		s(370),
+		1,
+		10,
+		0,
+		0,
+		function (x: number, y: number) {
+			return Bodies.rectangle(x, y, s(30), s(30), {
+				isStatic: false,
+				restitution: 0.001, // Less bouncy
+				friction: 1.5, // More resistance to sliding
+				density: 5,
+				render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+				//sleepThreshold: 60, // Adjust sleep threshold
+			});
+		},
+	);
+
+	World.add(engine.world, stack);
+	sceneCompositesStore.set([stack]);
+};
+
 const handleScene = (scene: string, matterInstance: MatterInstance) => {
 	// Remove all constraints from the world
 	const constraints = Matter.Composite.allConstraints(matterInstance.engine.world);
@@ -185,11 +215,14 @@ const handleScene = (scene: string, matterInstance: MatterInstance) => {
 
 	//Recreate the scene
 	switch (scene) {
+		case 'catapult':
+			catapultScene(matterInstance);
+			break;
 		case 'pyramid':
 			pyramidScene(matterInstance);
 			break;
-		case 'catapult':
-			catapultScene(matterInstance);
+		case 'stack':
+			stackScene(matterInstance);
 			break;
 		default:
 			console.warn(`Unknown scene: ${scene}`);
@@ -216,14 +249,6 @@ export function resetBodies(matter: MatterInstance) {
 	dynamicBodies.forEach((body) => {
 		World.remove(matter.engine.world, body);
 	});
-
-	// // Re-add the bodies at their initial positions
-	// initialBodies.forEach((initialBody) => {
-	// 	const { body, initialPosition } = initialBody;
-	// 	Matter.Body.setPosition(body, initialPosition); // Reset to initial position
-	// 	Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
-	// 	World.add(matter..world, body); // Add back to the world
-	// });
 
 	// Add user-created bodies to the world
 	userBodies.forEach((userBody) => {
@@ -278,12 +303,15 @@ export function handleInstruction(
 	snapshot: Record<string, any>[],
 ) {
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
+	let horizontalOffset = 0;
 	switch (instruction.action) {
 		case 'create circle':
 			let circleFill = variable.value as string;
 			circleFill = checkColor(circleFill);
+			// Use random horizontal offset for each triangle between -5 and 5
+			horizontalOffset = Math.random() * 10 - 5;
 			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(100), s(0), s(30), {
+				const circle = Bodies.circle(s(100 + horizontalOffset), s(0), s(30), {
 					isStatic: false,
 					restitution: 0.95,
 					friction: 0,
@@ -324,14 +352,13 @@ export function handleInstruction(
 		case 'create triangle':
 			let triangleFill = variable.value as string;
 			triangleFill = checkColor(triangleFill);
-			let horizontalOffset = 0;
 			// Use random horizontal offset for each triangle between -5 and 5
 			horizontalOffset = Math.random() * 10 - 5;
 
 			if (typeof triangleFill === 'string') {
 				const triangle = Bodies.polygon(s(350 + horizontalOffset), s(0), 3, s(40), {
 					isStatic: false,
-					restitution: 0.95,
+					restitution: 0.75,
 					friction: 0.5,
 					density: 0.01,
 					render: { fillStyle: triangleFill },
