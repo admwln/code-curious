@@ -61,6 +61,8 @@
 	};
 
 	const onSave = () => {
+		// Add default name, if empty
+		if (variable.name === '') variable.name = 'new array';
 		if (variable.itemType !== 'boolean') {
 			// Update variable value
 			variable.value = array;

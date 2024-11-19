@@ -43,6 +43,9 @@
 	};
 
 	const onSave = () => {
+		// Add default name and or value, if empty
+		if (variable.name === '') variable.name = 'new boolean';
+		if (!variable.value) variable.value = false;
 		if (editMode) {
 			// Convert string to boolean and update variable value
 			variable.value = _boolString === 'true';

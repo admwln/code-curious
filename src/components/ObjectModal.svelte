@@ -40,6 +40,8 @@
 	};
 
 	const onSave = () => {
+		// Add default name, if empty
+		if (variable.name === '') variable.name = 'new object';
 		if (editMode) {
 			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
