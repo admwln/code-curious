@@ -155,13 +155,18 @@
 				</div>
 				{#if variable.selectedType === 'array'}
 					<label class="flex items-center space-x-2">
-						<input class="checkbox" type="checkbox" bind:checked={variable.useIndex} />
+						<input
+							class="checkbox"
+							type="checkbox"
+							name="use-index"
+							bind:checked={variable.useIndex}
+						/>
 						<p>Index</p>
 					</label>
 				{/if}
 				{#if variable.selectedType === 'object'}
 					<label class="flex items-center space-x-2">
-						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+						<input class="checkbox" type="checkbox" name="use-key" bind:checked={variable.useKey} />
 						<p>Use key</p>
 					</label>
 				{/if}
