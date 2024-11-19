@@ -285,7 +285,7 @@ export function handleInstruction(
 			if (typeof circleFill === 'string') {
 				const circle = Bodies.circle(s(100), s(0), s(30), {
 					isStatic: false,
-					restitution: 1,
+					restitution: 0.95,
 					friction: 0,
 					density: 0.01,
 					render: { fillStyle: circleFill },
@@ -331,7 +331,7 @@ export function handleInstruction(
 			if (typeof triangleFill === 'string') {
 				const triangle = Bodies.polygon(s(350 + horizontalOffset), s(0), 3, s(40), {
 					isStatic: false,
-					restitution: 0.5,
+					restitution: 0.95,
 					friction: 0.5,
 					density: 0.01,
 					render: { fillStyle: triangleFill },
@@ -357,16 +357,16 @@ export function handleInstruction(
 				let circleFill = checkColor(fill);
 
 				if (typeof fill === 'string') {
-					const xPosition = s(50 + i * 85);
+					const xPosition = s(50 + i * 87);
 
 					// Adjusted random values for density and air resistance
 					const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
 					const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
 
 					// Create the circle with adjusted properties
-					const circle = Bodies.circle(xPosition, s(0), s(40), {
+					const circle = Bodies.circle(xPosition, s(0), s(30), {
 						isStatic: false,
-						restitution: 1,
+						restitution: 0.95,
 						friction: 0,
 						density: randomDensity, // Adjusted density range
 						frictionAir: randomFrictionAir, // Adjusted air resistance range

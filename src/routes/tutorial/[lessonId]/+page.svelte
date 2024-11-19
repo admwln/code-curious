@@ -27,6 +27,7 @@
 		faEye,
 		faRotateRight,
 		faShapes,
+		faStop,
 	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 
@@ -128,11 +129,6 @@
 		for (const block of $actionSnapshot) {
 			// If the current block has a variableId associated with it, create a deep clone of the variable
 			let variable = null;
-
-			// // Action blocks can have a variableId associated with them
-			// if (block.blockType === 'action' && block.variableId) {
-			// 	variable = structuredClone($actionSnapshot.find((v) => v.id === block.variableId));
-			// }
 			// Log blocks can have a selectedId associated with them
 			if (block.blockType === 'log' && block.selectedId) {
 				variable = structuredClone($actionSnapshot.find((v) => v.id === block.selectedId));
@@ -159,11 +155,19 @@
 				consoleOutput.update((output) => [...output, errorBlock]);
 			}
 		}
+		// The user may have stopped running the code manually
+		if (!$isRunning) return;
 
 		// Wait for stability in matterInstance before ending run
 		await waitForStability();
 		indicateStopped(); // Indicate that the code has stopped running in the console
 		isRunning.set(false); // Set to false when all blocks are processed and stable
+	}
+
+	// Function to stop the code execution manually
+	function handleStop() {
+		isRunning.set(false); // Set to false when the user stops the code manually
+		indicateStopped(true); // Indicate that the code has stopped running in the console
 	}
 
 	// Indicate that the code is running in the console
@@ -181,12 +185,18 @@
 		};
 		consoleOutput.update((output) => [...output, runningBlock]);
 	}
-	// Indicate that the code has stopped running in the console
-	function indicateStopped() {
+	// Indicate that the code has stopped running in the console,
+	// either by finishing or being stopped by the user
+	function indicateStopped(byUser: boolean = false) {
+		// If isRunning is false at this point,
+		// the user has manually stopped running the code
+		// and indicateStopped() has already been called
+		if (!$isRunning && !byUser) return;
+		const message = byUser ? 'Stopped by user' : 'Finished';
 		const stoppedBlock: Log = {
 			id: Date.now(),
 			blockType: 'log',
-			message: 'Stopped',
+			message: message,
 			indicateStopped: true,
 			selectedId: null,
 			selectedIndex: null,
@@ -359,19 +369,28 @@
 >
 	<div class="text-start w-full flex items-center justify-between space-x-4 py-2 px-4 bg-[#3a1d2a]">
 		<h2 class="flex items-center gap-4"><FontAwesomeIcon icon={faShapes} /> Playfield</h2>
-		<button
-			type="button"
-			on:click={runner}
-			disabled={$isRunning}
-			class="btn btn-sm bg-primary-900 flex gap-2"
-		>
+		<div class="flex gap-2">
+			<!-- STOP button, if running -->
 			{#if $isRunning}
-				<FontAwesomeIcon icon={faCircleExclamation} /> Running
+				<button type="button" on:click={handleStop} class="btn btn-sm bg-primary-900 flex gap-2">
+					<FontAwesomeIcon icon={faStop} /> Stop
+				</button>
 			{/if}
-			{#if !$isRunning}
-				<FontAwesomeIcon icon={faRotateRight} /> Run
-			{/if}
-		</button>
+			<!-- Main RUN button -->
+			<button
+				type="button"
+				on:click={runner}
+				disabled={$isRunning}
+				class="btn btn-sm bg-primary-900 flex gap-2"
+			>
+				{#if $isRunning}
+					<FontAwesomeIcon icon={faCircleExclamation} /> Running
+				{/if}
+				{#if !$isRunning}
+					<FontAwesomeIcon icon={faRotateRight} /> Run
+				{/if}
+			</button>
+		</div>
 	</div>
 	<!-- Dynamic content start -->
 	{#if lessonData}
