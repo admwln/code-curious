@@ -58,7 +58,7 @@
 
 	const deleteVariable = () => {
 		if (!checkIfDeletable(variable.id)) {
-			errorMsg = 'This variable is being used in another code block';
+			errorMsg = 'This variable is used in another code block';
 			return;
 		}
 		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
@@ -329,8 +329,10 @@
 			</div>
 			{#if errorMsg !== ''}
 				<aside class="alert variant-ghost-error mt-4">
-					<p class="alert-message flex gap-4 items-center">
-						<FontAwesomeIcon icon={faExclamationTriangle} />{errorMsg}
+					<p class="flex gap-4 items-center text-sm sm:text-lg">
+						<span class="hidden sm:inline-block"
+							><FontAwesomeIcon icon={faExclamationTriangle} /></span
+						>{errorMsg}
 					</p>
 				</aside>
 			{/if}
