@@ -183,7 +183,7 @@
 </script>
 
 <div class="h-full w-full flex flex-col items-center">
-	<div class="card mt-4 md:mt-12 md:w-1/2">
+	<div class="card mt-0 sm:mt-4 md:mt-12 md:w-1/2 rounded-none sm:rounded-2xl">
 		{#if hasError}
 			<section class="w-full p-4 flex justify-center items-start">
 				<aside class="alert variant-ghost-warning mt-4">

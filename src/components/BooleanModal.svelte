@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
-	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faExclamationTriangle,
+		faFloppyDisk,
+		faTrash,
+		faXmark,
+	} from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
 	import type { BooleanVariable } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
+	import { checkIfDeletable } from '$lib/utils/checkIfDeletable';
 
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 
@@ -12,6 +18,8 @@
 	export let isOpen: boolean;
 	export let variableId;
 	let variable: BooleanVariable;
+	let errorMsg: string = '';
+
 	// The value of the radio button must be a string. Is converted to boolean when saving.
 	let _boolString: string;
 
@@ -38,11 +46,18 @@
 	};
 
 	const deleteVariable = () => {
+		if (!checkIfDeletable(variable.id)) {
+			errorMsg = 'This variable is being used in another code block';
+			return;
+		}
 		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
 
 	const onSave = () => {
+		// Add default name and or value, if empty
+		if (variable.name === '') variable.name = 'new boolean';
+		if (!variable.value) variable.value = false;
 		if (editMode) {
 			// Convert string to boolean and update variable value
 			variable.value = _boolString === 'true';
@@ -119,24 +134,35 @@
 		<button type="submit" class="sr-only">Submit</button>
 	</form>
 	<div slot="footer">
-		<div class="card-footer flex justify-between">
-			{#if editMode}
-				<button
-					type="button"
-					on:click={deleteVariable}
-					class="btn btn-sm bg-primary-700 flex gap-2"
-				>
-					<FontAwesomeIcon icon={faTrash} /> Delete
-				</button>
-			{:else}
-				<div></div>
-			{/if}
-			<div class="flex">
-				<button on:click={closeModal} class="btn"> Cancel </button>
-				<button on:click={onSave} class="btn btn-sm bg-secondary-700 flex gap-2">
-					<FontAwesomeIcon icon={faFloppyDisk} /> Save
-				</button>
+		<div class="card-footer flex flex-col">
+			<div class="flex justify-between">
+				{#if editMode}
+					<button
+						type="button"
+						on:click={deleteVariable}
+						class="btn btn-sm bg-primary-700 flex gap-2"
+					>
+						<FontAwesomeIcon icon={faTrash} /> Delete
+					</button>
+				{:else}
+					<div></div>
+				{/if}
+				<div class="flex">
+					<button on:click={closeModal} class="btn"> Cancel </button>
+					<button on:click={onSave} class="btn btn-sm bg-secondary-700 flex gap-2">
+						<FontAwesomeIcon icon={faFloppyDisk} /> Save
+					</button>
+				</div>
 			</div>
+			{#if errorMsg !== ''}
+				<aside class="alert variant-ghost-error mt-4">
+					<p class="flex gap-4 items-center text-sm sm:text-lg">
+						<span class="hidden sm:inline-block"
+							><FontAwesomeIcon icon={faExclamationTriangle} /></span
+						>{errorMsg}
+					</p>
+				</aside>
+			{/if}
 		</div>
 	</div>
 </Modal>
