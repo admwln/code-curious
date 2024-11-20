@@ -249,7 +249,7 @@
 
 <!-- Panel 1: Lesson -->
 <section
-	class="bg-neutral-900 h-screen transition-all duration-250 ease-in-out flex flex-col {$currentPanel !==
+	class="bg-neutral-900 h-screen md:transition-all md:duration-250 md:ease-in-out flex flex-col {$currentPanel !==
 	1
 		? 'hidden'
 		: ''} {panel1Width} lg:block"
@@ -303,7 +303,7 @@
 
 <!-- Panel 2: Editor & Console -->
 <section
-	class="relative w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-hidden transition-all duration-250 ease-in-out {$currentPanel !==
+	class="relative w-full bg-neutral-900 lg:border-x border-zinc-700 h-screen overflow-y-hidden md:transition-all md:duration-250 md:ease-in-out {$currentPanel !==
 	2
 		? 'hidden'
 		: ''} {panel2Width} lg:block"
@@ -362,8 +362,7 @@
 
 <!-- Panel 3: Playfield -->
 <section
-	class="bg-[#12131a] w-full h-screen lg:block transition-all duration-250 ease-in-out {$currentPanel !==
-	3
+	class="bg-[#12131a] w-full h-screen lg:block {$currentPanel !== 3
 		? 'hidden lg:block'
 		: ''} {panel3Width} overflow-y-scroll"
 >

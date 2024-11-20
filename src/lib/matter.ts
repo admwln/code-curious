@@ -166,7 +166,7 @@ const stackScene = (matterInstance: MatterInstance) => {
 	const { engine } = matterInstance;
 
 	const stack = Matter.Composites.stack(
-		s(375),
+		s(335),
 		s(375),
 		1,
 		10,
@@ -176,8 +176,8 @@ const stackScene = (matterInstance: MatterInstance) => {
 			return Bodies.rectangle(x, y, s(30), s(30), {
 				isStatic: false,
 				restitution: 0.001, // Less bouncy
-				friction: 1.5, // More resistance to sliding
-				density: 5,
+				friction: 1.25, // More resistance to sliding
+				density: 0.05,
 				render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
 				//sleepThreshold: 60, // Adjust sleep threshold
 			});

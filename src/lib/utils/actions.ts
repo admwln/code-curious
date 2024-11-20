@@ -51,11 +51,11 @@ export const executeAction = async (action: Action) => {
 
 export function waitForStability(): Promise<void> {
 	const matterInstance = get(matterInstanceStore) as MatterInstance;
-	const velocityThreshold = 0.1; // Lower value means more leeway before deemed stable
-	const angularVelocityThreshold = 0.1;
+	const velocityThreshold = 0.075; // Lower value means more leeway before deemed stable
+	const angularVelocityThreshold = 0.075;
 
 	return new Promise((resolve) => {
-		const interval = 1000; // Check every x milliseconds
+		const interval = 1250; // Check every x milliseconds
 
 		const checkStability = () => {
 			const allBodies = Matter.Composite.allBodies(matterInstance.engine.world);
