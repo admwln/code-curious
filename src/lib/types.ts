@@ -42,6 +42,7 @@ export interface VariableType {
 	name: string;
 	type: string;
 	value: string | boolean | number | any[] | object;
+	itemType?: string;
 }
 
 export interface StringVariable {

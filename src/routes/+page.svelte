@@ -20,8 +20,8 @@
 	});
 </script>
 
-<div class="container my-4 lg:my-8 mx-auto flex flex-col items-center">
-	<div class="card md:w-1/2 lg:p-8">
+<div class="container my-0 sm:my-4 lg:my-8 mx-auto flex flex-col items-center">
+	<div class="card xl:w-1/2 lg:p-4 rounded-none sm:rounded-2xl">
 		<header class="card-header"><h2 class="text-4xl md:text-6xl">Curious about Code?</h2></header>
 		<hr class="opacity-50 my-2" />
 		<section class="p-4 text-sm lg:text-lg">

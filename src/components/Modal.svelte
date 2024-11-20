@@ -39,7 +39,7 @@
 	<!-- Background overlay -->
 	<div
 		bind:this={modalContainer}
-		class="fixed inset-0 bg-neutral-900 bg-opacity-50 z-50 flex items-start justify-center pt-0 md:pt-8"
+		class="fixed inset-0 bg-neutral-900 bg-opacity-50 z-50 flex items-start justify-center pt-0 md:pt-2"
 		role="dialog"
 	>
 		<!-- Modal container -->

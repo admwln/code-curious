@@ -5,7 +5,7 @@ import { consoleOutput } from './utils/consoleActions';
 import type { Log } from './types';
 import { writable } from 'svelte/store';
 // Create aliases to avoid "Matter." prefixes
-const { Body, Constraint, Engine, Render, World, Bodies, Runner } = Matter;
+const { Body, Constraint, Engine, Render, World, Bodies, Runner, Sleeping } = Matter;
 
 let engine: Matter.Engine | null = null;
 
@@ -37,6 +37,10 @@ export function initMatterJS(
 	}
 
 	engine = Engine.create();
+
+	engine.positionIterations = 25;
+	engine.velocityIterations = 25;
+
 	const render = Render.create({
 		element: container,
 		engine: engine,
@@ -158,6 +162,32 @@ const pyramidScene = (matterInstance: MatterInstance) => {
 	sceneCompositesStore.set([stack]);
 };
 
+const stackScene = (matterInstance: MatterInstance) => {
+	const { engine } = matterInstance;
+
+	const stack = Matter.Composites.stack(
+		s(335),
+		s(375),
+		1,
+		10,
+		0,
+		0,
+		function (x: number, y: number) {
+			return Bodies.rectangle(x, y, s(30), s(30), {
+				isStatic: false,
+				restitution: 0.001, // Less bouncy
+				friction: 1.25, // More resistance to sliding
+				density: 0.05,
+				render: { fillStyle: 'rgb(18 19 26)', strokeStyle: 'rgb(255, 255, 255)', lineWidth: 2 },
+				//sleepThreshold: 60, // Adjust sleep threshold
+			});
+		},
+	);
+
+	World.add(engine.world, stack);
+	sceneCompositesStore.set([stack]);
+};
+
 const handleScene = (scene: string, matterInstance: MatterInstance) => {
 	// Remove all constraints from the world
 	const constraints = Matter.Composite.allConstraints(matterInstance.engine.world);
@@ -185,11 +215,14 @@ const handleScene = (scene: string, matterInstance: MatterInstance) => {
 
 	//Recreate the scene
 	switch (scene) {
+		case 'catapult':
+			catapultScene(matterInstance);
+			break;
 		case 'pyramid':
 			pyramidScene(matterInstance);
 			break;
-		case 'catapult':
-			catapultScene(matterInstance);
+		case 'stack':
+			stackScene(matterInstance);
 			break;
 		default:
 			console.warn(`Unknown scene: ${scene}`);
@@ -216,14 +249,6 @@ export function resetBodies(matter: MatterInstance) {
 	dynamicBodies.forEach((body) => {
 		World.remove(matter.engine.world, body);
 	});
-
-	// // Re-add the bodies at their initial positions
-	// initialBodies.forEach((initialBody) => {
-	// 	const { body, initialPosition } = initialBody;
-	// 	Matter.Body.setPosition(body, initialPosition); // Reset to initial position
-	// 	Matter.Body.setVelocity(body, { x: 0, y: 0 }); // Reset velocity
-	// 	World.add(matter..world, body); // Add back to the world
-	// });
 
 	// Add user-created bodies to the world
 	userBodies.forEach((userBody) => {
@@ -278,14 +303,17 @@ export function handleInstruction(
 	snapshot: Record<string, any>[],
 ) {
 	const variable = snapshot.find((item: any) => item.id === instruction.variableId) as VariableType;
+	let horizontalOffset = 0;
 	switch (instruction.action) {
 		case 'create circle':
 			let circleFill = variable.value as string;
 			circleFill = checkColor(circleFill);
+			// Use random horizontal offset for each triangle between -5 and 5
+			horizontalOffset = Math.random() * 10 - 5;
 			if (typeof circleFill === 'string') {
-				const circle = Bodies.circle(s(100), s(0), s(30), {
+				const circle = Bodies.circle(s(100 + horizontalOffset), s(0), s(30), {
 					isStatic: false,
-					restitution: 1,
+					restitution: 0.95,
 					friction: 0,
 					density: 0.01,
 					render: { fillStyle: circleFill },
@@ -324,14 +352,13 @@ export function handleInstruction(
 		case 'create triangle':
 			let triangleFill = variable.value as string;
 			triangleFill = checkColor(triangleFill);
-			let horizontalOffset = 0;
 			// Use random horizontal offset for each triangle between -5 and 5
 			horizontalOffset = Math.random() * 10 - 5;
 
 			if (typeof triangleFill === 'string') {
 				const triangle = Bodies.polygon(s(350 + horizontalOffset), s(0), 3, s(40), {
 					isStatic: false,
-					restitution: 0.5,
+					restitution: 0.75,
 					friction: 0.5,
 					density: 0.01,
 					render: { fillStyle: triangleFill },
@@ -351,40 +378,67 @@ export function handleInstruction(
 			}
 			break;
 		case 'create circles':
-			let circleFills = variable.value as string[];
-
-			circleFills.forEach((fill, i) => {
-				let circleFill = checkColor(fill);
-
-				if (typeof fill === 'string') {
-					const xPosition = s(50 + i * 85);
-
-					// Adjusted random values for density and air resistance
-					const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
-					const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
-
-					// Create the circle with adjusted properties
-					const circle = Bodies.circle(xPosition, s(0), s(40), {
-						isStatic: false,
-						restitution: 1,
-						friction: 0,
-						density: randomDensity, // Adjusted density range
-						frictionAir: randomFrictionAir, // Adjusted air resistance range
-						render: { fillStyle: circleFill },
-					});
-
-					World.add(matterInstance.engine.world, circle);
-
-					userBodies = [
-						...userBodies,
-						{
-							body: circle,
-							initialPosition: { x: circle.position.x, y: circle.position.y },
-						},
-					];
+			try {
+				// Check if the items in the array are strings
+				if (variable.itemType !== 'string') {
+					throw new Error(
+						`Expected an array of strings, but got an array of ${variable.itemType}s`,
+					);
 				}
-			});
-			break;
+
+				// If no error, proceed with the rest of the logic
+				const circleFills = variable.value as string[];
+
+				circleFills.forEach((fill, i) => {
+					let circleFill = checkColor(fill);
+
+					if (typeof fill === 'string') {
+						const xPosition = s(50 + i * 87);
+
+						// Adjusted random values for density and air resistance
+						const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
+						const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
+
+						// Create the circle with adjusted properties
+						const circle = Bodies.circle(xPosition, s(0), s(30), {
+							isStatic: false,
+							restitution: 0.95,
+							friction: 0,
+							density: randomDensity, // Adjusted density range
+							frictionAir: randomFrictionAir, // Adjusted air resistance range
+							render: { fillStyle: circleFill },
+						});
+
+						World.add(matterInstance.engine.world, circle);
+
+						userBodies = [
+							...userBodies,
+							{
+								body: circle,
+								initialPosition: { x: circle.position.x, y: circle.position.y },
+							},
+						];
+					}
+				});
+			} catch (error: any) {
+				// Capture and log error to the Console component
+				const errorBlock: Log = {
+					id: Date.now(),
+					blockType: 'log',
+					message: `Error: ${error.message}`,
+					selectedId: null,
+					selectedIndex: 0,
+					selectedKey: null,
+					useIndex: false,
+					useKey: false,
+					selectedType: 'string',
+				};
+				consoleOutput.update((output) => [...output, errorBlock]);
+
+				// Break out of the case upon error
+				break;
+			}
+			break; // Break at the end of the case when no errors occur
 
 		default:
 			console.warn(`Unknown instruction type: ${instruction.action}`);
