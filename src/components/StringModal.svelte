@@ -2,8 +2,13 @@
 	import { createEventDispatcher } from 'svelte';
 	import Modal from './Modal.svelte';
 	import ColorPicker from './ColorPicker.svelte';
-	import { faFloppyDisk, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+	import {
+		faExclamationTriangle,
+		faFloppyDisk,
+		faTrash,
+		faXmark,
+	} from '@fortawesome/free-solid-svg-icons';
 	import type { StringVariable } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
@@ -15,6 +20,7 @@
 	export let variableId;
 	let variable: StringVariable;
 	let showColorPicker: boolean = false;
+	let errorMsg: string = '';
 
 	// Snapshot store
 	$: _snapshot = $snapshot;
@@ -42,7 +48,7 @@
 	const deleteVariable = () => {
 		// Check if variable is deletable
 		if (!checkIfDeletable(variable.id)) {
-			alert('Cannot delete variable, it is being used in another code block');
+			errorMsg = 'This variable is being used in another code block';
 			return;
 		}
 		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
@@ -150,24 +156,33 @@
 		<button type="submit" class="sr-only">Submit</button>
 	</form>
 	<div slot="footer">
-		<div class="card-footer flex justify-between">
-			{#if editMode}
-				<button
-					type="button"
-					on:click={deleteVariable}
-					class="btn btn-sm bg-primary-700 flex gap-2"
-				>
-					<FontAwesomeIcon icon={faTrash} /> Delete
-				</button>
-			{:else}
-				<div></div>
-			{/if}
-			<div class="flex">
-				<button on:click={closeModal} class="btn"> Cancel </button>
-				<button on:click={onSave} class="btn btn-sm bg-secondary-700 flex gap-2">
-					<FontAwesomeIcon icon={faFloppyDisk} /> Save
-				</button>
+		<div class="card-footer flex flex-col">
+			<div class="flex justify-between">
+				{#if editMode}
+					<button
+						type="button"
+						on:click={deleteVariable}
+						class="btn btn-sm bg-primary-700 flex gap-2"
+					>
+						<FontAwesomeIcon icon={faTrash} /> Delete
+					</button>
+				{:else}
+					<div></div>
+				{/if}
+				<div class="flex">
+					<button on:click={closeModal} class="btn"> Cancel </button>
+					<button on:click={onSave} class="btn btn-sm bg-secondary-700 flex gap-2">
+						<FontAwesomeIcon icon={faFloppyDisk} /> Save
+					</button>
+				</div>
 			</div>
+			{#if errorMsg !== ''}
+				<aside class="alert variant-ghost-error mt-4">
+					<p class="alert-message flex gap-4 items-center">
+						<FontAwesomeIcon icon={faExclamationTriangle} />{errorMsg}
+					</p>
+				</aside>
+			{/if}
 		</div>
 	</div>
 </Modal>

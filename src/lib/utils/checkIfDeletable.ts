@@ -10,7 +10,6 @@ import { snapshot } from '../stores/snapshots';
 export const checkIfDeletable = (variableId: number): boolean => {
 	// Access the current value of the snapshot store
 	const _snapshot: Record<string, any>[] = get(snapshot);
-	console.log('Snapshot:', _snapshot);
 
 	// Iterate through the snapshot to check for variable usage
 	for (let i = 0; i < _snapshot.length; i++) {
