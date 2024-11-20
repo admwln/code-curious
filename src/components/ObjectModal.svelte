@@ -148,13 +148,15 @@
 					</button>
 				</div>
 			</div>
-			<aside class="alert variant-ghost-error mt-4">
-				<p class="flex gap-4 items-center text-sm sm:text-lg">
-					<span class="hidden sm:inline-block"
-						><FontAwesomeIcon icon={faExclamationTriangle} /></span
-					>{errorMsg}
-				</p>
-			</aside>
+			{#if errorMsg !== ''}
+				<aside class="alert variant-ghost-error mt-4">
+					<p class="flex gap-4 items-center text-sm sm:text-lg">
+						<span class="hidden sm:inline-block"
+							><FontAwesomeIcon icon={faExclamationTriangle} /></span
+						>{errorMsg}
+					</p>
+				</aside>
+			{/if}
 		</div>
 	</div>
 </Modal>
