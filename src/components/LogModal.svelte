@@ -189,13 +189,18 @@
 				<!-- If it's an array of objects, option to select Key -->
 				{#if variable.useIndex && selectedObject}
 					<label class="flex items-center space-x-2">
-						<input class="checkbox" type="checkbox" bind:checked={variable.useKey} />
+						<input
+							class="checkbox"
+							type="checkbox"
+							name="use-object-key"
+							bind:checked={variable.useKey}
+						/>
 						<p>Key</p>
 					</label>
 				{/if}
 			</div>
 		{/if}
-		<!-- Key selection -->
+		<!-- Key selection for objects -->
 		{#if variable.selectedType === 'object' && variable.useKey}
 			<div class="label">
 				<span>Key</span>
@@ -204,7 +209,7 @@
 					name="key"
 					class="select"
 					bind:value={variable.selectedKey}
-					size={Object.keys(selectedObject).length}
+					size={Object.keys(selectedObject).length + 1}
 				>
 					{#each Object.entries(selectedObject) as [key]}
 						<option value={key}>{key}</option>
@@ -212,7 +217,7 @@
 				</select>
 			</div>
 		{/if}
-		<!-- Key selection for object in array -->
+		<!-- Key selection for array of objects -->
 		{#if variable.selectedType === 'array' && variable.useIndex && variable.useKey}
 			<div class="label">
 				<span>Key</span>
@@ -221,7 +226,7 @@
 					name="key"
 					class="select"
 					bind:value={variable.selectedKey}
-					size={Object.keys(selectedObject).length}
+					size={Object.keys(selectedObject).length + 1}
 				>
 					{#each Object.entries(selectedObject) as [key]}
 						<option value={key}>{key}</option>
