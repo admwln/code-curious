@@ -378,40 +378,67 @@ export function handleInstruction(
 			}
 			break;
 		case 'create circles':
-			let circleFills = variable.value as string[];
-
-			circleFills.forEach((fill, i) => {
-				let circleFill = checkColor(fill);
-
-				if (typeof fill === 'string') {
-					const xPosition = s(50 + i * 87);
-
-					// Adjusted random values for density and air resistance
-					const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
-					const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
-
-					// Create the circle with adjusted properties
-					const circle = Bodies.circle(xPosition, s(0), s(30), {
-						isStatic: false,
-						restitution: 0.95,
-						friction: 0,
-						density: randomDensity, // Adjusted density range
-						frictionAir: randomFrictionAir, // Adjusted air resistance range
-						render: { fillStyle: circleFill },
-					});
-
-					World.add(matterInstance.engine.world, circle);
-
-					userBodies = [
-						...userBodies,
-						{
-							body: circle,
-							initialPosition: { x: circle.position.x, y: circle.position.y },
-						},
-					];
+			try {
+				// Check if the items in the array are strings
+				if (variable.itemType !== 'string') {
+					throw new Error(
+						`Expected an array of strings, but got an array of ${variable.itemType}s`,
+					);
 				}
-			});
-			break;
+
+				// If no error, proceed with the rest of the logic
+				const circleFills = variable.value as string[];
+
+				circleFills.forEach((fill, i) => {
+					let circleFill = checkColor(fill);
+
+					if (typeof fill === 'string') {
+						const xPosition = s(50 + i * 87);
+
+						// Adjusted random values for density and air resistance
+						const randomDensity = Math.random() * 0.003 + 0.002; // Min density: 0.002, Max density: 0.005
+						const randomFrictionAir = Math.random() * 0.02 + 0.005; // Min frictionAir: 0.005, Max frictionAir: 0.025
+
+						// Create the circle with adjusted properties
+						const circle = Bodies.circle(xPosition, s(0), s(30), {
+							isStatic: false,
+							restitution: 0.95,
+							friction: 0,
+							density: randomDensity, // Adjusted density range
+							frictionAir: randomFrictionAir, // Adjusted air resistance range
+							render: { fillStyle: circleFill },
+						});
+
+						World.add(matterInstance.engine.world, circle);
+
+						userBodies = [
+							...userBodies,
+							{
+								body: circle,
+								initialPosition: { x: circle.position.x, y: circle.position.y },
+							},
+						];
+					}
+				});
+			} catch (error: any) {
+				// Capture and log error to the Console component
+				const errorBlock: Log = {
+					id: Date.now(),
+					blockType: 'log',
+					message: `Error: ${error.message}`,
+					selectedId: null,
+					selectedIndex: 0,
+					selectedKey: null,
+					useIndex: false,
+					useKey: false,
+					selectedType: 'string',
+				};
+				consoleOutput.update((output) => [...output, errorBlock]);
+
+				// Break out of the case upon error
+				break;
+			}
+			break; // Break at the end of the case when no errors occur
 
 		default:
 			console.warn(`Unknown instruction type: ${instruction.action}`);
