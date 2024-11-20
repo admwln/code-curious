@@ -167,7 +167,7 @@ const stackScene = (matterInstance: MatterInstance) => {
 
 	const stack = Matter.Composites.stack(
 		s(375),
-		s(370),
+		s(375),
 		1,
 		10,
 		0,

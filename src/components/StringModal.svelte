@@ -7,6 +7,7 @@
 	import type { StringVariable } from '$lib/types';
 	import { snapshot } from '$lib/stores/snapshots'; // Snapshot store
 
+	import { checkIfDeletable } from '$lib/utils/checkIfDeletable';
 	import { colors } from '$lib/utils/colors';
 
 	export let editMode: boolean;
@@ -39,6 +40,11 @@
 	};
 
 	const deleteVariable = () => {
+		// Check if variable is deletable
+		if (!checkIfDeletable(variable.id)) {
+			alert('Cannot delete variable, it is being used in another code block');
+			return;
+		}
 		$snapshot = _snapshot.filter((v) => v.id !== variable.id);
 		dispatch('close');
 	};
@@ -48,6 +54,7 @@
 		if (variable.name === '') variable.name = 'new string';
 		if (variable.value === '') variable.value = 'value';
 		if (editMode) {
+			// Update variable in snapshot store
 			$snapshot = _snapshot.map((v) => (v.id === variable.id ? variable : v));
 			dispatch('close');
 			return;
