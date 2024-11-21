@@ -82,7 +82,7 @@
 				"#### 4. Run Your Code\n\nBy now, you know the drill. To see your action take effect, click the **Run** button.\n\n#### 5. Celebrate!\n\nDid a circle in your color drop into the Playfield and onto the catapult? Well done!\n\nWhen you're ready, catapult yourself to the next lesson.",
 			],
 			prevLesson: 'lesson-2',
-			nextLesson: 'More Circles',
+			nextLesson: 'lesson-3',
 		};
 
 		lessonData.editor = {

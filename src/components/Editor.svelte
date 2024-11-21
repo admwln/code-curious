@@ -42,7 +42,6 @@
 	// Load snapshot data for the current lesson when the component mounts or lessonSlug changes
 	$: {
 		if (lessonSlug) {
-			console.log('data snapshot', data.snapshot);
 			loadSnapshot(lessonSlug, data.snapshot);
 			fetchUserSnapshot();
 		}
