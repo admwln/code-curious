@@ -59,41 +59,39 @@
 	let hasError = false;
 	let navigating = true;
 
-	const fetchLesson = async () => {
-		const { data, error } = await supabase
-			.from('lessons')
-			.select('*')
-			.eq('slug', lessonId)
-			.single();
-		if (error || !data) {
-			console.error('Error fetching lesson:', error || 'No data');
-			hasError = true; // Set error state
-			return;
-		}
+	const fetchLesson = () => {
+		// const { data, error } = await supabase
+		// 	.from('lessons')
+		// 	.select('*')
+		// 	.eq('slug', lessonId)
+		// 	.single();
+		// if (error || !data) {
+		// 	console.error('Error fetching lesson:', error || 'No data');
+		// 	hasError = true; // Set error state
+		// 	return;
+		// }
 		hasError = false; // Clear error state if successful
 		// Is successful, assign lessonData
 		lessonData.tutorial = {
-			title: data.title,
-			content: data.content,
-			prevLesson: data.prev_lesson,
-			nextLesson: data.next_lesson,
+			title: 'Actions and the Playfield',
+			content: [
+				"Underwhelmed? Don’t worry—we saved the best for last!\n\n#### 1. Actions\n\nSo far, you’ve stored, edited, and displayed data using the Editor and Console. But to interact with the Playfield, we need something called actions. Actions are what you use to make things happen in your code—beyond just Console messages. If variables are like boxes, then actions are what you **do** with the content of those boxes. You could shake it, toss it, stack it, pour it out on the floor. The content could even be used to inspire an interpretive dance number—the possibilities are endless!\n\n#### 2. Your First Action\n\nSee the catapult at the bottom of the Playfield? Wouldn't it be great if we could drop something on it? Let’s dive in with a specific action called 'create circle.' This action needs a bit of data to work, namely which color to use for our circle. And since we already stored a color variable, we’re all set to use it. Start by clicking the lightning bolt symbol next to your `color` variable in the Editor.",
+				'{{VariableBlock|color|yellow|action',
+				"#### 3. Select an Action\n\nIn the **Action** window, make sure your `color` variable is selected. From the list of **Actions** on the right, choose `create circle` and click **Save**. You’ve just told the Playfield, 'Hey, create a circle with my chosen color!'",
+				'{{ActionBlock|create circle|color',
+				"#### 4. Run Your Code\n\nBy now, you know the drill. To see your action take effect, click the **Run** button.\n\n#### 5. Celebrate!\n\nDid a circle in your color drop into the Playfield and onto the catapult? Well done!\n\nWhen you're ready, catapult yourself to the next lesson.",
+			],
+			prevLesson: 'lesson-2',
+			nextLesson: 'More Circles',
 		};
-		if (data.snapshot) {
-			lessonData.editor = {
-				snapshot: data.snapshot,
-			};
-		} else {
-			lessonData.editor = {
-				snapshot: [],
-			};
-		}
-		if (data.scene) {
-			lessonData.playfiled = {
-				scene: data.scene,
-			};
-		} else {
-			lessonData.playfiled = {};
-		}
+
+		lessonData.editor = {
+			snapshot: [],
+		};
+
+		lessonData.playfiled = {
+			scene: 'catapult',
+		};
 	};
 	fetchLesson();
 

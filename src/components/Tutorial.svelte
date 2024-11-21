@@ -6,25 +6,25 @@
 
 	// Expose the data prop to receive the data from the parent +page.svelte
 	export let data;
-	let nextTitle = '';
-	let previousTitle = '';
-	let titlesLoaded: boolean = false;
+	let nextTitle = 'More Circles';
+	let previousTitle = 'Logging to the Console';
+	let titlesLoaded: boolean = true;
 
 	// When data changes, update the next and previous lesson titles using the fetchLessonTitle function
-	$: {
-		(async () => {
-			titlesLoaded = false; // Set loading flag
-			if (data.nextLesson) {
-				const result = await fetchLessonTitle(data.nextLesson);
-				nextTitle = result ? result.title : '';
-			}
-			if (data.prevLesson) {
-				const result = await fetchLessonTitle(data.prevLesson);
-				previousTitle = result ? result.title : '';
-			}
-			titlesLoaded = true; // Titles are now loaded
-		})();
-	}
+	// $: {
+	// 	(async () => {
+	// 		titlesLoaded = false; // Set loading flag
+	// 		if (data.nextLesson) {
+	// 			const result = await fetchLessonTitle(data.nextLesson);
+	// 			nextTitle = result ? result.title : '';
+	// 		}
+	// 		if (data.prevLesson) {
+	// 			const result = await fetchLessonTitle(data.prevLesson);
+	// 			previousTitle = result ? result.title : '';
+	// 		}
+	// 		titlesLoaded = true; // Titles are now loaded
+	// 	})();
+	// }
 
 	// Helper function to split placeholder at , into an array
 	const parsePlaceholder = (placeholder: string) => {
