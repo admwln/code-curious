@@ -1,6 +1,6 @@
 # Gamified Programming Tutorial Web App
 
-This is a web application designed to introduce users to basic programming concepts through a gamified experience. Users interact with visual code blocks to influence a physics-based simulation, making programming concepts more accessible and fun!
+This is a message to try out remote connection. This is a web application designed to introduce users to basic programming concepts through a gamified experience. Users interact with visual code blocks to influence a physics-based simulation, making programming concepts more accessible and fun!
 
 ## Features
 
