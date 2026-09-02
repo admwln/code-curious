@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { signIn } from '$lib/auth';
 	import { goto } from '$app/navigation';
-
+	
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-	import { faExclamationTriangle, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+	import { faEye, faEyeSlash, faExclamationTriangle, faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 
 	let email = '';
 	let password = '';
 	let errorMsg = '';
+	let showPassword = false;
 
 	async function handleSignIn() {
 		const error = await signIn(email, password);
@@ -37,16 +38,40 @@
 						required
 					/></label
 				>
-				<label class="label"
-					><span>Password</span><input
-						class="input"
-						name="password"
-						bind:value={password}
-						type="password"
-						autocomplete="current-password"
-						required
-					/></label
-				>
+				<label class="label">
+					<span>Password</span>
+					<div class="flex items-center relative">
+						{#if showPassword}
+							<input
+								class="input"
+								name="password"
+								bind:value={password}
+								type="text"
+								autocomplete="current-password"
+								required
+							/>
+						{:else}
+							<input
+								class="input"
+								name="password"
+								bind:value={password}
+								type="password"
+								autocomplete="current-password"
+								required
+							/>
+						{/if}
+						<button
+							type="button"
+							class="absolute right-3 cursor-pointer"
+							on:click={() => (showPassword = !showPassword)}
+						>
+							{#key showPassword}
+							<FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+							{/key}
+						</button>
+					</div>
+				</label>
+				
 				<div class="flex items-start">
 					<button type="submit" class="btn bg-primary-700 flex gap-2"
 						><FontAwesomeIcon icon={faRightToBracket} />Sign In</button
